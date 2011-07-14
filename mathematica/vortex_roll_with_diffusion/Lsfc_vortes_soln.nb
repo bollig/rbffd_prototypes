@@ -1,0 +1,230 @@
+(* Content-type: application/mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 6.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       145,          7]
+NotebookDataLength[      8305,        221]
+NotebookOptionsPosition[      7868,        201]
+NotebookOutlinePosition[      8209,        216]
+CellTagsIndexPosition[      8166,        213]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Clear", "[", 
+   RowBox[{"\"\<`*\>\"", ",", "t", ",", " ", "rho0", ",", " ", "gamma"}], 
+   "]"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"rho0", "=", "3"}], ";", "\[IndentingNewLine]", 
+    RowBox[{"gamma", " ", "=", " ", "5"}], ";", "\[IndentingNewLine]", 
+    RowBox[{"t", " ", "=", " ", "3"}], ";"}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{"h", "=", " ", 
+  RowBox[{"1", " ", "-", " ", 
+   RowBox[{"Tanh", "[", 
+    RowBox[{"rho0", "*", 
+     RowBox[{
+      RowBox[{"Cos", "[", "th", "]"}], "/", "gamma"}], "*", 
+     RowBox[{"Sin", "[", 
+      RowBox[{"phi", " ", "-", " ", 
+       RowBox[{
+        FractionBox[
+         RowBox[{"3", "*", 
+          RowBox[{
+           SqrtBox["3"], "/", "2"}], "*", 
+          RowBox[{
+           RowBox[{"Sech", "[", 
+            RowBox[{"rho0", "*", 
+             RowBox[{"Cos", "[", "th", "]"}]}], "]"}], "^", "2"}], "*", 
+          RowBox[{"Tanh", "[", 
+           RowBox[{"rho0", "*", 
+            RowBox[{"Cos", "[", "th", "]"}]}], "]"}]}], 
+         RowBox[{"rho0", "*", 
+          RowBox[{"Cos", "[", "th", "]"}]}]], "*", "t"}]}], "]"}]}], 
+    "]"}]}]}]}], "Input",
+ CellChangeTimes->{{3.519403391234375*^9, 3.51940341403125*^9}, {
+  3.519403444203125*^9, 3.519403560234375*^9}, {3.519403607015625*^9, 
+  3.51940368471875*^9}, {3.519403963859375*^9, 3.519403973828125*^9}, {
+  3.519404133171875*^9, 3.519404144328125*^9}, {3.519404180421875*^9, 
+  3.51940418278125*^9}, {3.519404359375*^9, 3.51940439396875*^9}, {
+  3.519404440015625*^9, 3.519404470546875*^9}, {3.519404792515625*^9, 
+  3.519404793453125*^9}, {3.519406189546875*^9, 3.51940621675*^9}, {
+  3.519645682563538*^9, 3.5196457536460123`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"1", "-", 
+  RowBox[{"Tanh", "[", 
+   FractionBox[
+    RowBox[{"rho0", " ", 
+     RowBox[{"Cos", "[", "th", "]"}], " ", 
+     RowBox[{"Sin", "[", 
+      RowBox[{"phi", "-", 
+       FractionBox[
+        RowBox[{"3", " ", 
+         SqrtBox["3"], " ", "t", " ", 
+         RowBox[{"Sec", "[", "th", "]"}], " ", 
+         SuperscriptBox[
+          RowBox[{"Sech", "[", 
+           RowBox[{"rho0", " ", 
+            RowBox[{"Cos", "[", "th", "]"}]}], "]"}], "2"], " ", 
+         RowBox[{"Tanh", "[", 
+          RowBox[{"rho0", " ", 
+           RowBox[{"Cos", "[", "th", "]"}]}], "]"}]}], 
+        RowBox[{"2", " ", "rho0"}]]}], "]"}]}], "gamma"], "]"}]}]], "Output",
+ CellChangeTimes->{3.519645754960598*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FortranForm", "[", 
+  RowBox[{
+   RowBox[{"D", "[", 
+    RowBox[{"h", ",", 
+     RowBox[{"{", 
+      RowBox[{"th", ",", "2"}], "}"}]}], "]"}], " ", "-", " ", 
+   RowBox[{
+    RowBox[{"Tan", "[", "th", "]"}], "*", 
+    RowBox[{"D", "[", 
+     RowBox[{"h", ",", 
+      RowBox[{"{", 
+       RowBox[{"th", ",", "1"}], "}"}]}], "]"}]}], " ", "+", 
+   RowBox[{
+    RowBox[{"1", "/", 
+     RowBox[{
+      RowBox[{"Cos", "[", "th", "]"}], "^", "2"}]}], "*", 
+    RowBox[{"D", "[", 
+     RowBox[{"h", ",", 
+      RowBox[{"{", 
+       RowBox[{"phi", ",", "2"}], "}"}]}], "]"}]}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.519404814140625*^9, 3.519404845578125*^9}, {
+  3.519404925171875*^9, 3.519405006453125*^9}, {3.519406537015625*^9, 
+  3.51940655321875*^9}, {3.51940678675*^9, 3.51940679721875*^9}}],
+
+Cell["\<\
+        Sech((rho0*Cos(th)*Sin(phi - \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/(2.*rho0)))/\
+gamma)**2*Tan(th)*
+     -   (-((rho0*Sin(th)*Sin(phi - \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/(2.*rho0)))/\
+gamma) + 
+     -     (rho0*Cos(th)*Cos(phi - \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/(2.*rho0))*
+     -        ((3*Sqrt(3)*t*Sech(rho0*Cos(th))**4*Tan(th))/2. - \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tan(th)*Tanh(rho0*Cos(th)))/(2.*\
+rho0) - 
+     -          \
+3*Sqrt(3)*t*Sech(rho0*Cos(th))**2*Tan(th)*Tanh(rho0*Cos(th))**2))/gamma) - 
+     -  Sech((rho0*Cos(th)*Sin(phi - \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/(2.*rho0)))/\
+gamma)**2*
+     -   (-((rho0*Cos(th)*Sin(phi - \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/(2.*rho0)))/\
+gamma) - 
+     -     (2*rho0*Cos(phi - \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/(2.*rho0))*Sin(\
+th)*
+     -        ((3*Sqrt(3)*t*Sech(rho0*Cos(th))**4*Tan(th))/2. - \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tan(th)*Tanh(rho0*Cos(th)))/(2.*\
+rho0) - 
+     -          \
+3*Sqrt(3)*t*Sech(rho0*Cos(th))**2*Tan(th)*Tanh(rho0*Cos(th))**2))/gamma - 
+     -     (rho0*Cos(th)*Sin(phi - \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/(2.*rho0))*
+     -        ((3*Sqrt(3)*t*Sech(rho0*Cos(th))**4*Tan(th))/2. - \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tan(th)*Tanh(rho0*Cos(th)))/(2.*\
+rho0) - 
+     -           \
+3*Sqrt(3)*t*Sech(rho0*Cos(th))**2*Tan(th)*Tanh(rho0*Cos(th))**2)**2)/gamma + 
+     -     (rho0*Cos(th)*Cos(phi - \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/(2.*rho0))*
+     -        ((3*Sqrt(3)*t*Sec(th)**2*Sech(rho0*Cos(th))**4)/2. + \
+(3*Sqrt(3)*t*Sech(rho0*Cos(th))**4*Tan(th)**2)/2. - 
+     -          \
+(3*Sqrt(3)*t*Sec(th)**3*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/(2.*rho0) + 
+     -          \
+12*Sqrt(3)*rho0*t*Sech(rho0*Cos(th))**4*Sin(th)*Tan(th)*Tanh(rho0*Cos(th)) - 
+     -          \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tan(th)**2*Tanh(rho0*Cos(th)))/(2.*\
+rho0) - 
+     -          \
+3*Sqrt(3)*t*Sec(th)**2*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th))**2 - \
+3*Sqrt(3)*t*Sech(rho0*Cos(th))**2*Tan(th)**2*Tanh(rho0*Cos(th))**2 - 
+     -          \
+6*Sqrt(3)*rho0*t*Sech(rho0*Cos(th))**2*Sin(th)*Tan(th)*Tanh(rho0*Cos(th))**3))\
+/gamma) + 
+     -  2*Sech((rho0*Cos(th)*Sin(phi - \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/(2.*rho0)))/\
+gamma)**2*
+     -   (-((rho0*Sin(th)*Sin(phi - \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/(2.*rho0)))/\
+gamma) + 
+     -      (rho0*Cos(th)*Cos(phi - \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/(2.*rho0))*
+     -         ((3*Sqrt(3)*t*Sech(rho0*Cos(th))**4*Tan(th))/2. - \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tan(th)*Tanh(rho0*Cos(th)))/(2.*\
+rho0) - 
+     -           \
+3*Sqrt(3)*t*Sech(rho0*Cos(th))**2*Tan(th)*Tanh(rho0*Cos(th))**2))/gamma)**2*
+     -   Tanh((rho0*Cos(th)*Sin(phi - \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/(2.*rho0)))/\
+gamma) + 
+     -  Sec(th)**2*((rho0*Cos(th)*Sech((rho0*Cos(th)*Sin(phi - \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/(2.*rho0)))/\
+gamma)**2*
+     -        Sin(phi - \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/(2.*rho0)))/\
+gamma + 
+     -     (2*rho0**2*Cos(th)**2*Cos(phi - \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/(2.*rho0))**2*
+     -        Sech((rho0*Cos(th)*Sin(phi - \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/(2.*rho0)))/\
+gamma)**2*
+     -        Tanh((rho0*Cos(th)*Sin(phi - \
+(3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/(2.*rho0)))/\
+gamma))/gamma**2)\
+\>", "Output",
+ CellChangeTimes->{{3.51940658778125*^9, 3.519406609328125*^9}, 
+   3.5194068114375*^9, 3.5196456914246607`*^9, 3.5196457551281424`*^9}]
+}, Open  ]]
+},
+WindowSize->{1272, 683},
+WindowMargins->{{-8, Automatic}, {Automatic, -2}},
+FrontEndVersion->"7.0 for Mac OS X x86 (32-bit) (February 18, 2009)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[567, 22, 1741, 40, 135, "Input"],
+Cell[2311, 64, 725, 20, 62, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3073, 89, 816, 23, 27, "Input"],
+Cell[3892, 114, 3960, 84, 429, "Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
