@@ -3,13 +3,15 @@ clear all
 % Add diffusion timestepping in matlab
 % Implement in C++
 %
-USE_KDTREE = 0;
-%nodes = load('~/GRIDS/md/md050.02601'); nodes = nodes(:,1:3);
-nodes = load('~/GRIDS/md/md400.dat'); nodes = nodes(:,1:3);
+USE_KDTREE = 1;
+
+fdsize = 33;
+nodes = load('~/GRIDS/md/md063.04096'); ep = 8.5; % USE ep = 8.5 for fdsize 33 on interpolation
+%nodes = load('~/GRIDS/md/md050.02601'); ep = 8.5; % USE ep = 8.5 for fdsize 33 on interpolation
+%nodes = load('~/GRIDS/md/md400.dat'); ep = 7.5; % Better than USING ep = 2 for fdsize 33
+nodes = nodes(:,1:3);  
 N = length(nodes);
 dim = size(nodes, 2);
-fdsize = 33;
-ep = 2;
 
 rbf   = @(ep,rd) exp(-(ep*rd).^2);
 drbf  = @(ep,rd) -2*ep^2*exp(-(ep*rd).^2);
@@ -64,5 +66,7 @@ end
 Lsfc = sparse(ind_i,ind_j,weightsLsfc,N,N);
 if 0
     figure(1);
-    plot(real(eig(full(Lsfc))), imag(eig(full(Lsfc))),'.')
+    E = eig(full(Lsfc)); 
+    plot(real(E), imag(E),'.');
 end
+condest(Lsfc)

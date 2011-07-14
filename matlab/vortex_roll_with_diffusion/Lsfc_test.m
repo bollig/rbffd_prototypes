@@ -24,7 +24,7 @@ Lsfc_h = Lsfc_h_evan(phi, th, t, rho0, gamma);
   
 % Now, we are interpolating the exact solution to the meshgrid below: 
 % To do surf plot, sample uniformly in theta and phi
-me = 100; ne = 100;    % Number of points for interpolation grid in the (phi,theta) directions.
+me = 20; ne = 20;    % Number of points for interpolation grid in the (phi,theta) directions.
 [PI,TI] = meshgrid(linspace(-pi,pi,me)',linspace(-pi/2,pi/2,ne)'); T=TI(:); P=PI(:);
 clear xe
 [xe(:,1),xe(:,2),xe(:,3)] = sph2cart(P,T,ones(length(P),1)); 
@@ -36,12 +36,12 @@ Vt_exact = (3*sqrt(3)/2)*sech(rho_p_exact).^2 .* tanh(rho_p_exact);
 w_exact = Vt_exact ./ rho_p_exact;
 w_exact(abs(rho_p_exact) < 4*eps) = 0; %eps is Matlab machine precision
 h_exact = 1 - tanh((rho_p_exact/gamma).*sin(PI - w_exact*t));
+Lsfc_h_exact = Lsfc_h_evan(PI, TI, t, rho0, gamma); 
 
 %% TEST INTERPOLATION
-% Building a evaluation table (euclidean distance matrix)
-% this is dist mat = sqrt(2(1-x'x))
-re2 = zeros(length(T),N); 
+
 % Distance from test points to trial points
+re2 = zeros(length(T),N); 
 %re2 = sqrt(max(0,2*(1-xe(:,1)*xe(:,1).'-xe(:,2)*xe(:,2).'-xe(:,3)*xe(:,3).')));
 re2 = distmat2(xe, nodes);  % Should be [ne*me by numnodes]
 
@@ -56,23 +56,63 @@ AE = rbf(ep,re2);    % RBF evaluation matrix. AE*(inv(A)*u) gives the RBF interp
 % Get the weights: w = B * A^{-1}
 [LA,UA,PA] = lu(Agl);
 
-% Our approximation: 
-% IG_dis = reshape(AE*(UA\(LA\(PA*(Lsfc*h)))),ne,me);
 % Exact Interpolated laplacian over whole grid
-% IG_ex  = reshape(AE*(UA\(LA\(PA*(Lsfc_h)))),ne,me);
-% Test exact case:
-IG_dis = reshape(AE*(UA\(LA\(PA*(h)))),ne,me);
-IG_ex = reshape(h_exact, ne, me); 
+%IG_dis = reshape(AE*(UA\(LA\(PA*(Lsfc*h)))),ne,me);
+%IG_ex  = reshape(AE*(UA\(LA\(PA*(Lsfc_h)))),ne,me);
 
+Lsfc_approx = Lsfc*h; 
 
+l1norm = norm(Lsfc_approx - Lsfc_h, 1)
+l2norm = norm(Lsfc_approx - Lsfc_h, 2)
+linfnorm = norm(Lsfc_approx - Lsfc_h, inf)
 
-subplot(1,2,1)
+rel_l1norm = l1norm / norm(Lsfc_h, 1)
+rel_l2norm = l2norm / norm(Lsfc_h, 2)
+rel_linfnorm = linfnorm / norm(Lsfc_h, inf)
+
+% Our approximation to Laplacian(u) using the RBF-FD D_N, interpolated to test points: 
+IG_dis = reshape(AE*(UA\(LA\(PA*(Lsfc_approx)))),ne,me);
+
+% Laplacian of u interpolated from exact evaluation at trial points to approximate values at test points
+IG_int = reshape(AE*(UA\(LA\(PA*(Lsfc_h)))),ne,me);
+% Exact Laplacian of u evaluted at test points
+IG_ex = reshape(Lsfc_h_exact, ne, me); 
+abs_err = abs(IG_dis - IG_ex);
+rel_err = abs(IG_dis - IG_ex)./abs(IG_ex);
+rel_err(abs(IG_ex) < 1e-8) = 0;
+
+subplot(2,3,1)
 surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),IG_dis),
 hold on,
-plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
-axis equal, colormap(jet), shading interp, view([90 0]), drawnow
+%plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
+%plot3(xe(:,1),xe(:,2),xe(:,3),'k.','MarkerSize',8),
+axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar, drawnow
+title('(IG_{dis}) RBF-FD Approximated Laplacian(u) interpolated to TEST points with TEST Points Showing');
 
-subplot(1,2,2)
+subplot(2,3,2)
 surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),IG_ex), hold on
+%plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
+axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar, drawnow
+title('(IG_{ex}) Exact Laplacian(u) evaluated at TEST points, with TRIAL Points Showing');
+
+subplot(2,3,3)
+surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),IG_int), hold on
+%plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
+%plot3(xe(:,1),xe(:,2),xe(:,3),'y.','MarkerSize',8),
+axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar, drawnow
+title('(IG_{int}) Interpolated Laplacian from exact evaluation at Trial points to approximate values at Test Points');
+%title('Signed Error (Interpolation - Exact)');
+
+subplot(2,3,4)
+surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),abs_err), hold on
+%plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
+%plot3(xe(:,1),xe(:,2),xe(:,3),'y.','MarkerSize',8),
+axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar, drawnow
+title('Absolute Error (|IG_{int} - IG_{ex}|)');
+
+subplot(2,3,5)
+surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),rel_err), hold on
 plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
-axis equal, colormap(jet), shading interp, view([90 0]), drawnow
+axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar, drawnow
+title('Relative Error (|IG_{dis} - IG_{ex}|/|IG_{ex}|)');
+%, caxis([0 1e0])
