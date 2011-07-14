@@ -49,8 +49,8 @@ tanh((3.*cos(th).*sin(phi - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tanh(3.*c
       (18.*cos(th).^2 .*cos(phi - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tanh(3.*cos(th)))/2).^2.*...
       sech((3.*cos(th).*sin(phi - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tanh(3.*cos(th)))/2))/5).^2.*...
       tanh((3.*cos(th).*sin(phi - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tanh(3.*cos(th)))/2))/5))/25);
-
-test = Lsfc_h_evan(phi, th, t) - Lsfc_h_natasha(phi, th, t);
+Lsfc_e = Lsfc_h_evan(phi, th, 3); 
+Lsfc_compare = Lsfc_e - Lsfc_h;
   
 % To do surf plot  
 me = 20; ne = 20;    % Number of points for interpolation grid in the (phi,theta) directions.
