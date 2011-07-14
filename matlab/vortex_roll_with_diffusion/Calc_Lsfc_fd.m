@@ -6,8 +6,8 @@ clear all
 USE_KDTREE = 1;
 
 fdsize = 33;
-nodes = load('~/GRIDS/md/md063.04096'); ep = 8.5; % USE ep = 8.5 for fdsize 33 on interpolation
-%nodes = load('~/GRIDS/md/md050.02601'); ep = 8.5; % USE ep = 8.5 for fdsize 33 on interpolation
+%nodes = load('~/GRIDS/md/md063.04096'); ep = 8.5; % USE ep = 8.5 for fdsize 33 on interpolation
+nodes = load('~/GRIDS/md/md050.02601'); ep = 8.5; % USE ep = 8.5 for fdsize 33 on interpolation
 %nodes = load('~/GRIDS/md/md400.dat'); ep = 7.5; % Better than USING ep = 2 for fdsize 33
 nodes = nodes(:,1:3);  
 N = length(nodes);

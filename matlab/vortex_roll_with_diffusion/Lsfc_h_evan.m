@@ -5,6 +5,12 @@ function [val] = Lsfc_h_evan(phi, th, t, rho0, gamma)
 %rho0 = 3; 
 %gamma = 5; 
 
+rho_p = rho0*cos(th);
+if (abs(rho_p) < 4*eps) 
+    % handle Poles
+    val = 1;
+else 
+    % General case
 val = sech((rho0.*cos(th).*sin(phi - (3.*sqrt(3).*t.*sec(th).*sech(rho0.*cos(th)).^2.*tanh(rho0.*cos(th)))/(2.0.*rho0)))/gamma).^2.*tan(th).* ...
         (-((rho0.*sin(th).*sin(phi - (3.*sqrt(3).*t.*sec(th).*sech(rho0.*cos(th)).^2.*tanh(rho0.*cos(th)))/(2.0.*rho0)))/gamma) + ...
           (rho0.*cos(th).*cos(phi - (3.*sqrt(3).*t.*sec(th).*sech(rho0.*cos(th)).^2.*tanh(rho0.*cos(th)))/(2.0.*rho0)).* ...
