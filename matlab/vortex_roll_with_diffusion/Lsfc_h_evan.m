@@ -1,9 +1,9 @@
 
-function [val] = Lsfc_h_evan(phi, th, t)
+function [val] = Lsfc_h_evan(phi, th, t, rho0, gamma)
 %% DERIVED BY EVAN IN MATHEMATICA:
 %
-rho0 = 3; 
-gamma = 5; 
+%rho0 = 3; 
+%gamma = 5; 
 
 val = sech((rho0.*cos(th).*sin(phi - (3.*sqrt(3).*t.*sec(th).*sech(rho0.*cos(th)).^2.*tanh(rho0.*cos(th)))/(2.0.*rho0)))/gamma).^2.*tan(th).* ...
         (-((rho0.*sin(th).*sin(phi - (3.*sqrt(3).*t.*sec(th).*sech(rho0.*cos(th)).^2.*tanh(rho0.*cos(th)))/(2.0.*rho0)))/gamma) + ...

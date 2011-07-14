@@ -4,7 +4,7 @@
 
 rho0 = 3;
 gamma = 5;
-t=3;
+t=0.05;
 
 [phi,th,temp] = cart2sph(nodes(:,1),nodes(:,2),nodes(:,3));
 
@@ -17,64 +17,55 @@ w = Vt./rho_p;
 w(abs(rho_p) < 4*eps) = 0; %eps is Matlab machine precision
 
 %Initial Condition
-
 h = 1 - tanh(rho_p/gamma.*sin(phi - w*t));
 
-Lsfc_h = sech((3.*cos(th).*sin(phi - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tanh(3.*cos(th)))/2))/5).^2.*tan(th).*...
-   ((-3.*sin(th).*sin(phi - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tanh(3.*cos(th)))/2))/5 + ...
-     (3.*cos(th).*cos(phi - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tanh(3.*cos(th)))/2).*...
-    ((9.*sqrt(3).*sech(3.*cos(th)).^4.*tan(th))/2 - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tan(th).*tanh(3.*cos(th)))/2 -...
-      9.*sqrt(3).*sech(3.*cos(th)).^2.*tan(th).*tanh(3.*cos(th)).^2))/5) -... 
-sech((3.*cos(th).*sin(phi - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tanh(3.*cos(th)))/2.))/5).^2.*...
-   ((-3.*cos(th).*sin(phi - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tanh(3.*cos(th)))/2.))/5 - ...
-     (6.*cos(phi - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tanh(3.*cos(th)))/2.).*sin(th).*...
-    ((9.*sqrt(3).*sech(3.*cos(th)).^4.*tan(th))/2 - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tan(th).*tanh(3.*cos(th)))/2 - ...
-      9.*sqrt(3).*sech(3.*cos(th)).^2.*tan(th).*tanh(3.*cos(th)).^2))/5 - ...
-     (3.*cos(th).*sin(phi - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tanh(3.*cos(th)))/2).*...
-    ((9.*sqrt(3).*sech(3.*cos(th)).^4.*tan(th))/2 - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tan(th).*tanh(3.*cos(th)))/2 - ...
-      9.*sqrt(3).*sech(3.*cos(th)).^2.*tan(th).*tanh(3.*cos(th)).^2).^2)/5 + ...
-     (3.*cos(th).*cos(phi - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tanh(3.*cos(th)))/2).*...
-    ((9.*sqrt(3).*sec(th).^2.*sech(3.*cos(th)).^4)/2 + (9.*sqrt(3).*sech(3.*cos(th)).^4.*tan(th).^2)/2 - ...
-     (3.*sqrt(3).*sec(th).^3.*sech(3.*cos(th)).^2.*tanh(3.*cos(th)))/2 + 108.*sqrt(3).*sech(3.*cos(th)).^4.*sin(th).*tan(th).*tanh(3.*cos(th)) - ...
-     (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tan(th).^2.*tanh(3.*cos(th)))/2 - 9.*sqrt(3).*sec(th).^2.*sech(3.*cos(th)).^2.*tanh(3.*cos(th)).^2 -... 
-      9.*sqrt(3).*sech(3.*cos(th)).^2.*tan(th).^2.*tanh(3.*cos(th)).^2 - 54.*sqrt(3).*sech(3.*cos(th)).^2.*sin(th).*tan(th).*tanh(3.*cos(th)).^3))/5) +... 
-      2.*sech((3.*cos(th).*sin(phi - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tanh(3.*cos(th)))/2.))/5.).^2.*...
-   ((-3.*sin(th).*sin(phi - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tanh(3.*cos(th)))/2.))/5 + ...
-     (3.*cos(th).*cos(phi - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tanh(3.*cos(th)))/2).*...
-    ((9.*sqrt(3).*sech(3.*cos(th)).^4.*tan(th))/2 - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tan(th).*tanh(3.*cos(th)))/2 - ...
-      9.*sqrt(3).*sech(3.*cos(th)).^2.*tan(th).*tanh(3.*cos(th)).^2))/5).^2.*...
-tanh((3.*cos(th).*sin(phi - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tanh(3.*cos(th)))/2))/5) + ...
-      sec(th).^2.*((3.*cos(th).*sech((3.*cos(th).*sin(phi - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tanh(3.*cos(th)))/2))/5).^2.*...
-                        sin(phi - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tanh(3.*cos(th)))/2))/5 + ...
-      (18.*cos(th).^2 .*cos(phi - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tanh(3.*cos(th)))/2).^2.*...
-      sech((3.*cos(th).*sin(phi - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tanh(3.*cos(th)))/2))/5).^2.*...
-      tanh((3.*cos(th).*sin(phi - (3.*sqrt(3).*sec(th).*sech(3.*cos(th)).^2.*tanh(3.*cos(th)))/2))/5))/25);
-Lsfc_e = Lsfc_h_evan(phi, th, 3); 
-Lsfc_compare = Lsfc_e - Lsfc_h;
+% Mine is a time depedent version (see Lsfc_h_natasha.m for original):
+Lsfc_h = Lsfc_h_evan(phi, th, t, rho0, gamma); 
   
-% To do surf plot  
-me = 20; ne = 20;    % Number of points for interpolation grid in the (phi,theta) directions.
+% Now, we are interpolating the exact solution to the meshgrid below: 
+% To do surf plot, sample uniformly in theta and phi
+me = 60; ne = 60;    % Number of points for interpolation grid in the (phi,theta) directions.
 [PI,TI] = meshgrid(linspace(-pi,pi,me)',linspace(-pi/2,pi/2,ne)'); T=TI(:); P=PI(:);
 [xe(:,1),xe(:,2),xe(:,3)] = sph2cart(P,T,ones(length(P),1)); 
 
+rho_p_exact = rho0.*cos(TI);
+Vt_exact = (3*sqrt(3)/2)*sech(rho_p_exact).^2*tanh(rho_p_exact);
+w_exact = Vt_exact ./ rho_p_exact;
+w_exact(abs(rho_p_exact) < 4*eps) = 0; %eps is Matlab machine precision
+
+h_exact = 1 - tanh((rho_p_exact./gamma).*sin(PI - w_exact*t));
+
+
+% Building a evaluation table (euclidean distance matrix)
+% this is dist mat = sqrt(2(1-x'x))
 re2 = zeros(length(T),N); 
 re2 = max(0,2*(1-xe(:,1)*xe(:,1)'-xe(:,2)*xe(:,2)'-xe(:,3)*xe(:,3)')); 
-Agl = rbf(ep,dist);
+
+emat = max(0,2*(1-nodes(:,1)*nodes(:,1)'-nodes(:,2)*nodes(:,2)'-nodes(:,3)*nodes(:,3)'));
+
+% We need to build matrix A for the trial points (eg. 400x400 mat)
+Agl = rbf(ep,emat);
+% Then we build the matrix B for the test points (eg. 40x400 mat assuming
+% 40 test points; and each dist will be evaluated at all 400 trial points)
 AE = rbf(ep,re2);    % RBF evaluation matrix. AE*(inv(A)*u) gives the RBF interpolant to u at evaluation pts.
 
 % Get the weights: w = B * A^{-1}
 [LA,UA,PA] = lu(Agl);
-% Interpolated grid over ALL nodes: 
-IG_dis = reshape(AE*(UA\(LA\(PA*(Lsfc*h)))),ne,me);
-IG_ex  = reshape(AE*(UA\(LA\(PA*(Lsfc_h)))),ne,me);
+
+% Our approximation: 
+%IG_dis = reshape(AE*(UA\(LA\(PA*(Lsfc*h)))),ne,me);
+IG_dis = reshape(h_exact, ne, me); %reshape(AE*(UA\(LA\(PA*(h)))),ne,me);
+% Exact Interpolated laplacian over whole grid
+%IG_ex  = reshape(AE*(UA\(LA\(PA*(Lsfc_h)))),ne,me);
 
 subplot(1,2,1)
 surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),IG_dis),
 hold on,
-plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
+%plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
+%plot3(xe(:,1),xe(:,2),xe(:,3),'k.','MarkerSize',8),
 axis equal, colormap(jet), shading interp, view([90 0]), drawnow
 
-subplot(1,2,2)
-surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),IG_ex), hold on
-plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
-axis equal, colormap(jet), shading interp, view([90 0]), drawnow
+% subplot(1,2,2)
+% surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),IG_ex), hold on
+% plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
+% axis equal, colormap(jet), shading interp, view([90 0]), drawnow
