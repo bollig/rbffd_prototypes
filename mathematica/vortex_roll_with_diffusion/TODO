@@ -1,0 +1,8 @@
+- Add RK4 timescheme
+- Make movie of advection AND diffusion. 
+- Convergence Study 
+    - Requires EPSILON variable on CONDNUM
+
+Priority: 
+    - Handout for Natasha on what I have done
+
