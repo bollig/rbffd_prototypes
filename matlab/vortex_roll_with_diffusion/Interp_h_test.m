@@ -4,7 +4,7 @@
 
 rho0 = 3;
 gamma = 5;
-t=3.0;
+t=0;
 
 [phi,th,temp] = cart2sph(nodes(:,1),nodes(:,2),nodes(:,3));
 
@@ -73,23 +73,23 @@ surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),IG_dis),
 hold on,
 %plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
 %plot3(xe(:,1),xe(:,2),xe(:,3),'k.','MarkerSize',8),
-axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar, drawnow
-title('Interpolated Solution evaluated at TEST points with TEST Points Showing');
+axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar('FontSize', 12), drawnow
+title('Interpolated Solution evaluated at TEST points with TEST Points Showing', 'FontSize', 14);
 
 subplot(2,2,2)
 surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),IG_ex), hold on
 %plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
-axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar, drawnow
-title('Exact Solution evaluated at TEST points, with TRIAL Points Showing');
+axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar('FontSize', 12), drawnow
+title('Exact Solution evaluated at TEST points, with TRIAL Points Showing', 'FontSize', 14);
 
 subplot(2,2,3)
 surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),signed_err), hold on
 %plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
-axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar, drawnow
-title('Signed Error (Interpolation - Exact)');
+axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar('FontSize', 12), drawnow
+title('Signed Error (Interpolation - Exact)', 'FontSize', 14);
 
 subplot(2,2,4)
 surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),rel_err), hold on
 plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
-axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar, drawnow
-title('Relative Error (|Interpolation - Exact|/|Exact|)');
+axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar('FontSize', 12), drawnow
+title('Relative Error (|Interpolation - Exact|/|Exact|)', 'FontSize', 14);

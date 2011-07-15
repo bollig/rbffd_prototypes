@@ -3,7 +3,7 @@
 
 rho0 = 3;
 gamma = 5;
-t=1; 
+t=3; 
 
 [phi,th,temp] = cart2sph(nodes(:,1),nodes(:,2),nodes(:,3));
 
@@ -93,81 +93,81 @@ IG_abs = reshape(AE*(UA\(LA\(PA*(abs_err)))),ne,me);
 IG_rel = reshape(AE*(UA\(LA\(PA*(rel_err)))),ne,me);
 
 
-figure(1)
+h = figure(1);
 
 subplot(3,3,1)
 surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),IG_dis),
 hold on,
 %plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
 %plot3(xe(:,1),xe(:,2),xe(:,3),'k.','MarkerSize',8),
-axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar, drawnow
-title('(Lsfc_{approx}) RBF-FD Approximated Lapl(u), interpolated for display');
+axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar('FontSize', 12), drawnow
+title('(Lsfc_{approx}) RBF-FD Approximated Lapl(u), interpolated for display', 'FontSize', 14);
 
 subplot(3,3,2)
 surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),IG_ex), hold on
 %plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
 %plot3(xe(:,1),xe(:,2),xe(:,3),'y.','MarkerSize',8),
-axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar, drawnow
-title('(Lsfc_{ex}) Exact Lapl(u) interpolated for display');
+axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar('FontSize', 12), drawnow
+title('(Lsfc_{ex}) Exact Lapl(u) interpolated for display', 'FontSize', 14);
 %title('Signed Error (Interpolation - Exact)');
 
 subplot(3,3,3)
 surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),IG_test), hold on
 %plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
-axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar, drawnow
-title('(Lsfc_{test}) Exact Lapl(u) at interpolation points, NOT interpolated for display');
+axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar('FontSize', 12), drawnow
+title('(Lsfc_{test}) Exact Lapl(u) at interpolation points, NOT interpolated for display', 'FontSize', 14);
 
 
 subplot(3,3,4)
 surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),IG_abs), hold on
 plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
 %plot3(xe(:,1),xe(:,2),xe(:,3),'y.','MarkerSize',8),
-axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar, drawnow
-title('Absolute Error (|Lsfc_{approx} - Lsfc_{ex}|)');
+axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar('FontSize', 12), drawnow
+title('Absolute Error (|Lsfc_{approx} - Lsfc_{ex}|)', 'FontSize', 14);
 
 subplot(3,3,5:6)
 %surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),IG_rel), hold on
 %plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
 %plot3(xe(:,1),xe(:,2),xe(:,3),'y.','MarkerSize',8),
-%axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar, drawnow
+%axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar('FontSize', 12), drawnow
 [Phi Theta Rr] = cart2sph(nodes(:,1), nodes(:,2), nodes(:,3));
 Err = abs_err;
 tri = delaunay(Phi,Theta);
 hold on;
 trisurf(tri, Phi, Theta, Err); 
-axis tight, colormap(jet), shading interp, view([0 0 90]), colorbar, drawnow
+axis tight, colormap(jet), shading interp, view([0 0 90]), colorbar('FontSize', 12), drawnow
 plot3(Phi,Theta, Err,'k.','MarkerSize',8),
 %axis tight, drawnow
-title('Absolute Error (|Lsfc_{approx} - Lsfc_{ex}|)');
+title('Absolute Error (|Lsfc_{approx} - Lsfc_{ex}|)', 'FontSize', 14);
 hold off; 
 
 subplot(3,3,7)
 surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),IG_rel), hold on
 plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
 %plot3(xe(:,1),xe(:,2),xe(:,3),'y.','MarkerSize',8),
-axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar
+axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar('FontSize', 12)
 if(max(rel_err) > 1)
     caxis([0 1])
 end
 drawnow
-title('Relative Error (|Lsfc_{approx} - Lsfc_{ex}|/|Lsfc_{ex}|)');
+title('Relative Error (|Lsfc_{approx} - Lsfc_{ex}|/|Lsfc_{ex}|)', 'FontSize', 14);
 
 subplot(3,3,8:9)
 %surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),IG_rel), hold on
 %plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
 %plot3(xe(:,1),xe(:,2),xe(:,3),'y.','MarkerSize',8),
-%axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar, drawnow
+%axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar('FontSize', 12), drawnow
 Err = rel_err;
 hold on;
 trisurf(tri, Phi, Theta, Err); 
-axis tight, colormap(jet), shading interp, view([0 0 90]), colorbar, 
+axis tight, colormap(jet), shading interp, view([0 0 90]), colorbar('FontSize', 12), 
 if(max(rel_err) > 1)
     caxis([0 1])
 end
 drawnow
 plot3(Phi,Theta, Err,'k.','MarkerSize',8),
 %axis tight, drawnow
-title('Relative Error (|Lsfc_{approx} - Lsfc_{ex}|/|Lsfc_{ex}|)');
+title('Relative Error (|Lsfc_{approx} - Lsfc_{ex}|/|Lsfc_{ex}|)', 'FontSize', 14);
 hold off; 
 
 figtitle = sprintf('n=%d, eps=%g, t=%g, N=%d; Global Norms (L1,L2,Linf) = Abs[%2.2e, %2.2e, %2.2e], Rel[%2.2e, %2.2e, %2.2e]', ...
@@ -178,9 +178,10 @@ figtitle = sprintf('n=%d, eps=%g, t=%g, N=%d; Global Norms (L1,L2,Linf) = Abs[%2
 addpath('./mtit');
 p=mtit(figtitle,'fontsize',20, 'xoff',0, 'yoff',.035);
 
+
 % subplot(2,3,6)
 % surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),IG_rel), hold on
 % %plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
 % %plot3(xe(:,1),xe(:,2),xe(:,3),'y.','MarkerSize',8),
-% axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar, drawnow
+% axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar('FontSize', 12), drawnow
 % title('Relative Error (|Lsfc_{approx} - Lsfc_{ex}|/|Lsfc_{ex}|)');
