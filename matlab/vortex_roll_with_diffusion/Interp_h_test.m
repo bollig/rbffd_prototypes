@@ -4,7 +4,7 @@
 
 rho0 = 3;
 gamma = 5;
-t=0.15;
+t=3.0;
 
 [phi,th,temp] = cart2sph(nodes(:,1),nodes(:,2),nodes(:,3));
 
@@ -38,6 +38,12 @@ w_exact(abs(rho_p_exact) < 4*eps) = 0; %eps is Matlab machine precision
 h_exact = 1 - tanh((rho_p_exact/gamma).*sin(PI - w_exact*t));
 
 %% TEST INTERPOLATION
+
+%NOTE: adjust this epsilon for interpolation (ep_int) in order to fit our
+%data properly. Watch for interpolation errors introduced on rel_err and in
+%our approximated solution. For N=2601, ep_int=8.5 works well.
+ep_int = 8.5;
+
 % Building a evaluation table (euclidean distance matrix)
 % this is dist mat = sqrt(2(1-x'x))
 re2 = zeros(length(T),N); 
@@ -48,10 +54,10 @@ re2 = distmat2(xe, nodes);  % Should be [ne*me by numnodes]
 emat = sqrt(max(0,2*(1-nodes(:,1)*nodes(:,1).'-nodes(:,2)*nodes(:,2).'-nodes(:,3)*nodes(:,3).')));
 
 % We need to build matrix A for the trial points (eg. 400x400 mat)
-Agl = rbf(ep,emat);
+Agl = rbf(ep_int,emat);
 % Then we build the matrix B for the test points (eg. 40x400 mat assuming
 % 40 test points; and each dist will be evaluated at all 400 trial points)
-AE = rbf(ep,re2);    % RBF evaluation matrix. AE*(inv(A)*u) gives the RBF interpolant to u at evaluation pts.
+AE = rbf(ep_int,re2);    % RBF evaluation matrix. AE*(inv(A)*u) gives the RBF interpolant to u at evaluation pts.
 
 % Get the weights: w = B * A^{-1}
 [LA,UA,PA] = lu(Agl);
@@ -66,19 +72,19 @@ subplot(2,2,1)
 surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),IG_dis),
 hold on,
 %plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
-plot3(xe(:,1),xe(:,2),xe(:,3),'k.','MarkerSize',8),
+%plot3(xe(:,1),xe(:,2),xe(:,3),'k.','MarkerSize',8),
 axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar, drawnow
 title('Interpolated Solution evaluated at TEST points with TEST Points Showing');
 
 subplot(2,2,2)
 surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),IG_ex), hold on
-plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
+%plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
 axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar, drawnow
 title('Exact Solution evaluated at TEST points, with TRIAL Points Showing');
 
 subplot(2,2,3)
 surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),signed_err), hold on
-plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
+%plot3(nodes(:,1),nodes(:,2),nodes(:,3),'k.','MarkerSize',8),
 axis equal, colormap(jet), shading interp, view([0 0 90]), colorbar, drawnow
 title('Signed Error (Interpolation - Exact)');
 
