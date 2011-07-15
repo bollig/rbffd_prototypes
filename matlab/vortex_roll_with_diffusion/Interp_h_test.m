@@ -4,7 +4,7 @@
 
 rho0 = 3;
 gamma = 5;
-t=3.0;
+t=0.15;
 
 [phi,th,temp] = cart2sph(nodes(:,1),nodes(:,2),nodes(:,3));
 

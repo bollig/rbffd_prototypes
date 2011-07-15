@@ -5,9 +5,9 @@ clear all
 %
 USE_KDTREE = 1;
 
-fdsize = 33;
+fdsize = 9;
 %nodes = load('~/GRIDS/md/md063.04096'); ep = 8.5; % USE ep = 8.5 for fdsize 33 on interpolation
-nodes = load('~/GRIDS/md/md050.02601'); ep = 8.5; % USE ep = 8.5 for fdsize 33 on interpolation
+nodes = load('~/GRIDS/md/md050.02601'); ep = 2.5; % USE ep = 8.5 for fdsize 33 on interpolation
 %nodes = load('~/GRIDS/md/md400.dat'); ep = 7.5; % Better than USING ep = 2 for fdsize 33
 nodes = nodes(:,1:3);  
 N = length(nodes);
@@ -51,13 +51,15 @@ for j=1:N
         idm = idx(1:fdsize,j);
         rd = sqrt(max(0,2*(1-nodes(idm,1)*nodes(idm,1).'-nodes(idm,2)*nodes(idm,2).'-nodes(idm,3)*nodes(idm,3).')));
     end
-    rdv = rd(:,1);
+    scale = 1;%rd(end,1);
+    rdv = rd(:,1) ./ (scale);
+    rd = rd ./ scale;
     
     A(1:fdsize,1:fdsize) = rbf(ep,rd);
     [LA,UA,P] = lu(A);
     
     % Equation 20 in Wright Flyer and Yuen "A Hybrid Radial [...]" paper
-    B(1:fdsize) = 1/4*( (4-rdv.^2).*d2rbf(ep,rdv) + (4 - 3*rdv.^2).*drbf(ep,rdv) );  %weights L_sfc
+    B(1:fdsize) = (1/4) * ( (4-rdv.^2).*d2rbf(ep,rdv) + (4 - 3*rdv.^2).*drbf(ep,rdv) );  %weights L_sfc
     weights = UA\(LA\(P*B));
     weightsLsfc((j-1)*fdsize+1:j*fdsize) = weights(1:fdsize);
     
