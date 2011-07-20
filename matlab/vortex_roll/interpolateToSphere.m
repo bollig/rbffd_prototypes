@@ -59,7 +59,7 @@ IG_abs = reshape(AE*(UA\(LA\(PA*(abs_err)))),ne,me);
 % Relative Error interpolated to drawn sphere
 IG_rel = reshape(AE*(UA\(LA\(PA*(rel_err)))),ne,me);
 
-h = figure(1);
+%h = figure(1);
 
 subplot(2,1,1)
 surf(cos(PI).*cos(TI),cos(TI).*sin(PI),sin(TI),IG_dis),
