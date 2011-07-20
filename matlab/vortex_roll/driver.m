@@ -10,7 +10,7 @@ fdsize = 101;c1 = 0.058; c2 = 0.16;  hv_k = 6; hv_gamma = 5;
 % Switch Hyperviscosity ON (1) and OFF (0)
 useHV = 1;
 
-start_time = 6; 
+start_time = 0; 
 end_time = 10; 
 dt = 0.1; 
 dim = 2; 
