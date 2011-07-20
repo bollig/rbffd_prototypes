@@ -162,7 +162,7 @@ In an attempt to improve accuracy of the laplacian approximation, I kept the val
 
 \section{Varying $N$} 
 
-To get an idea of convergence with the total number of nodes $N$, Figures~\ref{fig:eps2.5_Lsfc_N=3364} and \ref{fig:eps2.5_Lsfc_N=4096} show the cases when $N=3364$ and $4096$ respectively. In both cases, $t=3$, $\epsilon=2.5$ and stencil size $n=33$.  
+To get an idea of convergence with the total number of nodes $N$, Figures~\ref{fig:eps2.5_Lsfc_N=3364},~\ref{fig:eps2.5_Lsfc_N=4096} and \ref{fig:eps2.5_Lsfc_N=6400} show the cases when $N=3364$, $4096$ and $6400$ respectively. In both cases, $t=3$, $\epsilon=2.5$ and stencil size $n=33$.  
 
 \begin{figure}[h]
 \begin{center}
@@ -175,6 +175,11 @@ To get an idea of convergence with the total number of nodes $N$, Figures~\ref{f
 \includegraphics[width=5in]{../Figures/Lsfc_h_N4096_n33_eps2p5_t=3.png}
 \caption{$N=4096$ approximation of $\Delta_{s} h(\theta,\phi,t)$ at $t=3$. RBF-FD support parameter, $\epsilon_{i}=2.5$. $n=33$ stencil points. }
 \label{fig:eps2.5_Lsfc_N=4096}
+\end{center}
+\end{figure}
+
+\begin{figure}[h]
+\begin{center}
 \includegraphics[width=5in]{../Figures/Lsfc_h_N6400_n33_eps2p5_t=3.png}
 \caption{$N=6400$ approximation of $\Delta_{s} h(\theta,\phi,t)$ at $t=3$. RBF-FD support parameter, $\epsilon_{i}=2.5$. $n=33$ stencil points. }
 \label{fig:eps2.5_Lsfc_N=6400}
@@ -183,13 +188,12 @@ To get an idea of convergence with the total number of nodes $N$, Figures~\ref{f
 
 \clearpage
 
-
 \section{Next Steps}
 Now that we have results to compare against in Matlab, I am working on the C++ equivalent in my code to approximate $\Delta_{s} h(\theta,\phi,t)$ with similar accuracy. Beyond that, I want to timestep the solution using RK4 and generate a movie with $t=[0,10]$. 
 
+I already have the approximation to $\d{h}{t} = - \frac{\omega(\theta) }{ cos(\theta)}\d{h}{\lambda}$ working in my code to approximate the vortex coil in time. With this new $\Delta_{s} h(\theta,\phi,t)$ operator I can keep $t$ as a constant parameter to $h$ and simulate a diffusive term to decay the coil in time. Then, I can join advection and diffusion parts into one equation. 
+
 \clearpage
-
-
 
 \appendix
 
