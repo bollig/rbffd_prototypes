@@ -13,7 +13,7 @@ useHV = 1;
 revolutions = 1;
 start_time = 0; 
 end_time = 1036800 * revolutions; 
-nsteps = 125; 
+nsteps = 150; 
 dim = 2; 
 
 dt = (end_time - start_time)/(nsteps*revolutions); 
