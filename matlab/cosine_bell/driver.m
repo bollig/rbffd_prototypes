@@ -18,12 +18,12 @@ dim = 2;
 
 dt = (end_time - start_time)/(nsteps*revolutions); 
 
-nodes = load('~/GRIDS/md/md099.10000');
+%nodes = load('~/GRIDS/md/md099.10000');
 %nodes = load('~/GRIDS/md/md079.06400');
 %nodes = load('~/GRIDS/md/md063.04096');
 %nodes = load('~/GRIDS/md/md059.03600'); 
 %nodes = load('~/GRIDS/md/md050.02601'); 
-%nodes = load('~/GRIDS/md/md031.01024');
+nodes = load('~/GRIDS/md/md031.01024');
 %nodes = load('~/GRIDS/md/md004.00025');
 
 nodes=nodes(:,1:3);

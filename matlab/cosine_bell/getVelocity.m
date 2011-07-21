@@ -1,6 +1,6 @@
 function [vel] = getVelocity(nodes, t)
 R = 1/3;
-alpha =pi/4;
+alpha =-pi/2;
 a = 1;%6.37122*10^6; % radius of earth in meters
 u0 = 2*pi*a/1036800; % Scale the initial velocity
 
