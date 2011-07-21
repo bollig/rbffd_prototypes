@@ -16,10 +16,10 @@ dt = 0.1;
 dim = 2; 
 
 
-nodes = load('~/GRIDS/md/md099.10000');
+%nodes = load('~/GRIDS/md/md099.10000');
 %nodes = load('~/GRIDS/md/md079.06400');
 %nodes = load('~/GRIDS/md/md063.04096');
-%nodes = load('~/GRIDS/md/md059.03600'); 
+nodes = load('~/GRIDS/md/md059.03600'); 
 %nodes = load('~/GRIDS/md/md050.02601'); 
 %nodes = load('~/GRIDS/md/md031.01024');
 %nodes = load('~/GRIDS/md/md004.00025');
@@ -29,13 +29,13 @@ N = length(nodes);
 ep = c1 * sqrt(N) - c2;
 
 [DM H] = Calc_Weights_fd(fdsize, N, nodes, ep, hv_k);
-% 
-% gamma=[0:100:4000];
-% for i = 1:size(gamma,2)
-%  hv_res(i) = testHVEigs(DM, H, gamma(i), hv_k, N);
-% end
+
+gamma=[3000];
+for i = 1:size(gamma,2)
+ hv_res(i) = testHVEigs(DM, H, gamma(i), hv_k, N);
+end
 
 %Found gamma = 200 * N^-2  works well for n=17
 %H = (-200/(N^hv_k)) * H_unscaled; 
-H = hv_gamma / N^(hv_k) * H; %(-3200/(N^hv_k)) * H; 
-runTest(DM, H, nodes, start_time, end_time, dt, useHV, 10);
+% H = hv_gamma / N^(hv_k) * H; %(-3200/(N^hv_k)) * H; 
+% runTest(DM, H, nodes, start_time, end_time, dt, useHV, 10);
