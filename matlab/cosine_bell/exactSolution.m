@@ -7,7 +7,7 @@ R = a/3;
 %NOTE: north pole pi/2, south pole -pi/2
 
 % Center (0,0) @ equator on Greenwhich mean line 
-theta_c = 0;
+theta_c = 0;%-3*pi/2;
 lambda_c = 0;
 
 % [Longitude, Latitude, R] 

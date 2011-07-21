@@ -42,4 +42,4 @@ ep = c1 * sqrt(N) - c2;
 %eigenvalues left of the plane, but that does not correlate to a good
 %solution.
 H = -hv_gamma * N^(-hv_k) * H_unscaled; 
-runTest(DM_Lambda, DM_Theta, H, nodes, start_time, end_time, dt, useHV, nsteps);
+runTest(DM_Lambda, DM_Theta, H, nodes, start_time, end_time, dt, useHV, nsteps/10);

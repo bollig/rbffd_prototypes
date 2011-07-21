@@ -1,12 +1,17 @@
-function [vel_u vel_v] = getVelocity(nodes, t)
-
+function [vel] = getVelocity(nodes, t)
 R = 1/3;
-alpha = 0;
-a = 1;
+alpha =pi/4;
+a = 1;%6.37122*10^6; % radius of earth in meters
 u0 = 2*pi*a/1036800; % Scale the initial velocity
+
 [lambda,theta,rtemp] = cart2sph(nodes(:,1),nodes(:,2),nodes(:,3));
 
-vel_u = u0 * ( cos(theta) .* cos(alpha) - sin(theta) .* sin(lambda) .* sin(alpha)); 
-vel_v = - u0 * ( sin(lambda) .* sin(alpha)); 
+vel = zeros(length(nodes), 2);
 
+% When alpha = 0, the first half is enabled and the second half disabled
+vel(:,1) = u0 * ( cos(theta) .* cos(alpha) - sin(theta) .* sin(lambda) .* sin(alpha)); 
+% When alpha = 0 this is disabled
+vel(:,2) = - u0 * ( cos(lambda) .* sin(alpha)); 
+
+vel = vel ./ a; 
 end

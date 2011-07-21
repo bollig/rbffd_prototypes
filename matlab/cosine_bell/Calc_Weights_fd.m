@@ -48,12 +48,15 @@ for j=1:N
     [lam_j,th_j,temp] = cart2sph(nodes(idx,1),nodes(idx,2),nodes(idx,3));
     [lam_i,th_i,temp] = cart2sph(nodes(j,1),nodes(j,2),nodes(j,3));
     
+    % Constant velocity in time. 
+   % vel = getVelocity(nodes(idx,:), 0); 
+    
     % NOTE: ordering (lam_i - lam_j) here can swap the rotation of our vortex. 
     dr_dlambda = cos(th_i) .* cos(th_j) .* sin(lam_i - lam_j);
     B_lambda(1:fdsize) = dr_dlambda .* drbf_over_r(ep, rdv);
     weights_lambda = UA\(LA\(P*B_lambda));
     
-    dr_dtheta = sin(th_i) .* cos(th_j) .* cos(lam_i - lam_j) - cos(th_i) .* sin(th_j);
+    dr_dtheta = cos(th_j) .* sin(th_i) .* cos(lam_i - lam_j) - sin(th_j) .* cos(th_i);
     B_theta(1:fdsize) = dr_dtheta .* drbf_over_r(ep, rdv);
     weights_theta = UA\(LA\(P*B_theta));
     
