@@ -10,7 +10,7 @@ fdsize = 31; c1 = 0.035; c2 = 0.1 ;  hv_k = 4; hv_gamma = 5e-2;
 % Switch Hyperviscosity ON (1) and OFF (0)
 useHV = 1;
 
-revolutions = 1;
+revolutions = 100;
 start_time = 0; 
 end_time = 1036800 * revolutions; 
 nsteps = 150; 
@@ -18,12 +18,12 @@ dim = 2;
 
 dt = (end_time - start_time)/(nsteps*revolutions); 
 
-%nodes = load('~/GRIDS/md/md099.10000');
+nodes = load('~/GRIDS/md/md099.10000');
 %nodes = load('~/GRIDS/md/md079.06400');
 %nodes = load('~/GRIDS/md/md063.04096');
 %nodes = load('~/GRIDS/md/md059.03600'); 
 %nodes = load('~/GRIDS/md/md050.02601'); 
-nodes = load('~/GRIDS/md/md031.01024');
+%nodes = load('~/GRIDS/md/md031.01024');
 %nodes = load('~/GRIDS/md/md004.00025');
 
 nodes=nodes(:,1:3);
@@ -42,4 +42,4 @@ ep = c1 * sqrt(N) - c2;
 %eigenvalues left of the plane, but that does not correlate to a good
 %solution.
 H = -hv_gamma * N^(-hv_k) * H_unscaled; 
-runTest(DM_Lambda, DM_Theta, H, nodes, start_time, end_time, dt, useHV, nsteps/10);
+runTest(DM_Lambda, DM_Theta, H, nodes, start_time, end_time, dt, useHV, nsteps);

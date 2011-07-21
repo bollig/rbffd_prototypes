@@ -2,7 +2,7 @@
 function [final_err] = runTest(DM_Lambda, DM_Theta, H, nodes, start_time, end_time, dt, useHV, vizFreq) 
 %% Run a test with the provide DM (differentiation matrix) and H (hypervisc
 %% matrix). 
-showSphere = 1; 
+showSphere = 0; 
 
 t=start_time;
 initial_condition = exactSolution(nodes, t);
@@ -21,7 +21,7 @@ fprintf('Max Z at begin of run: %f\n', max(u_old));
 % ntime = 600
 % When kiran runs 600 timesteps its equiv to 12 days.
 
-iter = 0;
+iter = 1;
 while t < end_time
     [u_new t] = advanceRK4(u_old, dt, t, DM_Lambda, DM_Theta, H, nodes, @rbffd_solve, useHV);
     if mod(iter,vizFreq) == 0 || mod(t, 1036800) == 0
