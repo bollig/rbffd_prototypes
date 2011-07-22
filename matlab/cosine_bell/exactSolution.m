@@ -1,7 +1,7 @@
 function [h_exact] = exactSolution(nodes, t)
 
 a = 1; 
-h0 = 1000; 
+h0 = 1; % was testing 1000 previously
 R = a/3;
 
 %NOTE: north pole pi/2, south pole -pi/2

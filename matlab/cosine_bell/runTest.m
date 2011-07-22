@@ -14,7 +14,8 @@ else
     plotSolution(initial_condition, initial_condition, nodes, t);
 end
 u_old = initial_condition;
-fprintf('Max Z at begin of run: %f\n', max(u_old));
+ initial_height = max(u_old);
+fprintf('Max Z at begin of run: %f\n', initial_height);
 
 % 1036800 = 12days*24hours*60min*60seconds
 % dtime = dble(1036800) / dble(ntime+1)       !Time step
@@ -33,10 +34,26 @@ while t < end_time
         else 
             plotSolution(u_new, u_exact, nodes, t);
         end
+        
+        err = norm(abs(u_new - u_exact), 1);
+        rel_err = err / norm(abs(u_exact), 1);
+        fprintf('\nIter %d, Time t=%g, Abs l1 Err = %e, Rel l1 Err = %e\n', iter, t, err, rel_err);
+        
         err = norm(abs(u_new - u_exact), 2);
         rel_err = err / norm(abs(u_exact), 2);
         fprintf('Iter %d, Time t=%g, Abs l2 Err = %e, Rel l2 Err = %e\n', iter, t, err, rel_err);
+         
+        err = norm(abs(u_new - u_exact), inf);
+        rel_err = err / norm(abs(u_exact), inf);
+        fprintf('Iter %d, Time t=%g, Abs lin Err = %e, Rel linf Err = %e\n', iter, t, err, rel_err);
+        peak_height = max(u_new); 
+         fprintf('Max Z: %f (%f difference, %f%% loss)\n', peak_height, (initial_height - peak_height), ((initial_height - peak_height)/initial_height) * 100);
     end
+    
+    if (mod(iter, 10) == 0) 
+        fprintf('.');
+    end
+    
     u_old = u_new;
     iter = iter+1;
 end
@@ -46,7 +63,8 @@ end
  else 
     plotSolution(u_old, u_exact, nodes, t);
  end
-fprintf('Max Z at end of run: %f\n', max(u_new));
+ peak_height = max(u_new); 
+ fprintf('Max Z at end of run: %f (%f difference, %f%% loss)\n', peak_height, (initial_height - peak_height), ((initial_height - peak_height)/initial_height) * 100);
 
 %figure(4); 
 % NOTE: due to interpolation errors, this might look wrong:
