@@ -21,4 +21,27 @@ du = -((vel(:,1)./cos(theta)) .* dh_dlambda + vel(:,2) .* dh_dtheta);
 if (useHV)
     du = du + (H*u);
 end
+
+computeEigs = 1;
+if (computeEigs) 
+    M = diag((vel(:,1)./cos(theta))) * DM_Lambda + diag(vel(:,2)) * DM_Theta; 
+   
+    %[EVec EVals] = eig(M);
+    EVals = eig(M);
+    
+    dlmwrite('eigs_noHV.mat', EVals);
+    %dlmwrite('eigvecs_noHV.mat', EVec);
+    
+    M = M + H;
+    
+    %[EVec EVals] = eig(M);
+    EVals = eig(M);
+    
+    dlmwrite('eigs_HV.mat', EVals);
+    %dlmwrite('eigvecs_noHV.mat', EVec);
+    
+    display('DONE COMPUTING EIGS'); 
+    pause
+end
+
 end

@@ -2,10 +2,10 @@
 %% Build a differentiation matrix, test hyperviscosity and run the vortex
 %% roll PDE.
 
-nodes = load('~/GRIDS/md/md159.25600');
+%nodes = load('~/GRIDS/md/md159.25600');
 %nodes = load('~/GRIDS/md/md099.10000');
 %nodes = load('~/GRIDS/md/md079.06400');
-%nodes = load('~/GRIDS/md/md063.04096');
+nodes = load('~/GRIDS/md/md063.04096');
 %nodes = load('~/GRIDS/md/md059.03600'); 
 %nodes = load('~/GRIDS/md/md050.02601'); 
 %nodes = load('~/GRIDS/md/md031.01024');
