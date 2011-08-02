@@ -1,0 +1,108 @@
+\begin{verbatim} 
+In[61]:= (* Clear all Definitions of Variables and Functions *)
+Clear["`*", t, rho0, gamma]
+(* Get Spherical Coordinate Calculus *)
+(*Needs["VectorAnalysis`"]*)
+
+In[70]:= (* LATITUDE, LONGITUDE, Radius *)
+{\[Theta], \[Lambda] , temp} = {th, phi, Rr}
+
+Out[70]= {th, phi, Rr}
+
+In[63]:= (* THESE CONSTANTS SHOULD RECREATE THE CASE IN NATASHA'S CODE *)
+(*{rho0, \
+gamma,t} = {3,5,3}*)
+
+In[64]:= rhoP := rho0 * Cos[\[Theta]]
+Vt := ((3 * Sqrt[3]) / 2) ((Sech[rhoP])^2) * Tanh[rhoP]
+w := Vt/rhoP 
+h := 1 - Tanh[(rhoP/gamma) * Sin[\[Lambda] - w * t]]
+
+In[68]:= (* Surface Laplacian: This is Equation (17) from Wright, Flyer, Yuen "A \
+Hybrid Radial Basis Func[...]" paper *)
+LsfcH := 
+ D[h, {th, 2}] - Tan[th]*D[h, {th, 1}] + 1/Cos[th]^2*D[h, {phi, 2}]
+(* Also: note that when angular velocity w == 0, we have h = 1 and therefore \
+LsfcH = 0 *)
+
+In[69]:= FortranForm[LsfcH]
+
+Out[69]//FortranForm=
+        Sech((rho0*Cos(th)*Sin(phi - 
+     -          (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/
+     -           (2.*rho0)))/gamma)**2*Tan(th)*
+     -   (-((rho0*Sin(th)*Sin(phi - 
+     -            (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/
+     -             (2.*rho0)))/gamma) + 
+     -     (rho0*Cos(th)*Cos(phi - 
+     -          (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/
+     -           (2.*rho0))*((3*Sqrt(3)*t*Sech(rho0*Cos(th))**4*Tan(th))/2. - 
+     -          (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tan(th)*
+     -             Tanh(rho0*Cos(th)))/(2.*rho0) - 
+     -          3*Sqrt(3)*t*Sech(rho0*Cos(th))**2*Tan(th)*Tanh(rho0*Cos(th))**2))/
+     -      gamma) - Sech((rho0*Cos(th)*
+     -        Sin(phi - (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*
+     -             Tanh(rho0*Cos(th)))/(2.*rho0)))/gamma)**2*
+     -   (-((rho0*Cos(th)*Sin(phi - 
+     -            (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/
+     -             (2.*rho0)))/gamma) - 
+     -     (2*rho0*Cos(phi - (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*
+     -             Tanh(rho0*Cos(th)))/(2.*rho0))*Sin(th)*
+     -        ((3*Sqrt(3)*t*Sech(rho0*Cos(th))**4*Tan(th))/2. - 
+     -          (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tan(th)*
+     -             Tanh(rho0*Cos(th)))/(2.*rho0) - 
+     -          3*Sqrt(3)*t*Sech(rho0*Cos(th))**2*Tan(th)*Tanh(rho0*Cos(th))**2))/
+     -      gamma - (rho0*Cos(th)*
+     -        Sin(phi - (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*
+     -             Tanh(rho0*Cos(th)))/(2.*rho0))*
+     -        ((3*Sqrt(3)*t*Sech(rho0*Cos(th))**4*Tan(th))/2. - 
+     -           (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tan(th)*
+     -              Tanh(rho0*Cos(th)))/(2.*rho0) - 
+     -           3*Sqrt(3)*t*Sech(rho0*Cos(th))**2*Tan(th)*Tanh(rho0*Cos(th))**2)\
+     -          **2)/gamma + (rho0*Cos(th)*
+     -        Cos(phi - (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*
+     -             Tanh(rho0*Cos(th)))/(2.*rho0))*
+     -        ((3*Sqrt(3)*t*Sec(th)**2*Sech(rho0*Cos(th))**4)/2. + 
+     -          (3*Sqrt(3)*t*Sech(rho0*Cos(th))**4*Tan(th)**2)/2. - 
+     -          (3*Sqrt(3)*t*Sec(th)**3*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/
+     -           (2.*rho0) + 12*Sqrt(3)*rho0*t*Sech(rho0*Cos(th))**4*Sin(th)*
+     -           Tan(th)*Tanh(rho0*Cos(th)) - 
+     -          (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tan(th)**2*
+     -             Tanh(rho0*Cos(th)))/(2.*rho0) - 
+     -          3*Sqrt(3)*t*Sec(th)**2*Sech(rho0*Cos(th))**2*
+     -           Tanh(rho0*Cos(th))**2 - 
+     -          3*Sqrt(3)*t*Sech(rho0*Cos(th))**2*Tan(th)**2*
+     -           Tanh(rho0*Cos(th))**2 - 
+     -          6*Sqrt(3)*rho0*t*Sech(rho0*Cos(th))**2*Sin(th)*Tan(th)*
+     -           Tanh(rho0*Cos(th))**3))/gamma) + 
+     -  2*Sech((rho0*Cos(th)*Sin(phi - 
+     -          (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/
+     -           (2.*rho0)))/gamma)**2*
+     -   (-((rho0*Sin(th)*Sin(phi - 
+     -             (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/
+     -              (2.*rho0)))/gamma) + 
+     -      (rho0*Cos(th)*Cos(phi - 
+     -           (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tanh(rho0*Cos(th)))/
+     -            (2.*rho0))*((3*Sqrt(3)*t*Sech(rho0*Cos(th))**4*Tan(th))/2. - 
+     -           (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*Tan(th)*
+     -              Tanh(rho0*Cos(th)))/(2.*rho0) - 
+     -           3*Sqrt(3)*t*Sech(rho0*Cos(th))**2*Tan(th)*Tanh(rho0*Cos(th))**2))
+     -        /gamma)**2*Tanh((rho0*Cos(th)*
+     -       Sin(phi - (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*
+     -            Tanh(rho0*Cos(th)))/(2.*rho0)))/gamma) + 
+     -  Sec(th)**2*((rho0*Cos(th)*
+     -        Sech((rho0*Cos(th)*
+     -             Sin(phi - (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*
+     -                  Tanh(rho0*Cos(th)))/(2.*rho0)))/gamma)**2*
+     -        Sin(phi - (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*
+     -             Tanh(rho0*Cos(th)))/(2.*rho0)))/gamma + 
+     -     (2*rho0**2*Cos(th)**2*
+     -        Cos(phi - (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*
+     -              Tanh(rho0*Cos(th)))/(2.*rho0))**2*
+     -        Sech((rho0*Cos(th)*
+     -             Sin(phi - (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*
+     -                  Tanh(rho0*Cos(th)))/(2.*rho0)))/gamma)**2*
+     -        Tanh((rho0*Cos(th)*
+     -            Sin(phi - (3*Sqrt(3)*t*Sec(th)*Sech(rho0*Cos(th))**2*
+     -                 Tanh(rho0*Cos(th)))/(2.*rho0)))/gamma))/gamma**2)
+     \end{verbatim}

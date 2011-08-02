@@ -22,7 +22,7 @@ if (useHV)
     du = du + (H*u);
 end
 
-computeEigs = 1;
+computeEigs = 0;
 if (computeEigs) 
     M = diag((vel(:,1)./cos(theta))) * DM_Lambda + diag(vel(:,2)) * DM_Theta; 
    
