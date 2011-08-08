@@ -1,4 +1,4 @@
-function[DM, H] = Calc_Weights_fd(fdsize, N, nodes, ep, hv_k)
+function[DM_Lambda, DM_Theta, H] = Calc_Weights_fd(fdsize, N, nodes, ep, hv_k)
 
 % Gaussian RBF
 rbf   = @(ep,rd) exp(-(ep*rd).^2);
@@ -14,8 +14,9 @@ ind_i = zeros(N*fdsize,1);
 ind_j = zeros(N*fdsize,1);
 
 A = ones(fdsize+1,fdsize+1); A(end,end) = 0;
-B_lsfc = zeros(fdsize+1,1);
+B_adv = zeros(fdsize+1,1);
 B_lambda = zeros(fdsize+1,1);
+B_theta = zeros(fdsize+1,1);
 B_hyper = zeros(fdsize+1,1);
 
 root = kdtree_build(nodes);
@@ -44,24 +45,32 @@ for j=1:N
     %B_lsfc(1:fdsize) = (1/4) * ( (4-rdv.^2).*d2rbf(ep,rdv) + (4 - 3*rdv.^2).*drbf(ep,rdv) );  %weights L_sfc
     %weights = UA\(LA\(P*B_lsfc));
     
-    [lam_i,th_i,temp] = cart2sph(nodes(idx,1),nodes(idx,2),nodes(idx,3));
-    [lam_j,th_j,temp] = cart2sph(nodes(j,1),nodes(j,2),nodes(j,3));
+    [lam_j,th_j,temp] = cart2sph(nodes(idx,1),nodes(idx,2),nodes(idx,3));
+    [lam_i,th_i,temp] = cart2sph(nodes(j,1),nodes(j,2),nodes(j,3));
     
-    B_lambda(1:fdsize+1) = 0; 
+    % Constant velocity in time. 
+   % vel = getVelocity(nodes(idx,:), 0); 
+    
     % NOTE: ordering (lam_i - lam_j) here can swap the rotation of our vortex. 
-    dr_dlambda = cos(th_i) .* cos(th_j) .* sin(lam_j - lam_i);
+    dr_dlambda = cos(th_i) .* cos(th_j) .* sin(lam_i - lam_j);
     B_lambda(1:fdsize) = dr_dlambda .* drbf_over_r(ep, rdv);
     weights_lambda = UA\(LA\(P*B_lambda));
+    
+    dr_dtheta = cos(th_j) .* sin(th_i) .* cos(lam_i - lam_j) - sin(th_j) .* cos(th_i);
+    B_theta(1:fdsize) = dr_dtheta .* drbf_over_r(ep, rdv);
+    weights_theta = UA\(LA\(P*B_theta));
     
     B_hyper(1:fdsize) = rbfhyper(ep, rdv, hv_k);
     weights_hyper = UA\(LA\(P*B_hyper));
        
-    DMweights((j-1)*fdsize+1:j*fdsize) = weights_lambda(1:fdsize);
+    DM_lam_weights((j-1)*fdsize+1:j*fdsize) = weights_lambda(1:fdsize);
+    DM_th_weights((j-1)*fdsize+1:j*fdsize) = weights_theta(1:fdsize);
     Hweights((j-1)*fdsize+1:j*fdsize) = weights_hyper(1:fdsize);
     
 end
 
-DM = sparse(ind_i,ind_j,DMweights,N,N);
+DM_Lambda = sparse(ind_i,ind_j,DM_lam_weights,N,N);
+DM_Theta = sparse(ind_i,ind_j,DM_th_weights,N,N);
 
 % Hyperviscosity scaling done here: 
 H = sparse(ind_i,ind_j,Hweights,N,N);

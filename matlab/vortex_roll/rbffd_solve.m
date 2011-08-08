@@ -11,4 +11,35 @@ du = -diag(W) * (DM * u);
 if (useHV)
     du = du + (H*u);
 end
+
+
+computeEigs = 1;
+if (computeEigs) 
+    
+    M = -diag(W) * DM; 
+   
+    %[EVec EVals] = eig(M);
+    EVals = eig(M);
+    
+    dlmwrite('eigs_noHV.mat', EVals);
+    %dlmwrite('eigvecs_noHV.mat', EVec);
+    
+    %[EVec EVals] = eig(M);
+    EVals = eig(M+H);
+    
+    dlmwrite('eigs_HV.mat', EVals);
+    %dlmwrite('eigvecs_noHV.mat', EVec);    
+    
+    figure
+    plot_eigenvalues('eigs_noHV.mat'); 
+    
+    figure
+    plot_eigenvalues('eigs_HV.mat'); 
+    
+    display('DONE COMPUTING EIGS'); 
+    computeEigs = 0;
+    pause
+end
+
+
 end
