@@ -5,7 +5,7 @@ function [du] = rbffd_solve(DM, H, u, t, nodes, useHV)
 W = angular_velocityCartCoords(nodes,t,3);
 
 % Should be negative because we move dh/dlambda to the RHS
-du = -diag(W) * (DM * u);
+du = -W .* (DM * u);
 
 % Only apply hyperviscosity when requested. 
 if (useHV)
@@ -13,16 +13,14 @@ if (useHV)
 end
 
 
-computeEigs = 1;
+computeEigs = 0;
 if (computeEigs) 
     
     M = -diag(W) * DM; 
    
-    %[EVec EVals] = eig(M);
-    EVals = eig(M);
-    
-    dlmwrite('eigs_noHV.mat', EVals);
-    %dlmwrite('eigvecs_noHV.mat', EVec);
+%     EVals = eig(M);
+%     
+%     dlmwrite('eigs_noHV.mat', EVals);
     
     %[EVec EVals] = eig(M);
     EVals = eig(M+H);
@@ -30,8 +28,8 @@ if (computeEigs)
     dlmwrite('eigs_HV.mat', EVals);
     %dlmwrite('eigvecs_noHV.mat', EVec);    
     
-    figure
-    plot_eigenvalues('eigs_noHV.mat'); 
+%     figure
+%     plot_eigenvalues('eigs_noHV.mat'); 
     
     figure
     plot_eigenvalues('eigs_HV.mat'); 
