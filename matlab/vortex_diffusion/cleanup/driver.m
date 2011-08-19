@@ -28,7 +28,9 @@ nodes=nodes(:,1:3);
 N = length(nodes);
 ep = c1 * sqrt(N) - c2
 
-[DM_Lambda DM_Theta H_unscaled] = Calc_Weights_fd(fdsize, N, nodes, ep, hv_k);
+% Calculate weights for Lsfc (laplace beltrami operator for surface of
+% sphere)
+[DM_Lsfc H_unscaled] = Calc_Weights_fd(fdsize, N, nodes, ep, hv_k);
 % 
 %  gamma=[3000];
 %  for i = 1:size(gamma,2)
@@ -39,4 +41,4 @@ ep = c1 * sqrt(N) - c2
 %H = (-200/(N^hv_k)) * H_unscaled; 
 
 H = - ( hv_gamma / N^(hv_k) ) * H_unscaled; 
-runTest(DM_Lambda, H, nodes, start_time, end_time, dt, useHV, 10);
+runTest(DM_Lsfc, H, nodes, start_time, end_time, dt, useHV, 10);
