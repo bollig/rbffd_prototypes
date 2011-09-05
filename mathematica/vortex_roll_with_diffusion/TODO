@@ -1,8 +1,5 @@
-- Add RK4 timescheme
-- Make movie of advection AND diffusion. 
-- Convergence Study 
-    - Requires EPSILON variable on CONDNUM
+- Need to have spherical harmonics for exact solution
 
-Priority: 
-    - Handout for Natasha on what I have done
+- Make movie of advection AND diffusion. 
+
 
