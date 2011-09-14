@@ -1,0 +1,3 @@
+[submodule "matlab/kdtree"]
+	path = matlab/kdtree
+	url = ssh://pamd.sc.fsu.edu/~/repos/matlab_kdtree.git

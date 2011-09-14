@@ -21,16 +21,13 @@ du = -((vel(:,1)./cos(theta)) .* dh_dlambda + vel(:,2) .* dh_dtheta);
 if (useHV)
     du = du + (H*u);
     
-    computeEigs = 0;
+    computeEigs = 1;
     if (computeEigs)
-        M = diag((vel(:,1)./cos(theta))) * DM_Lambda + diag(vel(:,2)) * DM_Theta;
+        M = -( diag((vel(:,1)./cos(theta))) * DM_Lambda + diag(vel(:,2)) * DM_Theta );
         
         EVals = eig(M);
         
         dlmwrite('eigs_noHV.mat', EVals);
-        
-        figure; 
-        plot_eigenvalues('eigs_noHV.mat');
         
         M = M + H;
         
@@ -39,6 +36,9 @@ if (useHV)
         
         dlmwrite('eigs_HV.mat', EVals);
         %dlmwrite('eigvecs_noHV.mat', EVec);
+        
+        figure; 
+        plot_eigenvalues('eigs_noHV.mat');
         
         figure; 
         plot_eigenvalues('eigs_HV.mat');
