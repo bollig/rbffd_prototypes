@@ -1,4 +1,4 @@
-%function [] = driver()
+function [] = driver()
 %% Build a differentiation matrix, test hyperviscosity and run the vortex
 %% roll PDE.
 
@@ -22,8 +22,9 @@ start_time = 0;
 end_time = 1036800 * revolutions; 
 dim = 2; 
 
-fdsize = 17; c1 = 0.026; c2 = 0.08;  hv_k = 2; hv_gamma = 8e-4; nsteps = 150;
+%fdsize = 17; c1 = 0.026; c2 = 0.08;  hv_k = 2; hv_gamma = 8e-4; nsteps = 150;
 %fdsize = 31; c1 = 0.035; c2 = 0.1 ;  hv_k = 4; hv_gamma = 5e-2; nsteps=150; 
+fdsize = 31; c1 = 0.035; c2 = 0.1 ;  hv_k = 4; hv_gamma = 5e-3; nsteps=150; 
 %fdsize = 50; c1 = 0.044; c2 = 0.14;  hv_k = 6; hv_gamma = 5e-1; nsteps=150
 %fdsize = 101; c1 = 0.058; c2 = 0.16;  hv_k = 8; hv_gamma = 5e-2; nsteps=150;
 
@@ -43,3 +44,4 @@ ep = c1 * sqrt(N) - c2
 %solution.
 H = -hv_gamma * N^(-hv_k) * H_unscaled; 
 runTest(DM_Lambda, DM_Theta, H, nodes, start_time, end_time, dt, useHV, nsteps);
+end
