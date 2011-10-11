@@ -1,4 +1,4 @@
-%function [] = driver()
+function [] = driver()
 %% Build a differentiation matrix, test hyperviscosity and run the vortex
 %% roll PDE.
 addpath('~/repos-rbffd_gpu/scripts/')
@@ -51,3 +51,4 @@ ep = c1 * sqrt(N) - c2
 %solution.
 H = -hv_gamma * N^(-hv_k) * H_unscaled; 
 runTest(DM_Lambda, DM_Theta, H, nodes, start_time, end_time, dt, useHV, nsteps);
+end
