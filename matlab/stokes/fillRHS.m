@@ -7,10 +7,16 @@ w_indices = (1:N) + 2*N;
 p_indices = (1:N) + 3*N; 
 
 T = TemperatureProfile(nodes, t); 
-Ra = 1e6;
-RHS(u_indices,1) = Ra .* T .* nodes(:,1) ./ sqrt(nodes(:,1).^2 + nodes(:,2).^2 + nodes(:,3).^2);
-RHS(v_indices,1) = Ra .* T .* nodes(:,2) ./ sqrt(nodes(:,1).^2 + nodes(:,2).^2 + nodes(:,3).^2);
-RHS(w_indices,1) = Ra .* T .* nodes(:,3) ./ sqrt(nodes(:,1).^2 + nodes(:,2).^2 + nodes(:,3).^2);
+Ra = 1e1;
+
+x = nodes(:,1); 
+y = nodes(:,2);
+z = nodes(:,3);
+r = sqrt(nodes(:,1).^2 + nodes(:,2).^2 + nodes(:,3).^2);
+
+RHS(u_indices,1) = Ra .* T .* x ./ r;
+RHS(v_indices,1) = Ra .* T .* y ./ r;
+RHS(w_indices,1) = Ra .* T .* z ./ r;
 RHS(p_indices,1) = zeros(N, 1); 
 
 end

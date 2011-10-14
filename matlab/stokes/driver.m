@@ -3,9 +3,9 @@
 %% roll PDE.
 
 %fdsize = 17; c1 = 0.026; c2 = 0.08;  hv_k = 2; hv_gamma = 8;
-%fdsize = 31; c1 = 0.035; c2 = 0.1 ; hv_k = 4; hv_gamma = 800;
+fdsize = 31; c1 = 0.035; c2 = 0.1 ; hv_k = 4; hv_gamma = 800;
 %fdsize = 50; c1 = 0.044; c2 = 0.14; hv_k = 4; hv_gamma = 145;
-fdsize = 101;c1 = 0.058; c2 = 0.16;  hv_k = 4; hv_gamma = 40;
+%fdsize = 101;c1 = 0.058; c2 = 0.16;  hv_k = 4; hv_gamma = 40;
 
 % Switch Hyperviscosity ON (1) and OFF (0)
 useHV = 0;
@@ -61,21 +61,25 @@ r = symrcm(LHS);
 
 % Manufacture a RHS given our LHS
 
-%% Test 1: If we have uniform density and uniform temperature, we should
-%% get 0 velocity everywhere. 
-RHS2 = [ones(N,1); 
-        ones(N,1); 
-        ones(N,1); 
-        zeros(N,1)]; 
+% %% Test 1: If we have uniform density and uniform temperature, we should
+% %% get 0 velocity everywhere. 
+% RHS = [ones(N,1); 
+%         ones(N,1); 
+%         ones(N,1); 
+%         zeros(N,1)]; 
     
-U = gmres(LHS, RHS2); 
+%% Test 2: Using a Spherical Harmonic on the RHS, lets get the steady state
+%% velocity
+RHS = fillRHS(nodes, 0);
+
+U = LHS \ RHS; 
 
 vecs = reshape(U,N,4);
-velU = vec(:,1:3);
-p = vec(:,4);
+velU = vecs(:,1:3);
+p = vecs(:,4);
+plotSolution(RHS, p, nodes, 0);
 
-
-%% Test 2: Manufacture a solution with uniform velocity in one direction
+%% Test 3: Manufacture a solution with uniform velocity in one direction
 %% and try to recover it
 % RHS2 = LHS * [ones(N,1); 
 %               ones(N,1); 
