@@ -10,59 +10,51 @@ N = length(nodes);
 % 9*N*n nonzeros (9 nonzero blocks with N*n nonzeros each)
 L = spalloc(4*N, 4*N, 9*n*N); 
 
+eta = 1;
 
 %% %%%%%%  Column 1 %%%%%%%%%%%%
 
 diag_row_ind = (1:N) + 0*N;
 diag_col_ind = (1:N) + 0*N;
-% Fill block one with surface laplacian
-L(diag_row_ind, diag_col_ind) = RBFFD_WEIGHTS.lsfc; 
+L(diag_row_ind, diag_col_ind) = -eta * RBFFD_WEIGHTS.lsfc; 
 
 diag_row_ind = (1:N) + 3*N;
 diag_col_ind = (1:N) + 0*N;
-% Fill block one with surface laplacian
-L(diag_row_ind, diag_col_ind) = RBFFD_WEIGHTS.lsfc; 
+L(diag_row_ind, diag_col_ind) = RBFFD_WEIGHTS.x; 
 
 
 %% %%%%%%  Column 2 %%%%%%%%%%%%
 
 diag_row_ind = (1:N) + 1*N;
 diag_col_ind = (1:N) + 1*N;
-% Fill block one with surface laplacian
-L(diag_row_ind, diag_col_ind) = RBFFD_WEIGHTS.lsfc; 
+L(diag_row_ind, diag_col_ind) = -eta * RBFFD_WEIGHTS.lsfc; 
 
 diag_row_ind = (1:N) + 3*N;
 diag_col_ind = (1:N) + 1*N;
-% Fill block one with surface laplacian
-L(diag_row_ind, diag_col_ind) = RBFFD_WEIGHTS.lsfc; 
+L(diag_row_ind, diag_col_ind) = RBFFD_WEIGHTS.y; 
 
 %% %%%%%%  Column 3 %%%%%%%%%%%%
 
 diag_row_ind = (1:N) + 2*N;
 diag_col_ind = (1:N) + 2*N;
-% Fill block one with surface laplacian
-L(diag_row_ind, diag_col_ind) = RBFFD_WEIGHTS.lsfc; 
+L(diag_row_ind, diag_col_ind) = -eta * RBFFD_WEIGHTS.lsfc; 
 
 diag_row_ind = (1:N) + 3*N;
 diag_col_ind = (1:N) + 2*N;
-% Fill block one with surface laplacian
-L(diag_row_ind, diag_col_ind) = RBFFD_WEIGHTS.lsfc; 
+L(diag_row_ind, diag_col_ind) = RBFFD_WEIGHTS.z; 
 
 %% %%%%%%  Column 4 %%%%%%%%%%%%
 
 diag_row_ind = (1:N) + 0*N;
 diag_col_ind = (1:N) + 3*N;
-% Fill block one with surface laplacian
-L(diag_row_ind, diag_col_ind) = RBFFD_WEIGHTS.lsfc; 
+L(diag_row_ind, diag_col_ind) = RBFFD_WEIGHTS.x; 
 
 diag_row_ind = (1:N) + 1*N;
 diag_col_ind = (1:N) + 3*N;
-% Fill block one with surface laplacian
-L(diag_row_ind, diag_col_ind) = RBFFD_WEIGHTS.lsfc; 
+L(diag_row_ind, diag_col_ind) = RBFFD_WEIGHTS.y; 
 
 diag_row_ind = (1:N) + 2*N;
 diag_col_ind = (1:N) + 3*N;
-% Fill block one with surface laplacian
-L(diag_row_ind, diag_col_ind) = RBFFD_WEIGHTS.lsfc; 
+L(diag_row_ind, diag_col_ind) = RBFFD_WEIGHTS.z; 
 
 end

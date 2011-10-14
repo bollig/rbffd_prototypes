@@ -18,11 +18,11 @@ dim = 2;
 %nodes = load('~/GRIDS/md/md122.15129');
 %nodes = load('~/GRIDS/md/md099.10000');
 %nodes = load('~/GRIDS/md/md079.06400');
-%nodes = load('~/GRIDS/md/md063.04096');
+nodes = load('~/GRIDS/md/md063.04096');
 %nodes = load('~/GRIDS/md/md059.03600'); 
 %nodes = load('~/GRIDS/md/md050.02601'); 
 %nodes = load('~/GRIDS/md/md031.01024');
-nodes = load('~/GRIDS/md/md004.00025');
+%nodes = load('~/GRIDS/md/md004.00025');
 
 nodes=nodes(:,1:3);
 N = length(nodes);
@@ -36,7 +36,7 @@ global RBFFD_WEIGHTS;
 % weights, or append newly calculated weights to those already calculated. 
 % We replace the nodes JUST IN CASE our weight calculator re-orders them
 % for cache optimality. 
-[weights_available, nodes] = Calc_RBFFD_Weights({'hv', 'lsfc', 'x', 'y', 'z'}, N, nodes, fdsize, ep, hv_k);
+[weights_available, nodes] = Calc_RBFFD_Weights({'lsfc', 'x', 'y', 'z', 'hv'}, N, nodes, fdsize, ep, hv_k);
 
 H = - ( hv_gamma / N^(hv_k) ) * RBFFD_WEIGHTS.hv; 
 addpath('~/repos-rbffd_gpu/scripts');

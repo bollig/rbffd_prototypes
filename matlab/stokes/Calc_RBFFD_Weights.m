@@ -151,7 +151,7 @@ for j=1:N
             case 'hv'
                 B(1:n,windx) = rbf.HV(ep, rdv, hv_k);
             otherwise
-                error('unsupported derivative type: ', dertype);
+                error(['unsupported derivative type: ', dertype]);
         end
     end
     weights = UA\(LA\(P*B));

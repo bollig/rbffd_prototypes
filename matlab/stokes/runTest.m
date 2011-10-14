@@ -13,6 +13,9 @@ LHS = func(nodes, N, n, useHV);
 figure(2)
 spy(LHS)
 
+figure(3)
+image(LHS)
+
 % iter = 0;
 % while t < end_time
 %     %u_new = advanceEuler(u_old, dt, DM, H, nodes);
