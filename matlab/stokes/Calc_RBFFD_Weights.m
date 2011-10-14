@@ -1,4 +1,4 @@
-function[weights_available] = Calc_Weights_fd(which, N, nodes, n, ep, hv_k)
+function[weights_available nodes] = Calc_RBFFD_Weights(which, N, nodes, n, ep, hv_k)
 %% Calculate RBF-FD weights and store them globally
 % NOTE: assumes the use of Gaussian RBFs.
 %
@@ -68,13 +68,13 @@ root = kdtree_build(nodes);
 % weights (remember this is FORTRAN style indexing).
 weights_temp = zeros(n,N,length(which));
 
-% Sort the nodes according to the KDTree spatial ordering (Improves caching
-% a bit, but it is ordering according to two nodes separated by maximal
-% distance (in level sets). This should be similar to symrcm.
-idxs = kdtree_k_nearest_neighbors(root, nodes(1,:), N);
-nodes = nodes(idxs,:);
-%Rebuild the tree
-root = kdtree_build(nodes);
+    % Sort the nodes according to the KDTree spatial ordering (Improves caching
+    % a bit, but it is ordering according to two nodes separated by maximal
+    % distance (in level sets). This should be similar to symrcm.
+    idxs = kdtree_k_nearest_neighbors(root, nodes(1,:), N);
+    nodes = nodes(idxs,:);
+    %Rebuild the tree
+    root = kdtree_build(nodes);
 for j=1:N
     
     % Use KDTREE (BUGFIX: returns the nearest neighbors in reverse order)
