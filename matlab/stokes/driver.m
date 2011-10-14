@@ -36,7 +36,7 @@ global RBFFD_WEIGHTS;
 % weights, or append newly calculated weights to those already calculated. 
 % We replace the nodes JUST IN CASE our weight calculator re-orders them
 % for cache optimality. 
-[weights_available, nodes] = Calc_RBFFD_Weights({'hv', 'lsfc'}, N, nodes, fdsize, ep, hv_k);
+[weights_available, nodes] = Calc_RBFFD_Weights({'hv', 'lsfc', 'x', 'y', 'z'}, N, nodes, fdsize, ep, hv_k);
 
 H = - ( hv_gamma / N^(hv_k) ) * RBFFD_WEIGHTS.hv; 
 addpath('~/repos-rbffd_gpu/scripts');

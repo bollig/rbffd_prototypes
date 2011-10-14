@@ -41,18 +41,35 @@ global RBFFD_WEIGHTS;
 % Initialize all as unavailable (we'll flip these later)
 weights_available = struct('lambda', 0, 'theta', 0, 'lsfc', 0, 'hv', 0);
 
-% Gaussian RBF
-rbf  = @(ep,rd) exp(-(ep*rd).^2);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Gaussian RBF and its derivatives: 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rbf.phi = @(ep,rd) exp(-(ep*rd).^2);
+
+% These three require the x, y or z separation of nodes (i.e., xd = nodes(i,1) - nodes(j-1)) in addition
+% to the distance itself.
+rbf.DphiDx = @(ep,rd,xd) -2 .* xd .* ep^2 .* rbf.phi(ep, rd);
+rbf.DphiDy = @(ep,rd,yd) -2 .* yd .* ep^2 .* rbf.phi(ep, rd);
+rbf.DphiDz = @(ep,rd,zd) -2 .* zd .* ep^2 .* rbf.phi(ep, rd);
 
 % (1/r) * dphi/dr [NOTE: we include the 1/r in this analytically to reduce
 % error in numerics
-drbf_over_r  = @(ep,rd) -2 .* ep^2 .* rbf(ep, rd);
+rbf.Dphi_Dr_times_r_inv  = @(ep,rd) -2 .* ep^2 .* rbf.phi(ep, rd);
+
 % This is d^2(Phi)/dr^2:
-d2rbf = @(ep,rd) -2*ep^2*exp(-(ep*rd).^2) + 4*ep^4*rd.^2.*exp(-(ep*rd).^2);
+rbf.D2phi_Dr2 = @(ep,rd) -2*ep^2*exp(-(ep*rd).^2) + 4*ep^4*rd.^2.*exp(-(ep*rd).^2);
 
 % Hyperviscosity:
 % Q: is DIM here set to 2 for the sphere surface? YES.
-rbfhyper = @(ep,rd,k) ep^(2*k) .* hv_p_k(ep, rd, k, 2) .* rbf(ep,rd);
+rbf.HV = @(ep,rd,k) ep^(2*k) .* hv_p_k(ep, rd, k, 2) .* rbf.phi(ep,rd);
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
 
 ind_i = zeros(N*n,1);
 ind_j = zeros(N*n,1);
@@ -90,9 +107,10 @@ for j=1:N
     % This is the distance matrix: sqrt(2*(1 - x'x))
     rd = distmat(nodes(imat,:)); %sqrt(max(0,2*(1-nodes(imat,1)*nodes(imat,1).'-nodes(imat,2)*nodes(imat,2).'-nodes(imat,3)*nodes(imat,3).')));
     
+    %% The euclidean distances for each node from the stencil center
     rdv = rd(:,1);
     
-    A(1:n,1:n) = rbf(ep,rd);
+    A(1:n,1:n) = rbf.phi(ep,rd);
     [LA,UA,P] = lu(A);
     
     % Fill multiple RHS (indexed by windx)
@@ -102,23 +120,35 @@ for j=1:N
         dertype = char(w);
         %fprintf('WHICH: %s\n', dertype);
         switch dertype
+            case 'x'
+                % X separation
+                xdv = nodes(imat,1) - nodes(imat(1),1);
+                B(1:n,windx) = rbf.DphiDx(ep, rdv, xdv);
+            case 'y'
+                % Y separation
+                xdv = nodes(imat,2) - nodes(imat(1),1);
+                B(1:n,windx) = rbf.DphiDx(ep, rdv, xdv);
+            case 'z'
+                % Z separation
+                xdv = nodes(imat,3) - nodes(imat(1),1);
+                B(1:n,windx) = rbf.DphiDx(ep, rdv, xdv);
             case {'theta', 'lambda'}
                 [lam_j,th_j,temp] = cart2sph(nodes(idx,1),nodes(idx,2),nodes(idx,3));
                 [lam_i,th_i,temp] = cart2sph(nodes(j,1),nodes(j,2),nodes(j,3));
                 
                 if strcmp(dertype,'theta')
                     dr_dtheta = cos(th_j) .* sin(th_i) .* cos(lam_i - lam_j) - sin(th_j) .* cos(th_i);
-                    B(1:n,windx) = dr_dtheta .* drbf_over_r(ep, rdv);
+                    B(1:n,windx) = dr_dtheta .* rbf.Dphi_Dr_times_r_inv(ep, rdv);
                 else
                     % NOTE: ordering (lam_i - lam_j) here can swap the rotation of our vortex.
                     dr_dlambda = cos(th_i) .* cos(th_j) .* sin(lam_i - lam_j);
-                    B(1:n,windx) = dr_dlambda .* drbf_over_r(ep, rdv);
+                    B(1:n,windx) = dr_dlambda .* rbf.Dphi_Dr_times_r_inv(ep, rdv);
                 end
             case 'lsfc'
                 % Equation 20 in Wright Flyer and Yuen "A Hybrid Radial [...]" paper
-                B(1:n,windx) = (1/4) * ( (4-rdv.^2).*d2rbf(ep,rdv) + (4 - 3*rdv.^2).*drbf_over_r(ep,rdv) );
+                B(1:n,windx) = (1/4) * ( (4-rdv.^2).*rbf.D2phi_Dr2(ep,rdv) + (4 - 3*rdv.^2).*rbf.Dphi_Dr_times_r_inv(ep,rdv) );
             case 'hv'
-                B(1:n,windx) = rbfhyper(ep, rdv, hv_k);
+                B(1:n,windx) = rbf.HV(ep, rdv, hv_k);
             otherwise
                 error('unsupported derivative type: ', dertype);
         end
