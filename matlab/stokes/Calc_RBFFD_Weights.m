@@ -145,6 +145,7 @@ for j=1:N
                     B(1:n,windx) = dr_dlambda .* rbf.Dphi_Dr_times_r_inv(ep, rdv);
                 end
             case 'lsfc'
+                % Surface Laplacian or "Laplace-Beltrami" operator
                 % Equation 20 in Wright Flyer and Yuen "A Hybrid Radial [...]" paper
                 B(1:n,windx) = (1/4) * ( (4-rdv.^2).*rbf.D2phi_Dr2(ep,rdv) + (4 - 3*rdv.^2).*rbf.Dphi_Dr_times_r_inv(ep,rdv) );
             case 'hv'
