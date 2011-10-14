@@ -2,10 +2,10 @@
 %% Build a differentiation matrix, test hyperviscosity and run the vortex
 %% roll PDE.
 
-fdsize = 17; c1 = 0.026; c2 = 0.08;  hv_k = 2; hv_gamma = 8;
+%fdsize = 17; c1 = 0.026; c2 = 0.08;  hv_k = 2; hv_gamma = 8;
 %fdsize = 31; c1 = 0.035; c2 = 0.1 ; hv_k = 4; hv_gamma = 800;
 %fdsize = 50; c1 = 0.044; c2 = 0.14; hv_k = 4; hv_gamma = 145;
-%fdsize = 101;c1 = 0.058; c2 = 0.16;  hv_k = 4; hv_gamma = 40;
+fdsize = 101;c1 = 0.058; c2 = 0.16;  hv_k = 4; hv_gamma = 40;
 
 % Switch Hyperviscosity ON (1) and OFF (0)
 useHV = 0;
@@ -41,4 +41,56 @@ global RBFFD_WEIGHTS;
 H = - ( hv_gamma / N^(hv_k) ) * RBFFD_WEIGHTS.hv; 
 addpath('~/repos-rbffd_gpu/scripts');
 
-runTest(@stokes, nodes, N, fdsize, useHV);
+%runTest(@stokes, nodes, N, fdsize, useHV);
+
+
+% RHS = fillRHS(nodes, 0);
+% 
+% % Show initial solution:
+% %interpolateToSphere(initial_condition, initial_condition, nodes, t);
+% figure(1);
+% plotSolution(RHS, RHS, nodes, 0);
+
+LHS = stokes(nodes, N, fdsize, useHV);
+ 
+% spy(LHS);
+
+% Spend some time reordering initially. 
+r = symrcm(LHS); 
+%LHS = LHS(r,r); 
+
+% Manufacture a RHS given our LHS
+
+%% Test 1: If we have uniform density and uniform temperature, we should
+%% get 0 velocity everywhere. 
+RHS2 = [ones(N,1); 
+        ones(N,1); 
+        ones(N,1); 
+        zeros(N,1)]; 
+    
+U = gmres(LHS, RHS2); 
+
+vecs = reshape(U,N,4);
+velU = vec(:,1:3);
+p = vec(:,4);
+
+
+%% Test 2: Manufacture a solution with uniform velocity in one direction
+%% and try to recover it
+% RHS2 = LHS * [ones(N,1); 
+%               ones(N,1); 
+%               ones(N,1); 
+%               ones(N,1)]; 
+
+
+% figure(2)
+% plotSolution(RHS2((1:N)+0*N), RHS2((1:N)+1*N), nodes, 0)
+% figure(3)
+% plotSolution(U((1:N)+0*N), U((1:N)+1*N), nodes, 0)
+% figure(4)
+% plotSolution(RHS2((1:N)+2*N), U((1:N)+2*N), nodes, 0)
+
+
+%figure(2) 
+%plotSolution(U, RHS, nodes, 1);
+

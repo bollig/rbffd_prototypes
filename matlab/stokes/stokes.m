@@ -57,4 +57,5 @@ diag_row_ind = (1:N) + 2*N;
 diag_col_ind = (1:N) + 3*N;
 L(diag_row_ind, diag_col_ind) = RBFFD_WEIGHTS.z; 
 
+% L = L(1:3*N, 1:3*N);
 end

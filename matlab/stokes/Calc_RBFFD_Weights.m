@@ -21,10 +21,14 @@ function[weights_available nodes] = Calc_RBFFD_Weights(which, N, nodes, n, ep, h
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % which = The choice of weight to compute. Current candidates are:
 %       'lsfc'      => Laplace-Beltrami (Laplacian) on the surface of sphere
+%       'x'         => d/dx
+%       'y'         => d/dy
+%       'z'         => d/dz
 %       'theta'     => d/dtheta (Latitude) on surface of sphere
 %       'lambda'    => d/dlambda (Longitude) on surface of sphere
 %       'hv'        => Hypervisocity (\nabla^hv_k) unscaled (you must scale by hv_gamma * N^{-k}).
-%       NOTE: needs to be passed a cell type.
+%       TODO: Euclidean Laplacian (spherical or cartesian coord system)
+%       NOTE: needs to be passed as a MATLAB "cell" data-type.
 %
 % N = Total number of nodes in the domain
 %
@@ -84,14 +88,14 @@ root = kdtree_build(nodes);
 % NOTE: we store with stencil size first to maintain cache coherency in
 % weights (remember this is FORTRAN style indexing).
 weights_temp = zeros(n,N,length(which));
-
-    % Sort the nodes according to the KDTree spatial ordering (Improves caching
-    % a bit, but it is ordering according to two nodes separated by maximal
-    % distance (in level sets). This should be similar to symrcm.
-    idxs = kdtree_k_nearest_neighbors(root, nodes(1,:), N);
-    nodes = nodes(idxs,:);
-    %Rebuild the tree
-    root = kdtree_build(nodes);
+% 
+%     % Sort the nodes according to the KDTree spatial ordering (Improves caching
+%     % a bit, but it is ordering according to two nodes separated by maximal
+%     % distance (in level sets). This should be similar to symrcm.
+%     idxs = kdtree_k_nearest_neighbors(root, nodes(1,:), N);
+%     nodes = nodes(idxs,:);
+%     %Rebuild the tree
+%     root = kdtree_build(nodes);
 for j=1:N
     
     % Use KDTREE (BUGFIX: returns the nearest neighbors in reverse order)
@@ -154,8 +158,11 @@ for j=1:N
                 error(['unsupported derivative type: ', dertype]);
         end
     end
+    % Solve all RHS in one shot
     weights = UA\(LA\(P*B));
-    % Put each weight type into its own DM page
+    % Put each weight type into its own DM page (NOTE: could be useful to
+    % access these instead of the Matlab sparse representation (or, say,
+    % to make my own sparse rep)
     for windx=1:length(which)
         weights_temp(1:n,j,windx) = weights(1:n,windx);
     end

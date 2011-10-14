@@ -10,11 +10,17 @@ plotSolution(RHS, RHS, nodes, 0);
 
 LHS = func(nodes, N, n, useHV);
 
-figure(2)
-spy(LHS)
 
-figure(3)
-image(LHS)
+U = LHS \ RHS; 
+
+figure(2) 
+plotSolution(U, RHS, nodes, 1);
+
+%figure(2)
+%spy(LHS)
+
+%figure(3)
+%image(LHS)
 
 % iter = 0;
 % while t < end_time
