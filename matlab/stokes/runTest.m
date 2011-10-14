@@ -8,7 +8,7 @@ RHS = fillRHS(nodes, 0);
 figure(1);
 plotSolution(RHS, RHS, nodes, 0);
 
-LHS = func(nodes, N, n, useHV)
+LHS = func(nodes, N, n, useHV);
 
 figure(2)
 spy(LHS)
