@@ -16,9 +16,9 @@ dt = 0.05;
 dim = 2; 
 %nodes = load('~/GRIDS/md/md159.25600');
 %nodes = load('~/GRIDS/md/md122.15129');
-%nodes = load('~/GRIDS/md/md099.10000');
+nodes = load('~/GRIDS/md/md099.10000');
 %nodes = load('~/GRIDS/md/md079.06400');
-nodes = load('~/GRIDS/md/md063.04096');
+%nodes = load('~/GRIDS/md/md063.04096');
 %nodes = load('~/GRIDS/md/md059.03600'); 
 %nodes = load('~/GRIDS/md/md050.02601'); 
 %nodes = load('~/GRIDS/md/md031.01024');
@@ -87,6 +87,8 @@ U = LHS \ RHS;
 fprintf('Done.\n'); 
 figure(3) 
 plotVectorComponents(U, nodes, 'Computed Solution (U = L^{-1}F)'); 
+
+r2d2 = LHS * U; 
 
 figure(4)
 plotVectorComponents(r2d2,nodes,'Reconstructed RHS (R2 = L*U_{computed})')

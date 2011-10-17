@@ -21,7 +21,10 @@ function[weights_available nodes] = Calc_RBFFD_Weights(which, N, nodes, n, ep, h
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % which = The choice of weight to compute. Current candidates are:
 %       'lsfc'      => Laplace-Beltrami (Laplacian) on the surface of sphere
-%       'x'         => d/dx
+%       'xsfc'      => d/dx projected onto surface of the sphere
+%       'ysfc'      => d/dy projected onto surface of the sphere
+%       'zsfc'      => d/dz projected onto surface of the sphere
+%       'x'         => d/dx (Cartesian Coordinates)
 %       'y'         => d/dy
 %       'z'         => d/dz
 %       'theta'     => d/dtheta (Latitude) on surface of sphere
