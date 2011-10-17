@@ -36,6 +36,7 @@ global RBFFD_WEIGHTS;
 % weights, or append newly calculated weights to those already calculated. 
 % We replace the nodes JUST IN CASE our weight calculator re-orders them
 % for cache optimality. 
+fprintf('Calculating weights\n'); 
 [weights_available, nodes] = Calc_RBFFD_Weights({'lsfc', 'x', 'y', 'z', 'hv'}, N, nodes, fdsize, ep, hv_k);
 
 H = - ( hv_gamma / N^(hv_k) ) * RBFFD_WEIGHTS.hv; 
@@ -43,20 +44,19 @@ addpath('~/repos-rbffd_gpu/scripts');
 
 %runTest(@stokes, nodes, N, fdsize, useHV);
 
-
 % RHS = fillRHS(nodes, 0);
 % 
 % % Show initial solution:
 % %interpolateToSphere(initial_condition, initial_condition, nodes, t);
 % figure(1);
 % plotSolution(RHS, RHS, nodes, 0);
-
+fprintf('Filling LHS Collocation Matrix\n'); 
 LHS = stokes(nodes, N, fdsize, useHV);
  
 % spy(LHS);
 
 % Spend some time reordering initially. 
-r = symrcm(LHS); 
+%r = symrcm(LHS); 
 %LHS = LHS(r,r); 
 
 % Manufacture a RHS given our LHS
@@ -70,14 +70,31 @@ r = symrcm(LHS);
     
 %% Test 2: Using a Spherical Harmonic on the RHS, lets get the steady state
 %% velocity
+fprintf('Filling RHS Vector\n'); 
 RHS = fillRHS(nodes, 0);
 
+figure(1) 
+plotVectorComponents(RHS, nodes, 'RHS (F)'); 
+
+figure(2)
+spy(LHS); 
+title('LHS (L)', 'FontSize', 26);
+set(gca, 'FontSize', 22); 
+
+fprintf('Solving Lu=F\n'); 
 U = LHS \ RHS; 
 
-vecs = reshape(U,N,4);
-velU = vecs(:,1:3);
-p = vecs(:,4);
-plotSolution(RHS, p, nodes, 0);
+fprintf('Done.\n'); 
+figure(3) 
+plotVectorComponents(U, nodes, 'Computed Solution (U = L^{-1}F)'); 
+
+figure(4)
+plotVectorComponents(r2d2,nodes,'Reconstructed RHS (R2 = L*U_{computed})')
+
+% vecs = reshape(U,N,4);
+% velU = vecs(:,1:3);
+% p = vecs(:,4);
+% plotSolution(RHS, p, nodes, 0);
 
 %% Test 3: Manufacture a solution with uniform velocity in one direction
 %% and try to recover it

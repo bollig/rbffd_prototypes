@@ -9,6 +9,17 @@ lam = linspace(-pi,pi,nlam); lam = lam(1:end);
 
 max_l = 3;
 figure;
+subplot(max_l+1,2*max_l+1,1),
+ Y = sph(0,0,TT,LL);
+      surf(XX,YY,ZZ,Y);
+      axis square;
+      axis off;
+      shading interp;
+      camlight;
+      lighting phong;
+t = sprintf('$Y^{m}_{l}$'); 
+title({'Legend'; t}, 'Interpreter', 'Latex', 'FontSize', 24);
+      
 for l = 0:max_l
    cnt = l*(2*max_l+1)+1;
    for m = -l:l
@@ -20,5 +31,7 @@ for l = 0:max_l
       shading interp;
       camlight;
       lighting phong;
+      t = sprintf('$Y^{%d}_{%d}$', m, l); 
+      title(t, 'Interpreter', 'Latex', 'FontSize', 24);
    end
 end
