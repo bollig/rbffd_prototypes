@@ -99,9 +99,9 @@ saveas(hhh,[output_dir,'U_computed','.eps'],'epsc');
 
 r2d2 = LHS * U; 
 
-rel_l1_err = norm(RHS-r2d2, 1)./norm(RHS,1);
-rel_l2_err = norm(RHS-r2d2, 2)./norm(RHS,2);
-rel_li_err = norm(RHS-r2d2, inf)./norm(RHS,inf);
+rel_l1_err = norm(RHS-r2d2, 1)./norm(RHS,1)
+rel_l2_err = norm(RHS-r2d2, 2)./norm(RHS,2)
+rel_li_err = norm(RHS-r2d2, inf)./norm(RHS,inf)
 
 hhh=figure(4);
 plotVectorComponents(r2d2,nodes,'Reconstructed RHS (R2 = L*U_{computed})', cmin, cmax)
