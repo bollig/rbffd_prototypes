@@ -2,6 +2,8 @@
 %% Build a differentiation matrix, test hyperviscosity and run the vortex
 %% roll PDE.
 
+output_dir = './figures/overdetermined_system/';
+
 %fdsize = 17; c1 = 0.026; c2 = 0.08;  hv_k = 2; hv_gamma = 8;
 fdsize = 31; c1 = 0.035; c2 = 0.1 ; hv_k = 4; hv_gamma = 800;
 %fdsize = 50; c1 = 0.044; c2 = 0.14; hv_k = 4; hv_gamma = 145;
@@ -53,12 +55,13 @@ addpath('~/repos-rbffd_gpu/scripts');
 fprintf('Filling LHS Collocation Matrix\n'); 
 LHS = stokes(nodes, N, fdsize, useHV);
  
-figure(1)
+hhh=figure(1)
+set(hhh,'Unit', 'normalized');
+set(hhh,'Position',[0 0 0.5 1])
 spy(LHS); 
 title('LHS (L)', 'FontSize', 26);
 set(gca, 'FontSize', 22); 
-
-pause
+saveas(hhh,[output_dir,'LHS','.eps'],'epsc');
 
 % Spend some time reordering initially. 
 %r = symrcm(LHS); 
@@ -81,20 +84,42 @@ RHS = fillRHS(nodes, 0);
 cmin = min(RHS(:));
 cmax = max(RHS(:));
 
-figure(2) 
+hhh=figure(2) ;
 plotVectorComponents(RHS, nodes, 'RHS (F)'); 
+saveas(hhh,[output_dir,'RHS','.eps'],'epsc');
 
 fprintf('Solving Lu=F\n'); 
 U = LHS \ RHS; 
 
 fprintf('Done.\n'); 
-figure(3) 
+hhh=figure(3) ;
 plotVectorComponents(U, nodes, 'Computed Solution (U = L^{-1}F)'); 
+saveas(hhh,[output_dir,'U_computed','.eps'],'epsc');
 
 r2d2 = LHS * U; 
 
-figure(4)
+rel_l1_err = norm(RHS-r2d2, 1)./norm(RHS,1);
+rel_l2_err = norm(RHS-r2d2, 2)./norm(RHS,2);
+rel_li_err = norm(RHS-r2d2, inf)./norm(RHS,inf);
+
+hhh=figure(4);
 plotVectorComponents(r2d2,nodes,'Reconstructed RHS (R2 = L*U_{computed})', cmin, cmax)
+saveas(hhh,[output_dir,'Reconstructed_RHS','.eps'],'epsc');
+
+hhh=figure(5)
+abs_err = abs(RHS-r2d2);
+plotVectorComponents(abs_err, nodes, 'Abs Error (|RHS-Reconstructed|)'); 
+saveas(hhh,[output_dir,'AbsError','.eps'],'epsc');
+
+hhh=figure(6);
+rel_err = abs_err / abs(RHS); 
+rel_err(abs(RHS) < 1e-12) = abs_err(abs(RHS) < 1e-12); 
+plotVectorComponents(rel_err, nodes, 'Rel Error (|RHS-Reconstructed|/|RHS|)'); 
+saveas(hhh,[output_dir,'RelError','.eps'],'epsc');
+
+
+
+
 
 % vecs = reshape(U,N,4);
 % velU = vecs(:,1:3);
