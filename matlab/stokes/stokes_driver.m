@@ -39,22 +39,10 @@ global RBFFD_WEIGHTS;
 % We replace the nodes JUST IN CASE our weight calculator re-orders them
 % for cache optimality. 
 fprintf('Calculating weights\n'); 
-<<<<<<< HEAD
-<<<<<<< HEAD:matlab/stokes/driver.m
-[weights_available, nodes] = Calc_RBFFD_Weights({'lsfc', 'x', 'y', 'z', 'hv'}, N, nodes, fdsize, ep, hv_k);
-
-RBFFD_WEIGHTS.scaled_hv = - ( hv_gamma / N^(hv_k) ) * RBFFD_WEIGHTS.hv; 
-=======
-[weights_available, nodes] = Calc_RBFFD_Weights({'lsfc', 'xsfc', 'ysfc', 'zsfc', 'hv'}, N, nodes, fdsize, ep, hv_k);
-%return ;
-H = - ( hv_gamma / N^(hv_k) ) * RBFFD_WEIGHTS.hv; 
->>>>>>> ca29a21356875ad3bc88e61cb23ac7254d96e34d:matlab/stokes/stokes_driver.m
-=======
 [weights_available, nodes] = Calc_RBFFD_Weights({'lsfc', 'xsfc', 'ysfc', 'zsfc', 'hv'}, N, nodes, fdsize, ep, hv_k);
 
 % NO need for hyperviscosity at this point
 %RBFFD_WEIGHTS.scaled_hv = - ( hv_gamma / N^(hv_k) ) * RBFFD_WEIGHTS.hv; 
->>>>>>> ea5971f7cd6fb01249bc11360d7d314f7cf3f2c4
 addpath('~/repos-rbffd_gpu/scripts');
 
 %runTest(@stokes, nodes, N, fdsize, useHV);
