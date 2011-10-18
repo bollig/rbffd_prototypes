@@ -39,7 +39,7 @@ global RBFFD_WEIGHTS;
 fprintf('Calculating weights\n'); 
 [weights_available, nodes] = Calc_RBFFD_Weights({'lsfc', 'x', 'y', 'z', 'hv'}, N, nodes, fdsize, ep, hv_k);
 
-H = - ( hv_gamma / N^(hv_k) ) * RBFFD_WEIGHTS.hv; 
+RBFFD_WEIGHTS.scaled_hv = - ( hv_gamma / N^(hv_k) ) * RBFFD_WEIGHTS.hv; 
 addpath('~/repos-rbffd_gpu/scripts');
 
 %runTest(@stokes, nodes, N, fdsize, useHV);
