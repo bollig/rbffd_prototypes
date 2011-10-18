@@ -1,7 +1,7 @@
-function [] = driver()
+%function [] = driver()
 %% Build a differentiation matrix, test hyperviscosity and run the vortex
 %% roll PDE.
-addpath('~/repos-rbffd_gpu/scripts/')
+addpath('~/rbffd_gpu/scripts/')
 
 %nodes = load('~/GRIDS/md/md159.25600');
 %nodes = load('~/GRIDS/md/md099.10000');
@@ -25,9 +25,14 @@ dim = 2;
 
 %fdsize = 17; c1 = 0.026; c2 = 0.08;  hv_k = 2; hv_gamma = 8e-4; nsteps = 150;
 %fdsize = 31; c1 = 0.035; c2 = 0.1 ;  hv_k = 4; hv_gamma = 5e-2; nsteps=150; 
-fdsize = 31; c1 = 0.035; c2 = 0.1 ;  hv_k = 4; hv_gamma = 5e-3; nsteps=150; 
+%fdsize = 31; c1 = 0.035; c2 = 0.1 ;  hv_k = 4; hv_gamma = 5e-3; nsteps=150; 
 %fdsize = 50; c1 = 0.044; c2 = 0.14;  hv_k = 6; hv_gamma = 5e-1; nsteps=150
-fdsize = 101; c1 = 0.058; c2 = 0.16;  hv_k = 10; hv_gamma = 5e-2; nsteps=300;
+%fdsize = 101; c1 = 0.058; c2 = 0.16;  hv_k = 6; hv_gamma = 5e-3; nsteps=300;
+%fdsize = 101; c1 = 0.058; c2 = 0.16;  hv_k = 8; hv_gamma = 5e-2; nsteps=300;
+%fdsize = 101; c1 = 0.058; c2 = 0.16;  hv_k = 10; hv_gamma = 0.38; nsteps=300;
+%fdsize = 101; c1 = 0.058; c2 = 0.16;  hv_k = 8; hv_gamma = 7.43e-9; nsteps=300;
+fdsize = 101; c1 = 0.058; c2 = 0.16;  hv_k = 6; hv_gamma =1.43e-12; nsteps=300;
+%fdsize = 101; c1 = 0.058; c2 = 0.16;  hv_k = 10; hv_gamma = 5e-2; nsteps=300;
 
 dt = (end_time - start_time)/(nsteps*revolutions); 
 ep = c1 * sqrt(N) - c2
@@ -43,6 +48,6 @@ ep = c1 * sqrt(N) - c2
 %Found gamma = 200 * N^-2  works well visually for n=17 (i.e., moves all
 %eigenvalues left of the plane, but that does not correlate to a good
 %solution.
-H = -hv_gamma * N^(-hv_k) * H_unscaled; 
+H = -hv_gamma * N^(-hv_k/2) * H_unscaled; 
 runTest(DM_Lambda, DM_Theta, H, nodes, start_time, end_time, dt, useHV, nsteps);
-end
+% end

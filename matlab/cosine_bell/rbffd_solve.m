@@ -25,9 +25,9 @@ if (useHV)
     if (computeEigs)
         M = -( diag((vel(:,1)./cos(theta))) * DM_Lambda + diag(vel(:,2)) * DM_Theta );
         
-        EVals = eig(M);
+        %EVals = eig(M);
         
-        dlmwrite('eigs_noHV.mat', EVals);
+        %dlmwrite('eigs_noHV.mat', EVals);
         
         M = M + H;
         
@@ -37,12 +37,9 @@ if (useHV)
         dlmwrite('eigs_HV.mat', EVals);
         %dlmwrite('eigvecs_noHV.mat', EVec);
         
-        figure; 
-        plot_eigenvalues('eigs_noHV.mat');
-        
-        figure; 
+        %plot_eigenvalues('eigs_noHV.mat');
         plot_eigenvalues('eigs_HV.mat');
-        
+        %title(mytitle);
         display('DONE COMPUTING EIGS');
         pause
     end

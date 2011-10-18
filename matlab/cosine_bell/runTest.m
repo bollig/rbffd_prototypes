@@ -7,11 +7,11 @@ showSphere = 0;
 t=start_time;
 initial_condition = exactSolution(nodes, t);
 % Show initial solution:
-figure(1);
+%figure(1);
 if showSphere
     interpolateToSphere(initial_condition, initial_condition, nodes, t);
 else
-    plotSolution(initial_condition, initial_condition, nodes, t);
+    %plotSolution(initial_condition, initial_condition, nodes, t);
 end
 u_old = initial_condition;
  initial_height = max(u_old);
