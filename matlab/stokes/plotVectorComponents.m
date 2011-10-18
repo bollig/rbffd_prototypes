@@ -1,5 +1,10 @@
-function[] = plotVectorComponents(vec, nodes, figTitle)
+function[] = plotVectorComponents(vec, nodes, figTitle, cmin, cmax)
 
+if nargin > 3
+   scaleColormap = true; 
+else 
+    scaleColormap = false; 
+end
 [lam,th,temp] = cart2sph(nodes(:,1),nodes(:,2),nodes(:,3));
 N = length(nodes);
 
@@ -26,6 +31,9 @@ shading interp;
 % camlight;
 lighting phong;
 colorbar;
+if scaleColormap
+    caxis([cmin, cmax]);
+end
 title('U direction', 'FontSize',22); 
 set(gca,'FontSize',18);
 a1 = gca;
@@ -41,6 +49,9 @@ shading interp;
 % camlight;
 lighting phong;
 colorbar;
+if scaleColormap
+    caxis([cmin, cmax]);
+end
 title('V direction', 'FontSize',22); 
 set(gca,'FontSize',18);
 a2 = gca;
@@ -57,6 +68,9 @@ shading interp;
 % camlight;
 lighting phong;
 colorbar;
+if scaleColormap
+    caxis([cmin, cmax]);
+end
 title('W direction', 'FontSize',22); 
 set(gca,'FontSize',18);
 a3 = gca;
@@ -72,6 +86,9 @@ shading interp;
 % camlight;
 lighting phong;
 colorbar;
+if scaleColormap
+    caxis([cmin, cmax]);
+end
 title('Pressure', 'FontSize',22); 
 set(gca,'FontSize',18);
 a4 = gca;

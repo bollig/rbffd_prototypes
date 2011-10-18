@@ -5,6 +5,7 @@ u_indices = (1:N) + 0*N;
 v_indices = (1:N) + 1*N;
 w_indices = (1:N) + 2*N;
 p_indices = (1:N) + 3*N;
+const_indices = (1:1) + 4*N;
 
 T = TemperatureProfile(nodes, t);
 
@@ -19,7 +20,8 @@ RHS(u_indices,1) = Ra .* T .* x ./ r;
 RHS(v_indices,1) = Ra .* T .* y ./ r;
 RHS(w_indices,1) = Ra .* T .* z ./ r;
 RHS(p_indices,1) = zeros(N, 1);
-
+% Tie down a variable const in the singular system
+RHS(const_indices,1) = 1; 
 end
 
 function[T] = TemperatureProfile(nodes, t)

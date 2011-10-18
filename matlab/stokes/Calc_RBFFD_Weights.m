@@ -46,7 +46,7 @@ function[weights_available nodes] = Calc_RBFFD_Weights(which, N, nodes, n, ep, h
 global RBFFD_WEIGHTS;
 
 % Initialize all as unavailable (we'll flip these later)
-weights_available = struct('lambda', 0, 'theta', 0, 'lsfc', 0, 'hv', 0);
+weights_available = struct('lambda', 0, 'theta', 0, 'lsfc', 0, 'hv', 0, 'x', 0, 'y', 0, 'z', 0, 'xsfc', 0, 'ysfc', 0, 'zsfc', 0);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Gaussian RBF and its derivatives: 
@@ -88,9 +88,38 @@ B = zeros(n+1,1);
 
 root = kdtree_build(nodes);
 
+foundSFCOperators = cellfun(@(x) ~isempty(strfind(x,'xsfc'))|~isempty(strfind(x,'ysfc'))|~isempty(strfind(x,'zsfc')),which);
+computeSFCOperators = (sum(foundSFCOperators) > 0);
+if computeSFCOperators
+    willXCompute = sum(cellfun(@(x) ~isempty(strfind(x,'x'))&isempty(strfind(x,'xsfc')),which));
+    willYCompute = sum(cellfun(@(x) ~isempty(strfind(x,'y'))&isempty(strfind(x,'ysfc')),which));
+    willZCompute = sum(cellfun(@(x) ~isempty(strfind(x,'z'))&isempty(strfind(x,'zsfc')),which));
+    
+    % IF it wont compute then we need to call a sub compute
+    if ~willXCompute
+        which = [which 'x'];
+        fprintf('Added derivative type "x" to satisfy dependencies in weight calculation\n');
+    end
+    if ~willYCompute
+        which = [which 'y'];
+        fprintf('Added derivative type "y" to satisfy dependencies in weight calculation\n');
+    end
+    if ~willZCompute
+        which = [which 'z'];
+        fprintf('Added derivative type "z" to satisfy dependencies in weight calculation\n');
+    end
+    % Delete the SFC operators so they dont compute in the case statement below. 
+    which(foundSFCOperators) = [];
+end
+
 % NOTE: we store with stencil size first to maintain cache coherency in
 % weights (remember this is FORTRAN style indexing).
-weights_temp = zeros(n,N,length(which));
+if computeSFCOperators
+    % When we compute one, we compute them all
+    weights_temp = zeros(n,N,length(which)+3);
+else 
+    weights_temp = zeros(n,N,length(which));
+end
 % 
 %     % Sort the nodes according to the KDTree spatial ordering (Improves caching
 %     % a bit, but it is ordering according to two nodes separated by maximal
@@ -122,8 +151,11 @@ for j=1:N
     
     % Fill multiple RHS (indexed by windx)
     windx=0;
+    %wlength=length(which); 
     for w=which(1:end)
+    %while windx < wlength
         windx=windx+1;
+     %   w = which(windx);
         dertype = char(w);
         %fprintf('WHICH: %s\n', dertype);
         switch dertype
@@ -169,6 +201,31 @@ for j=1:N
     for windx=1:length(which)
         weights_temp(1:n,j,windx) = weights(1:n,windx);
     end
+    
+    if computeSFCOperators
+        % Find the x,y,z operator indices
+        foundX = cellfun(@(x) ~isempty(strfind(x,'x')),which);
+        foundY = cellfun(@(x) ~isempty(strfind(x,'y')),which);
+        foundZ = cellfun(@(x) ~isempty(strfind(x,'z')),which);
+        
+        % We assume unit sphere, so we dont normalize. These are actually
+        % supposed to be directions though. 
+        xx = nodes(j,1); 
+        yy = nodes(j,2); 
+        zz = nodes(j,3); 
+        
+        % d/dx projected to sphere
+        weights_temp(1:n,j,length(which)+1) = (1-xx^2)*weights(1:n,foundX) + (-xx*yy) * weights(1:n,foundY) + (-xx*zz) * weights(1:n,foundZ);
+        % d/dy projected to sphere
+        weights_temp(1:n,j,length(which)+2) = (-xx*yy)*weights(1:n,foundX) + (1-yy^2)* weights(1:n,foundY) + (-yy*zz) * weights(1:n,foundZ);
+        % d/dz projected to sphere
+        weights_temp(1:n,j,length(which)+3) = (-xx*zz)*weights(1:n,foundX) + (-yy*zz) * weights(1:n,foundY) + (1-zz^2) * weights(1:n,foundZ);
+    end
+end
+
+% Add the operators again so we store them globally
+if computeSFCOperators
+which = [which 'xsfc', 'ysfc', 'zsfc'];     
 end
 
 windx=0;

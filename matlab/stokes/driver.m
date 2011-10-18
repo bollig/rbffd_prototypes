@@ -16,9 +16,9 @@ dt = 0.05;
 dim = 2; 
 %nodes = load('~/GRIDS/md/md159.25600');
 %nodes = load('~/GRIDS/md/md122.15129');
-nodes = load('~/GRIDS/md/md099.10000');
+%nodes = load('~/GRIDS/md/md099.10000');
 %nodes = load('~/GRIDS/md/md079.06400');
-%nodes = load('~/GRIDS/md/md063.04096');
+nodes = load('~/GRIDS/md/md063.04096');
 %nodes = load('~/GRIDS/md/md059.03600'); 
 %nodes = load('~/GRIDS/md/md050.02601'); 
 %nodes = load('~/GRIDS/md/md031.01024');
@@ -37,8 +37,8 @@ global RBFFD_WEIGHTS;
 % We replace the nodes JUST IN CASE our weight calculator re-orders them
 % for cache optimality. 
 fprintf('Calculating weights\n'); 
-[weights_available, nodes] = Calc_RBFFD_Weights({'lsfc', 'x', 'y', 'z', 'hv'}, N, nodes, fdsize, ep, hv_k);
-
+[weights_available, nodes] = Calc_RBFFD_Weights({'lsfc', 'xsfc', 'ysfc', 'zsfc', 'hv'}, N, nodes, fdsize, ep, hv_k);
+%return ;
 H = - ( hv_gamma / N^(hv_k) ) * RBFFD_WEIGHTS.hv; 
 addpath('~/repos-rbffd_gpu/scripts');
 
@@ -53,7 +53,12 @@ addpath('~/repos-rbffd_gpu/scripts');
 fprintf('Filling LHS Collocation Matrix\n'); 
 LHS = stokes(nodes, N, fdsize, useHV);
  
-% spy(LHS);
+figure(1)
+spy(LHS); 
+title('LHS (L)', 'FontSize', 26);
+set(gca, 'FontSize', 22); 
+
+pause
 
 % Spend some time reordering initially. 
 %r = symrcm(LHS); 
@@ -73,13 +78,11 @@ LHS = stokes(nodes, N, fdsize, useHV);
 fprintf('Filling RHS Vector\n'); 
 RHS = fillRHS(nodes, 0);
 
-figure(1) 
-plotVectorComponents(RHS, nodes, 'RHS (F)'); 
+cmin = min(RHS(:));
+cmax = max(RHS(:));
 
-figure(2)
-spy(LHS); 
-title('LHS (L)', 'FontSize', 26);
-set(gca, 'FontSize', 22); 
+figure(2) 
+plotVectorComponents(RHS, nodes, 'RHS (F)'); 
 
 fprintf('Solving Lu=F\n'); 
 U = LHS \ RHS; 
@@ -91,7 +94,7 @@ plotVectorComponents(U, nodes, 'Computed Solution (U = L^{-1}F)');
 r2d2 = LHS * U; 
 
 figure(4)
-plotVectorComponents(r2d2,nodes,'Reconstructed RHS (R2 = L*U_{computed})')
+plotVectorComponents(r2d2,nodes,'Reconstructed RHS (R2 = L*U_{computed})', cmin, cmax)
 
 % vecs = reshape(U,N,4);
 % velU = vecs(:,1:3);
