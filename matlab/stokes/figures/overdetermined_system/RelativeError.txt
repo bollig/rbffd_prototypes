@@ -1,0 +1,33 @@
+>> norm(RHS-r2d2,2)./norm(RHS,2)
+
+    ans =
+
+    0.0020
+
+>> norm(RHS-r2d2,1)/norm(RHS,1)
+
+    ans =
+
+    9.8186e-04
+
+>> norm(RHS-r2d2,inf)/norm(RHS,inf)
+
+    ans =
+
+    0.0450
+
+>> max(abs(RHS-r2d2))
+
+    ans =
+
+    2.1141e+04
+
+>> sum(abs(RHS-r2d2))
+
+    ans =
+
+    1.3955e+06
+
+
+
+
