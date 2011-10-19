@@ -45,7 +45,7 @@ fprintf('Calculating weights (N=%d, n=%d, ep=%f, hv_k=%d, hv_gamma=%e)\n', N, fd
 
 % NO need for hyperviscosity at this point
 %RBFFD_WEIGHTS.scaled_hv = - ( hv_gamma / N^(hv_k) ) * RBFFD_WEIGHTS.hv; 
-addpath('~/repos-rbffd_gpu/scripts');
+%NOT NEEDED: addpath('~/repos-rbffd_gpu/scripts');
 
 %runTest(@stokes, nodes, N, fdsize, useHV);
 
