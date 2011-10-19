@@ -2,7 +2,7 @@
 %% Build a differentiation matrix, test hyperviscosity and run the vortex
 %% roll PDE.
 
-output_dir = './figures/test_system/';
+output_dir = './figures/N1024/';
 fprintf('Making directory: %s\n', output_dir);
 mkdir(output_dir); 
 
