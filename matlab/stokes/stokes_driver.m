@@ -3,6 +3,7 @@
 %% roll PDE.
 
 output_dir = './figures/test_system/';
+fprintf('Making directory: %s\n', output_dir);
 mkdir(output_dir); 
 
 %fdsize = 17; c1 = 0.026; c2 = 0.08;  hv_k = 2; hv_gamma = 8;
@@ -39,7 +40,7 @@ global RBFFD_WEIGHTS;
 % weights, or append newly calculated weights to those already calculated. 
 % We replace the nodes JUST IN CASE our weight calculator re-orders them
 % for cache optimality. 
-fprintf('Calculating weights\n'); 
+fprintf('Calculating weights (N=%d, n=%d, ep=%f, hv_k=%d, hv_gamma=%e)\n', N, fdsize, ep, hv_k, hv_gamma); 
 [weights_available, nodes] = Calc_RBFFD_Weights({'lsfc', 'xsfc', 'ysfc', 'zsfc', 'hv'}, N, nodes, fdsize, ep, hv_k);
 
 % NO need for hyperviscosity at this point
@@ -57,13 +58,21 @@ addpath('~/repos-rbffd_gpu/scripts');
 fprintf('Filling LHS Collocation Matrix\n'); 
 LHS = stokes(nodes, N, fdsize, useHV);
  
-hhh=figure('visible', 'off')
-set(hhh,'Unit', 'normalized');
-set(hhh,'Position',[0 0 0.5 1])
+hhh=figure('visible', 'off');
+% resize the window to most of my laptop screen
+set(hhh,'Units', 'normalized'); 
+set(hhh,'Position',[0 0 0.5 1]);
+% Get the window size in terms of inches of realestate
+set(hhh,'Units','inches');
+figpos = get(hhh,'Position');
+% Change the paper size to match the window size
+set(hhh,'PaperUnits','inches','PaperPosition',figpos);
 spy(LHS); 
 title('LHS (L)', 'FontSize', 26);
 set(gca, 'FontSize', 22); 
-print(hhh,'-zbuffer','-r300','-depsc2',[output_dir,'LHS','.eps']);
+figFileName=[output_dir,'LHS','.eps'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
 
 % Spend some time reordering initially. 
 %r = symrcm(LHS); 
@@ -87,16 +96,22 @@ cmin = min(RHS(:));
 cmax = max(RHS(:));
 
 hhh=figure('visible', 'off') ;
-plotVectorComponents(RHS, nodes, 'RHS (F)'); 
-print(hhh,'-zbuffer','-r300','-depsc2',[output_dir,'RHS','.eps']);
+plotVectorComponents(RHS, nodes, 'RHS (F)',cmin,cmax); 
+figFileName=[output_dir,'RHS','.eps'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
+close(hhh);
 
 fprintf('Solving Lu=F\n'); 
 U = LHS \ RHS; 
 
-fprintf('Done.\n'); 
+fprintf('Done Solving.\n'); 
 hhh=figure('visible', 'off') ;
 plotVectorComponents(U, nodes, 'Computed Solution (U = L^{-1}F)'); 
-print(hhh,'-zbuffer','-r300','-depsc2',[output_dir,'U_computed','.eps']);
+figFileName=[output_dir,'U_computed','.eps'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
+close(hhh);
 
 r2d2 = LHS * U; 
 
@@ -106,24 +121,30 @@ rel_li_err = norm(RHS-r2d2, inf)./norm(RHS,inf)
 
 hhh=figure('visible', 'off');
 plotVectorComponents(r2d2,nodes,'Reconstructed RHS (R2 = L*U_{computed})', cmin, cmax)
-print(hhh,'-zbuffer','-r300','-depsc2',[output_dir,'Reconstructed_RHS','.eps']);
+figFileName=[output_dir,'Reconstructed_RHS','.eps'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
+close(hhh);
 
-hhh=figure('visible', 'off')
+hhh=figure('visible', 'off');
 abs_err = abs(RHS-r2d2);
 plotVectorComponents(abs_err, nodes, 'Abs Error (|RHS-Reconstructed|)'); 
-print(hhh,'-zbuffer','-r300','-depsc2',[output_dir,'AbsError','.eps']);
+figFileName=[output_dir,'AbsError','.eps'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
+close(hhh);
 
 hhh=figure('visible', 'off');
 rel_err = abs_err / abs(RHS); 
 rel_err(abs(RHS) < 1e-12) = abs_err(abs(RHS) < 1e-12); 
 plotVectorComponents(rel_err, nodes, 'Rel Error (|RHS-Reconstructed|/|RHS|)'); 
-print(hhh,'-zbuffer','-r300','-depsc2',[output_dir,'RelError','.eps']);
+figFileName=[output_dir,'RelError','.eps'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
+close(hhh);
 
-
-% vecs = reshape(U,N,4);
-% velU = vecs(:,1:3);
-% p = vecs(:,4);
-% plotSolution(RHS, p, nodes, 0);
+% Force all hidden figures to close: 
+%close all hidden;
 
 %% Test 3: Manufacture a solution with uniform velocity in one direction
 %% and try to recover it

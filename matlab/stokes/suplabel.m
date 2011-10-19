@@ -82,8 +82,12 @@ elseif strcmp('yy',whichLabel)
   ylabel(text);
   set(ax,'YAxisLocation','right')
 end
-
-for k=1:length(currax), axes(currax(k));end % restore all other axes
+%This is the line that brings the window forward, and it turns out we dont 
+% need it. 
+% restore all other axes
+%for k=1:length(currax)
+    %axes(currax(k));
+%end 
 
 if (nargout < 2)
   return
