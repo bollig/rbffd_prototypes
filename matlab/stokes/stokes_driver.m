@@ -2,7 +2,8 @@
 %% Build a differentiation matrix, test hyperviscosity and run the vortex
 %% roll PDE.
 
-output_dir = './figures/overdetermined_system/';
+output_dir = './figures/test_system/';
+mkdir(output_dir); 
 
 %fdsize = 17; c1 = 0.026; c2 = 0.08;  hv_k = 2; hv_gamma = 8;
 fdsize = 31; c1 = 0.035; c2 = 0.1 ; hv_k = 4; hv_gamma = 800;
@@ -20,10 +21,10 @@ dim = 2;
 %nodes = load('~/GRIDS/md/md122.15129');
 %nodes = load('~/GRIDS/md/md099.10000');
 %nodes = load('~/GRIDS/md/md079.06400');
-nodes = load('~/GRIDS/md/md063.04096');
+%nodes = load('~/GRIDS/md/md063.04096');
 %nodes = load('~/GRIDS/md/md059.03600'); 
 %nodes = load('~/GRIDS/md/md050.02601'); 
-%nodes = load('~/GRIDS/md/md031.01024');
+nodes = load('~/GRIDS/md/md031.01024');
 %nodes = load('~/GRIDS/md/md004.00025');
 
 nodes=nodes(:,1:3);
@@ -51,18 +52,18 @@ addpath('~/repos-rbffd_gpu/scripts');
 % 
 % % Show initial solution:
 % %interpolateToSphere(initial_condition, initial_condition, nodes, t);
-% figure(1);
+
 % plotSolution(RHS, RHS, nodes, 0);
 fprintf('Filling LHS Collocation Matrix\n'); 
 LHS = stokes(nodes, N, fdsize, useHV);
  
-hhh=figure(1)
+hhh=figure('visible', 'off')
 set(hhh,'Unit', 'normalized');
 set(hhh,'Position',[0 0 0.5 1])
 spy(LHS); 
 title('LHS (L)', 'FontSize', 26);
 set(gca, 'FontSize', 22); 
-saveas(hhh,[output_dir,'LHS','.eps'],'epsc');
+print(hhh,'-zbuffer','-r300','-depsc2',[output_dir,'LHS','.eps']);
 
 % Spend some time reordering initially. 
 %r = symrcm(LHS); 
@@ -85,17 +86,17 @@ RHS = fillRHS(nodes, 0);
 cmin = min(RHS(:));
 cmax = max(RHS(:));
 
-hhh=figure(2) ;
+hhh=figure('visible', 'off') ;
 plotVectorComponents(RHS, nodes, 'RHS (F)'); 
-saveas(hhh,[output_dir,'RHS','.eps'],'epsc');
+print(hhh,'-zbuffer','-r300','-depsc2',[output_dir,'RHS','.eps']);
 
 fprintf('Solving Lu=F\n'); 
 U = LHS \ RHS; 
 
 fprintf('Done.\n'); 
-hhh=figure(3) ;
+hhh=figure('visible', 'off') ;
 plotVectorComponents(U, nodes, 'Computed Solution (U = L^{-1}F)'); 
-saveas(hhh,[output_dir,'U_computed','.eps'],'epsc');
+print(hhh,'-zbuffer','-r300','-depsc2',[output_dir,'U_computed','.eps']);
 
 r2d2 = LHS * U; 
 
@@ -103,23 +104,20 @@ rel_l1_err = norm(RHS-r2d2, 1)./norm(RHS,1)
 rel_l2_err = norm(RHS-r2d2, 2)./norm(RHS,2)
 rel_li_err = norm(RHS-r2d2, inf)./norm(RHS,inf)
 
-hhh=figure(4);
+hhh=figure('visible', 'off');
 plotVectorComponents(r2d2,nodes,'Reconstructed RHS (R2 = L*U_{computed})', cmin, cmax)
-saveas(hhh,[output_dir,'Reconstructed_RHS','.eps'],'epsc');
+print(hhh,'-zbuffer','-r300','-depsc2',[output_dir,'Reconstructed_RHS','.eps']);
 
-hhh=figure(5)
+hhh=figure('visible', 'off')
 abs_err = abs(RHS-r2d2);
 plotVectorComponents(abs_err, nodes, 'Abs Error (|RHS-Reconstructed|)'); 
-saveas(hhh,[output_dir,'AbsError','.eps'],'epsc');
+print(hhh,'-zbuffer','-r300','-depsc2',[output_dir,'AbsError','.eps']);
 
-hhh=figure(6);
+hhh=figure('visible', 'off');
 rel_err = abs_err / abs(RHS); 
 rel_err(abs(RHS) < 1e-12) = abs_err(abs(RHS) < 1e-12); 
 plotVectorComponents(rel_err, nodes, 'Rel Error (|RHS-Reconstructed|/|RHS|)'); 
-saveas(hhh,[output_dir,'RelError','.eps'],'epsc');
-
-
-
+print(hhh,'-zbuffer','-r300','-depsc2',[output_dir,'RelError','.eps']);
 
 
 % vecs = reshape(U,N,4);
@@ -133,16 +131,3 @@ saveas(hhh,[output_dir,'RelError','.eps'],'epsc');
 %               ones(N,1); 
 %               ones(N,1); 
 %               ones(N,1)]; 
-
-
-% figure(2)
-% plotSolution(RHS2((1:N)+0*N), RHS2((1:N)+1*N), nodes, 0)
-% figure(3)
-% plotSolution(U((1:N)+0*N), U((1:N)+1*N), nodes, 0)
-% figure(4)
-% plotSolution(RHS2((1:N)+2*N), U((1:N)+2*N), nodes, 0)
-
-
-%figure(2) 
-%plotSolution(U, RHS, nodes, 1);
-

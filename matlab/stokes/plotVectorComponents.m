@@ -16,9 +16,19 @@ P = vec((1:N) + 3*N);
 
 % Review the spherical harmonic as the sphere mapped to an ellipse
 [X, Y] = pr_mollweide(lam, th, 1);
+maxDims = get(0,'ScreenSize');
+%set(0,'Units','pixels')
 
-set(gcf,'Unit', 'normalized'); 
-set(gcf,'Position',[0 0 0.5 1])
+% resize the window to most of my laptop screen
+set(gcf,'Units', 'normalized'); 
+set(gcf,'Position',[0 0 0.5 1]);
+% Get the window size in terms of inches of realestate
+set(gcf,'Units','inches');
+figpos = get(gcf,'Position');
+% Change the paper size to match the window size
+set(gcf,'PaperUnits','inches','PaperPosition',figpos)
+
+
 
 subplot(2, 2, 1); 
 
