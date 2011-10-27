@@ -83,7 +83,7 @@ for j=1:N
    % [LA,UA,P] = lu(A);
     
    cond_sum = cond_sum + cond(A); 
-   cond_log10_sum = cond_sum + log10(cond(A)); 
+   cond_log10_sum = cond_log10_sum + log10(cond(A)); 
 end
 avg_cond_num = cond_sum / N;
 avg_log10_cond_num = cond_log10_sum / N;
