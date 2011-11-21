@@ -1,4 +1,4 @@
-function [h, C, SQRT_N, EP, avg_conds] = generate_contours(n, do_plot)
+function [h, C, SQRT_N, EP, avg_conds] = generate_contours(n)
 %SQRT_N EP contours
 
 %% MD Nodes are N=[2:166].^2
@@ -24,10 +24,12 @@ for i = 1:length(SQRT_N)
 end
 %fprintf('Using avg_log10_cond_num'); 
 avg_conds = avg_log10_cond_num; 
-if do_plot
+
+
     figure
-    pbaspect([2 1 1]); 
+    set(gcf,'Position', [50   321   810   579]);
     [C,h] = contour(X, Y, avg_conds);
+    %pbaspect([1 1 1]); 
     set(h,'LevelStep', 2);
     set(h,'ShowText','on','TextStep',get(h,'LevelStep'));
     set(h,'LabelSpacing',244)
@@ -37,5 +39,5 @@ if do_plot
     title(mytitle, 'Interpreter', 'latex','FontSize',26);
     xlabel('$\sqrt{N}$', 'Interpreter', 'Latex','FontSize',22);
     ylabel('$\epsilon$', 'Interpreter', 'Latex','FontSize',22);
-end
+
 end

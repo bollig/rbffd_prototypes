@@ -1,10 +1,10 @@
-%function [eps_params avg_cond_num h C SQRT_N EP] = getContourParams(n, do_plot)
+function [eps_params avg_cond_num h C SQRT_N EP] = getContourParams(n)
 
 % Returns contours of log_10(avg_kappa) where avg_kappa is the
 % AVERAGE condition number for all RBFFD LHS matrices when calculating
 % weights.
 
-[h C SQRT_N EP avg_cond_num] = generate_contours(n,do_plot);
+[h C SQRT_N EP avg_cond_num] = generate_contours(n);
 
 end_contours = length(C);
 start_contour = 1;
@@ -91,23 +91,8 @@ for i = 1:length(display_list)
 end
 set(text_handle,'FontSize',18);
 
-%draw_pt_x = min(CX(end), CX(1)) + abs(CX(end) - CX(1)) / 2;  %floor((end-1)/2)
-%draw_pt_y = min(CY(end), CY(1)) + abs(CY(end) - CY(1)) / 2;
-%[ax ay] = get(gca,'Aspect');
-%*180/(0.20*pi)
-%dy = 10-1;
-%dx = 100 - 40;
-%[figX1 figY1] = dsxy2figxy(gca, CX(1), CY(1))
-%[figX2 figY2] = dsxy2figxy(gca, CX(end), CY(end))
-%figM = (figY2 - figY1) / (figX2 - figX1);
-%ax = axis;
-%px = pbaspect;
-%dar = get(gca, 'DataAspectRatio');
-%dar = dar / dar(3);
-
-%figM = (ax(4) - ax(3))  / (ax(2) - ax(1)) ;
-%figM = M * figM * (px(2))/(px(1));
-%figM = M * dar(1)/dar(2);
-%text(draw_pt_x, draw_pt_y+0.25, params, 'Rotation', atan(figM) , 'FontSize', 18, 'HorizontalAlignment', 'Center');
-
-%end
+% MAKE SURE EVERYTHING IS VISIBLE
+%pbaspect([1 1 1]); % change to a square view (everything will be visible)
+%pbaspect('auto');  % Scale back out to the window size, but keep everything visible
+set(gca,'Unit', 'normalized','Position',[0.08 0.1 0.80 0.80])
+end

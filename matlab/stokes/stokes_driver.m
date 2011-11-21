@@ -2,7 +2,7 @@
 %% Build a differentiation matrix, test hyperviscosity and run the vortex
 %% roll PDE.
 
-output_dir = './figures/N1024/';
+output_dir = './figures/N1024_2/';
 fprintf('Making directory: %s\n', output_dir);
 mkdir(output_dir); 
 
@@ -142,6 +142,8 @@ figFileName=[output_dir,'RelError','.eps'];
 fprintf('Printing figure: %s\n',figFileName);
 print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
 close(hhh);
+
+
 
 % Force all hidden figures to close: 
 %close all hidden;
