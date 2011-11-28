@@ -1,0 +1,41 @@
+Ok, i have an idea on how to pick our support parameters for general node positions/layouts. 
+
+
+Lets say we have scattered nodes, and its NOT a uniform distribution. ERik's approach of calculating the average condition number works for regular distributions. 
+When we have a non-uniform dist, we must adjust this approach and try to choose a variety of supports for the stencil that will give us the same sort of condition number as the uniform case. 
+
+What I propose is we perform the following test: 
+
+1) Uniformly distribute nodes around a stencil center.
+2) Pick a condition number and the corresponding support paramter for the nodes according to Eriks method
+3) From the stencil select one of the nodes (not the center)
+4) Vary the position of that one node both closer and further away and find the epsilon that will keep the condition number approximately the same as the one picked above
+    - This gives us a 2D plot with contours describing epsilon according to node position in stencil
+
+I supsect (hypothesize) that the curve for epsilon will be a radial basis function itself and we will be able to substitute an SPH basis function for the choice of epsilon rather than doing this process repeatedly. By that I mean, each stencil will have an additional basis function for epsilon centered at the stencil center, and we will be able to get a rough approximation to the best supports for a stencil by sampling that stencil basis function. What this means however, is that each node will have a unique support for every stencil that includes it. Also, there is another variable here. The epsilon basis function will increase or decrese in support according to the stencil spread. But, if we can get a handle on how it behaves for the base case above we should be able to do a simple scalar on everything we find as the stencils get wider or narrower.
+
+Also, this method will work when one stencil node moves, but it is not guaranteed for the full stencil. But it gives us a good estimate to start. When we finish this test we can move a second node and see how the movement of the 2 can be constrained to get the appropriate epsilon. 
+    - Comment: i suspect that the movement of 2 might change the game completely. We're talking about n-dimensional optimization where the distance from nodes to center are each a dimension and then there are additional problems introduced by those nodes squeezing in on each other. Perhaps we should vary that first node both in and out AND between neighboring nodes (say up and down or in theta and phi if we assume a spherical coordinate system). 
+
+
+                        Cond(A_8) for One moving node
+                        (The condition number of A when the stencil support is chosen to achieve cond(A)==8 but we move one node
+
+                |
+    epsilon     |
+                |
+                |                       From this we plot contours and find the function to describe the function for epsilon that 
+                |                       will maintain cond(A)==8. 
+                |
+                +-----------------
+                    dist(node, center)
+
+
+
+Lets say all the nodes are in the unit disk. And they're evenly spaced angularly. Then we move in the radial direction to get the X-axis coords above.
+And we vary epsilon over the range [1,10]. We will get a good contour plot to look at. But also, this contour plot can be extended in a third dimension by varying the
+radius of the stnecil disk. If we dont have a linear correllation in the stneicl radius dimension, then we're going to have a major problem on our hands.
+
+What Im going for is to get good feel for how to auto tune the support parameters for stencil nodes that are NOT evenly distributed and for various stencil sizes and grid resolutions. If we have to compute the cond of each stencil and tune for to obtain the right average cond num, we will need to know how to tweak individual node supports.
+
+Really what it comes down to is we're goign to have a high dimensional minimization problem on our hands where we're seekign the saddle point corresponding to the desired condition number and each dimension is the stencil support for nodal basis functions. The stencil center included, but I want to start with the assumption the basis function for the center stays a constant width corresponding to the total stencil radius (so it manages to touch all of the stencil nodes).  
