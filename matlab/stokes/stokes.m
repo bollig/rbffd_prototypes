@@ -1,4 +1,4 @@
-function [LHS] = stokes(nodes, N, n, useHV)
+function [LHS, DIV_operator] = stokes(nodes, N, n, useHV, constantViscosity)
 %% Fills a large sparse matrix with 4x4 blocks. NOTE: it does this by
 %% COLUMN to make memory access more efficient in MATLAB. 
 
@@ -15,9 +15,15 @@ LHS = spalloc(4*N+4, 4*N+4, 15*n*N + 6*N);
 
 eta = ones(N,1);
 
+if constantViscosity
+dEta_dx = zeros(N,1); 
+dEta_dy = zeros(N,1);
+dEta_dz = zeros(N,1);
+else 
 dEta_dx = RBFFD_WEIGHTS.xsfc * eta; 
 dEta_dy = RBFFD_WEIGHTS.ysfc * eta; 
 dEta_dz = RBFFD_WEIGHTS.zsfc * eta; 
+end
 
 %% %%%%%%  Column 1 %%%%%%%%%%%%
 
@@ -119,5 +125,8 @@ LHS(ind, 4*N+1) = 1;
 % 
 % [Usvd, Ssvd, Vsvd, flagSVD] = svds(LHS,100,0);
 % sing_value_indices = find(max(Ssvd) < 1e-6)
+
+
+DIV_operator = LHS(3*N+1:4*N+4,1:4*N+4);
 
 end
