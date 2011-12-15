@@ -7,7 +7,16 @@ w_indices = (1:N) + 2*N;
 p_indices = (1:N) + 3*N;
 const_indices = (1:4) + 4*N;
 
-T = TemperatureProfile(nodes, t);
+
+%% Choose our spherical harmonics for the manufactured solution (U_desired)
+m1=2;
+l1=3;
+m2=20;
+l2=20;
+
+[lam,th,temp] = cart2sph(nodes(:,1),nodes(:,2),nodes(:,3));
+
+T = sph(l1,m1,th,lam) + sph(l2,m2,th,lam);
 
 Ra = 1;
 
@@ -16,6 +25,7 @@ y = nodes(:,2);
 z = nodes(:,3);
 r = sqrt(nodes(:,1).^2 + nodes(:,2).^2 + nodes(:,3).^2);
 
+%% Project the spherical harmonics to directions U,V,W
 U_desired(u_indices,1) = Ra .* T .* x ./ r;
 U_desired(v_indices,1) = Ra .* T .* y ./ r;
 U_desired(w_indices,1) = Ra .* T .* z ./ r;
@@ -23,8 +33,14 @@ U_desired(p_indices,1) = zeros(N, 1);
 % Tie down a variable const in the singular system
 U_desired(const_indices,1) = 0;
 
+%% manufacture a solution with the given exact solution
+RHS = LHS * U_desired;
 
-RHS = LHS * U_desired; 
+%% We want zero divergence. But our matrix does not give us that...
+%% If we enforce this then the divergence is 0, but the solution is not
+%% what we manufacture. Something missing here....
+RHS(p_indices,1) = 0; 
+RHS(const_indices,1) = 0;
 
 end
 

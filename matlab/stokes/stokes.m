@@ -102,31 +102,35 @@ LHS(diag_row_ind, diag_col_ind) = RBFFD_WEIGHTS.zsfc;
 % [Usvd, Ssvd, Vsvd, flagSVD] = svds(LHS,20,0);
 % sing_value_indices_before = find(max(Ssvd) < 1e-5)
 
-diag_row_ind = (1:1) + 4*N;
-diag_col_ind = (1:4*N) + 0*N;
-LHS(diag_row_ind, diag_col_ind) = 1; 
-% 
-ind = (1:N)+0*N; 
+%% Bottom row
+% diag_row_ind = (1:1) + 4*N;
+% diag_col_ind = (1:4*N) + 0*N;
+% LHS(diag_row_ind, diag_col_ind) = 1; 
+
+%% Far right columns, and bottom rows (integral over each vector component
+%% is 0)
+ind = (1:N)+0*N;
+LHS(4*N+1, ind) = 1; 
+LHS(ind, 4*N+1) = 1; 
+
+ind = (1:N)+1*N; 
 LHS(ind, 4*N+2) = 1; 
 LHS(4*N+2, ind) = 1; 
 
-ind = (1:N)+1*N; 
+ind = (1:N)+2*N; 
 LHS(ind, 4*N+3) = 1; 
 LHS(4*N+3, ind) = 1; 
 
-ind = (1:N)+2*N; 
+ind = (1:N)+3*N; 
 LHS(ind, 4*N+4) = 1; 
 LHS(4*N+4, ind) = 1; 
 
-ind = (1:N)+3*N;
-LHS(4*N+1, ind) = 1; 
-LHS(ind, 4*N+1) = 1; 
 % 
 % 
-% [Usvd, Ssvd, Vsvd, flagSVD] = svds(LHS,100,0);
-% sing_value_indices = find(max(Ssvd) < 1e-6)
+[Usvd, Ssvd, Vsvd, flagSVD] = svds(LHS,10,0);
+sing_value_indices = find(max(Ssvd) < 1e-6)
 
 
-DIV_operator = LHS(3*N+1:4*N+4,1:4*N+4);
+DIV_operator = LHS(3*N+1:4*N,1:4*N+4);
 
 end
