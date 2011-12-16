@@ -39,8 +39,8 @@ RHS = LHS * U_desired;
 %% We want zero divergence. But our matrix does not give us that...
 %% If we enforce this then the divergence is 0, but the solution is not
 %% what we manufacture. Something missing here....
-RHS(p_indices,1) = 0; 
-RHS(const_indices,1) = 0;
+%RHS(p_indices,1) = 0; 
+%RHS(const_indices,1) = 0;
 
 end
 

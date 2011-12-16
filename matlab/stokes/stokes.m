@@ -109,6 +109,7 @@ LHS(diag_row_ind, diag_col_ind) = RBFFD_WEIGHTS.zsfc;
 
 %% Far right columns, and bottom rows (integral over each vector component
 %% is 0)
+if 1
 ind = (1:N)+0*N;
 LHS(4*N+1, ind) = 1; 
 LHS(ind, 4*N+1) = 1; 
@@ -124,6 +125,15 @@ LHS(4*N+3, ind) = 1;
 ind = (1:N)+3*N; 
 LHS(ind, 4*N+4) = 1; 
 LHS(4*N+4, ind) = 1; 
+else 
+    %% DOeSNT work. it was an attempt to specify one point without
+    %% reworking all stencils
+LHS(3*N+1,:) = 0;
+LHS(3*N+1,3) = 1;
+ind = (1:N)+3*N; 
+LHS(ind, 4*N+1) = 1; 
+LHS(4*N+1, ind) = 1;     
+end
 
 % 
 % 

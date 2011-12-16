@@ -211,6 +211,20 @@ fprintf('Printing figure: %s\n',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
 close(hhh);
 
+div_m_P_l1_norm = norm(div_U-RHS(3*N+1:4*N), 1)
+div_m_P_l2_norm = norm(div_U-RHS(3*N+1:4*N), 2)
+div_m_P_linf_norm = norm(div_U-RHS(3*N+1:4*N), inf)
+
+hhh=figure('visible', 'off');
+plotScalarfield(div_U-RHS(3*N+1:4*N), nodes, 'Div( U ) - RHS_P'); 
+figFileName=[output_dir,'Div_U_m_P'];
+fprintf('Printing figure: %s\n',figFileName);
+%print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+close(hhh);
+
+
+
 clear div_U; 
 
 % Force all hidden figures to close: 
