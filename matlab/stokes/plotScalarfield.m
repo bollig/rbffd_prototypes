@@ -16,6 +16,7 @@ U = vec((1:N) + 0*N);
 maxDims = get(0,'ScreenSize');
 %set(0,'Units','pixels')
 
+if 0
 % resize the window to most of my laptop screen
 set(gcf,'Units', 'normalized'); 
 set(gcf,'Position',[0 0 0.5 0.5]);
@@ -24,7 +25,7 @@ set(gcf,'Units','inches');
 figpos = get(gcf,'Position');
 % Change the paper size to match the window size
 set(gcf,'PaperUnits','inches','PaperPosition',figpos)
-
+end
 
 
 %subplot(2, 2, 1); 
@@ -41,12 +42,13 @@ colorbar;
 if scaleColormap
     caxis([cmin, cmax]);
 end
-title('U direction', 'FontSize',22); 
+title(figTitle, 'FontSize',22); 
 set(gca,'FontSize',18);
 a1 = gca;
 
-[ax,hh] = suplabel(figTitle,'t');
-set(hh,'FontSize',26);
+
+%[ax,hh] = suplabel(figTitle,'t');
+%set(hh,'FontSize',26);
 
 % set(a1,'Unit', 'normalized','Position',[0.05 0.55 0.45 1])
 % set(a2,'Unit', 'normalized'); 

@@ -22,7 +22,7 @@ min(th)
 max(th)
 min(lam)
 max(lam)
-Ttheta = th;  % This pi/2 is the difference between Mathematica and Matlab
+Ttheta = pi/2 - th;  % This pi/2 is the difference between Mathematica and Matlab
 Pphi = lam; 
 
 
@@ -34,11 +34,14 @@ Pphi = lam;
 %% LAPL_BELTRAMI[SPH(3,2)]
 T_continuous = sph(l1,m1,th,lam);
 
+sph32_mathematica_matlab = (sqrt(105/pi) .* (cos(Ttheta).^2) .* cos(2*Pphi) .* sin(Ttheta)) ./ 4; 
+sph32_mathematica_matlab = (sqrt(105/pi) .* cos(2*Pphi) .* sin(Ttheta).^2 .* cos(Ttheta)) ./ 4.;
 % Mathematica sph[3,2] need cos^2 to match matlab
 T_mathematica = (sqrt(105/(2.*pi)).*cos(Ttheta).*cos(Ttheta).*cos(2*Pphi).*sin(Ttheta))/4.;
-L_sph32_mathematica_matlab = 3*sqrt(105/pi).*cos(2*Pphi).*cos(Ttheta).*sin(Ttheta).*sin(Ttheta);
+Lapl_sph32_mathematica = -3*sqrt(105/pi).*cos(2*Pphi).*cos(Ttheta).*sin(Ttheta).^2;
+Beltrami_sph32_mathematica = (sqrt(105/pi).*(-3*cos(2*Pphi) - 4*cos(4*Pphi) + 15*cos(6*Pphi)).*csc(Pphi))/32.;
 
-ContinuousRHS_T = L_sph32_mathematica_matlab; 
+ContinuousRHS_T = sph32_mathematica_matlab; 
 
 Ra = 1;
 
@@ -73,10 +76,24 @@ norm(RHS_continuous - RHS_discrete,1)
 %norm(U_continuous - U_discrete,1)
 
 figure(1)
-plotScalarfield(ContinuousRHS_T,nodes,'ContRHS');
+plotScalarfield(sph32_mathematica_matlab,nodes,'Mathematica SPH(3,2)');
 figure(2)
-plotScalarfield(RBFFD_WEIGHTS.x*T_continuous,nodes,'DiscreteRHS');
+plotScalarfield(T_continuous,nodes,'Matlab SPH(3,2)');
+figure(3)
+plotScalarfield(abs(T_continuous - sph32_mathematica_matlab),nodes,'abs(Matlab-Mathematica)');
+figure(4)
+plotScalarfield(Lapl_sph32_mathematica,nodes,'Mathematica Lapl(SPH(3,2))');
+figure(5)
+plotScalarfield(RBFFD_WEIGHTS.lsfc * T_continuous,nodes,'RBFFD WEIGHTS.lsfc * MatlabSPH');
+figure(6)
+plotScalarfield(abs(Lapl_sph32_mathematica - (RBFFD_WEIGHTS.lsfc * T_continuous)),nodes,'Abs(Lapl_{Mathematica} - Lapl_{Matlab}');
 
+figure(6)
+plotScalarfield(RBFFD_WEIGHTS.lsfc * (T_continuous.*x ./ r),nodes,'RBFFD WEIGHTS.lsfc * (MatlabSPH*(x/r))');
+figure(7)
+plotScalarfield(Lapl_sph32_mathematica_matlab,nodes,'Lapl MathematicaSPH');
+figure(8)
+plotScalarfield(Beltrami_sph32_mathematica, nodes, 'Beltrami Mathematica');
 %% We want zero divergence. But our matrix does not give us that...
 %% If we enforce this then the divergence is 0, but the solution is not
 %% what we manufacture. Something missing here....
