@@ -28,12 +28,11 @@ figpos = get(gcf,'Position');
 % Change the paper size to match the window size
 set(gcf,'PaperUnits','inches','PaperPosition',figpos)
 
-
+tri = delaunay(X,Y);
 
 subplot(2, 2, 1); 
 
 % Plot it as a surface
-tri = delaunay(X,Y);
 h = trisurf(tri, X, Y, U,'EdgeColor','none','LineStyle','none');
 axis([-pi pi -pi/2 pi/2])
 pbaspect([2, 1, 1]);
@@ -51,8 +50,11 @@ a1 = gca;
 subplot(2, 2, 2); 
 
 % Plot it as a surface
-tri = delaunay(X,Y);
+%tri = delaunay(X,Y);
 h = trisurf(tri, X, Y, V,'EdgeColor','none','LineStyle','none');
+%hold on 
+%plot(X,Y, 'k.'); 
+%hold off
 axis([-pi pi -pi/2 pi/2])
 pbaspect([2, 1, 1]);
 shading interp;
@@ -70,7 +72,7 @@ a2 = gca;
 subplot(2, 2, 3); 
 
 % Plot it as a surface
-tri = delaunay(X,Y);
+%tri = delaunay(X,Y);
 h = trisurf(tri, X, Y, W,'EdgeColor','none','LineStyle','none');
 axis([-pi pi -pi/2 pi/2])
 pbaspect([2, 1, 1]);
@@ -88,7 +90,7 @@ a3 = gca;
 subplot(2, 2, 4); 
 
 % Plot it as a surface
-tri = delaunay(X,Y);
+%tri = delaunay(X,Y);
 h = trisurf(tri, X, Y, P,'EdgeColor','none','LineStyle','none');
 axis([-pi pi -pi/2 pi/2])
 pbaspect([2, 1, 1]);

@@ -13,35 +13,29 @@ const_indices = (1:4) + 4*N;
 %% Choose our spherical harmonics for the manufactured solution (U_desired)
 m1=2;
 l1=3;
-m2=20;
-l2=20;
+m2=10;
+l2=10;
 
 % [Azimuth, Elevation, Radius]
 [lam,th,temp] = cart2sph(nodes(:,1),nodes(:,2),nodes(:,3));
-min(th)
-max(th)
-min(lam)
-max(lam)
 Ttheta = pi/2 - th;  % This pi/2 is the difference between Mathematica and Matlab
 Pphi = lam; 
+Xx = nodes(:,1); 
+Yy = nodes(:,2);
+Zz = nodes(:,3);
 
+% Y_3^2 from mathematica. Laplacian of this should be -l(l+1)Y_l^m => 12*Y_3^2.
+sph32_mathematica = (sqrt(105/pi).*cos(2*Pphi).*cos(Ttheta).*sin(Ttheta).^2)/4.;
+Lapl_sph32_mathematica = -3 * sqrt(105/pi) .* cos(2*Pphi) .* cos(Ttheta) .* sin(Ttheta).^2;
+cart_sph32_mathematica = (sqrt(105/pi).*(Xx - Yy).*(Xx + Yy).*Zz)./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^1.5);
 
+sph32_plus_sph1515 = (sqrt(105/pi).*cos(2*Pphi).*cos(Ttheta).*sin(Ttheta).^2)/4. + (3*sqrt(33393355/(2.*pi)).*cos(15*Pphi).*sin(Ttheta).^15)/8192.; 
+Lapl_sph32_plus_sph1515 = -3 * sqrt(105/pi).*cos(2*Pphi).*cos(Ttheta).*sin(Ttheta).^2 - (45*sqrt(33393355/(2.*pi)).*cos(15*Pphi).*sin(Ttheta).^15)/512.; 
 
-%% LAPL_BELTRAMI[SPH(3,2) + SPH(20,20)]
-%T_continuous = sph(l1,m1,th,lam) + sph(l2,m2,th,lam);
-%ContinuousRHS_T =-3*sqrt(105/(2*pi)).*cos(2*Pphi).*cos(Ttheta).*sin(Ttheta).^2 - (315*sqrt(156991880045/pi).*cos(20*Pphi).*sin(Ttheta).^20)/262144;
+% Get these from SphericalHarmonic_Laplacians_For_Matlab.nb
+sph32_plus_sph2020 = (sqrt(105/pi) .* cos(2*Pphi) .* cos(Ttheta) .* sin(Ttheta).^2 ) ./ 4. + (3*sqrt(156991880045/(2.*pi)) .* cos(20*Pphi) .* sin(Ttheta).^20) ./ 524288.;
+Lapl_sph32_plus_sph2020 = -3 * sqrt(105/pi) .* cos(2*Pphi) .* cos(Ttheta) .* sin(Ttheta).^2 - (315*sqrt(156991880045/(2.*pi)) .* cos(20*Pphi) .* sin(Ttheta).^20) ./ 131072.;
 
-%% LAPL_BELTRAMI[SPH(3,2)]
-T_continuous = sph(l1,m1,th,lam);
-
-sph32_mathematica_matlab = (sqrt(105/pi) .* (cos(Ttheta).^2) .* cos(2*Pphi) .* sin(Ttheta)) ./ 4; 
-sph32_mathematica_matlab = (sqrt(105/pi) .* cos(2*Pphi) .* sin(Ttheta).^2 .* cos(Ttheta)) ./ 4.;
-% Mathematica sph[3,2] need cos^2 to match matlab
-T_mathematica = (sqrt(105/(2.*pi)).*cos(Ttheta).*cos(Ttheta).*cos(2*Pphi).*sin(Ttheta))/4.;
-Lapl_sph32_mathematica = -3*sqrt(105/pi).*cos(2*Pphi).*cos(Ttheta).*sin(Ttheta).^2;
-Beltrami_sph32_mathematica = (sqrt(105/pi).*(-3*cos(2*Pphi) - 4*cos(4*Pphi) + 15*cos(6*Pphi)).*csc(Pphi))/32.;
-
-ContinuousRHS_T = sph32_mathematica_matlab; 
 
 Ra = 1;
 
@@ -53,9 +47,9 @@ r = sqrt(nodes(:,1).^2 + nodes(:,2).^2 + nodes(:,3).^2);
 
 
 %% Project the spherical harmonics to directions U,V,W
-U_continuous(u_indices,1) = Ra .* T_continuous .* x ./ r;
-U_continuous(v_indices,1) = Ra .* T_continuous .* y ./ r;
-U_continuous(w_indices,1) = Ra .* T_continuous .* z ./ r;
+U_continuous(u_indices,1) = sph32_mathematica;
+U_continuous(v_indices,1) = cart_sph32_mathematica;
+U_continuous(w_indices,1) = sph32_mathematica - cart_sph32_mathematica;
 U_continuous(p_indices,1) = zeros(N,1);
 % Tie down a variable const in the singular system
 U_continuous(const_indices,1) = 0;
@@ -66,34 +60,36 @@ U_continuous(const_indices,1) = 0;
 RHS_discrete = LHS * U_continuous; 
 
 
-RHS_continuous(u_indices,1) = Ra .* ContinuousRHS_T .* x ./ r;
-RHS_continuous(v_indices,1) = Ra .* ContinuousRHS_T .* y ./ r;
-RHS_continuous(w_indices,1) = Ra .* ContinuousRHS_T .* z ./ r;
-RHS_continuous(p_indices,1) = ContinuousRHS_T ;
+RHS_continuous(u_indices,1) = -Lapl_sph32_mathematica;
+RHS_continuous(v_indices,1) = -(-l2*(l2+1)) * sph(l2,m2,th,lam);
+RHS_continuous(w_indices,1) = -Lapl_sph32_plus_sph2020;
+RHS_continuous(p_indices,1) = zeros(N,1) ;
 RHS_continuous(const_indices,1) = 0;
 
 norm(RHS_continuous - RHS_discrete,1)
 %norm(U_continuous - U_discrete,1)
 
+if 0
 figure(1)
-plotScalarfield(sph32_mathematica_matlab,nodes,'Mathematica SPH(3,2)');
+plotScalarfield(sph32_mathematica,nodes,'Mathematica SPH(3,2)');
 figure(2)
-plotScalarfield(T_continuous,nodes,'Matlab SPH(3,2)');
-figure(3)
-plotScalarfield(abs(T_continuous - sph32_mathematica_matlab),nodes,'abs(Matlab-Mathematica)');
-figure(4)
 plotScalarfield(Lapl_sph32_mathematica,nodes,'Mathematica Lapl(SPH(3,2))');
+figure(4)
+plotScalarfield(RBFFD_WEIGHTS.lsfc * sph32_mathematica,nodes,'RBFFD WEIGHTS.lsfc * sph32_mathematica');
 figure(5)
-plotScalarfield(RBFFD_WEIGHTS.lsfc * T_continuous,nodes,'RBFFD WEIGHTS.lsfc * MatlabSPH');
+plotScalarfield(abs(Lapl_sph32_mathematica - (RBFFD_WEIGHTS.lsfc * sph32_mathematica)),nodes,'Abs(Lapl_{Mathematica} - RBFFD WEIGHTS.lsfc * sph32_mathematica');
+end
 figure(6)
-plotScalarfield(abs(Lapl_sph32_mathematica - (RBFFD_WEIGHTS.lsfc * T_continuous)),nodes,'Abs(Lapl_{Mathematica} - Lapl_{Matlab}');
-
-figure(6)
-plotScalarfield(RBFFD_WEIGHTS.lsfc * (T_continuous.*x ./ r),nodes,'RBFFD WEIGHTS.lsfc * (MatlabSPH*(x/r))');
+plotVectorComponents(RHS_discrete, nodes, 'Discrete RHS'); 
 figure(7)
-plotScalarfield(Lapl_sph32_mathematica_matlab,nodes,'Lapl MathematicaSPH');
+plotVectorComponents(RHS_continuous, nodes, 'Continuous RHS'); 
 figure(8)
-plotScalarfield(Beltrami_sph32_mathematica, nodes, 'Beltrami Mathematica');
+plotVectorComponents(U_continuous, nodes, 'Continuous U'); 
+figure(9)
+plotVectorComponents(abs(RHS_continuous-RHS_discrete), nodes, '|RHS_{continuous} - RHS_{discrete}|'); 
+figure(10)
+plotVectorComponents(abs(RHS_continuous-RHS_discrete)./abs(RHS_continuous), nodes, '|RHS_{continuous} - RHS_{discrete}| / |RHS_{continuous}'); 
+
 %% We want zero divergence. But our matrix does not give us that...
 %% If we enforce this then the divergence is 0, but the solution is not
 %% what we manufacture. Something missing here....
