@@ -57,9 +57,9 @@ r = sqrt(nodes(:,1).^2 + nodes(:,2).^2 + nodes(:,3).^2);
 
 %% Project the spherical harmonics to directions U,V,W
 U_continuous(u_indices,1) = cart_sph32_mathematica;
-U_continuous(v_indices,1) = sph(l2,m2,th,lam); 
-U_continuous(w_indices,1) = sph32_plus_sph2020;
-U_continuous(p_indices,1) = zeros(N,1);
+U_continuous(v_indices,1) = cart_sph32_mathematica; %sph(l2,m2,th,lam); 
+U_continuous(w_indices,1) = cart_sph32_mathematica; %sph32_plus_sph2020;
+U_continuous(p_indices,1) = cart_sph32_mathematica; %zeros(N,1);
 % Tie down a variable const in the singular system
 U_continuous(const_indices,1) = 0;
 
@@ -68,13 +68,12 @@ U_continuous(const_indices,1) = 0;
 %% manufacture a solution with the given exact solution
 RHS_discrete = LHS * U_continuous; 
 
-approx_ddx = RBFFD_WEIGHTS.ysfc * sph(l1,m1,th,lam);
+approx_pdx = RBFFD_WEIGHTS.xsfc * sph(l1,m1,th,lam);
 
-RHS_continuous(u_indices,1) = -Lapl_sph32_mathematica;
-RHS_continuous(v_indices,1) = approx_ddx; 
-%-(-l2*(l2+1)) * sph(l2,m2,th,lam);
-RHS_continuous(w_indices,1) = pdy_sph32_mathematica; %-Lapl_sph32_plus_sph2020;
-RHS_continuous(p_indices,1) = abs(approx_ddx - pdy_sph32_mathematica); %zeros(N,1) ;
+RHS_continuous(u_indices,1) = -Lapl_sph32_mathematica +pdx_sph32_mathematica ;
+RHS_continuous(v_indices,1) = -Lapl_sph32_mathematica +pdy_sph32_mathematica ; %-(-l2*(l2+1)) * sph(l2,m2,th,lam);
+RHS_continuous(w_indices,1) = -Lapl_sph32_mathematica +pdz_sph32_mathematica ; %-Lapl_sph32_plus_sph2020;
+RHS_continuous(p_indices,1) = pdx_sph32_mathematica + pdy_sph32_mathematica + pdz_sph32_mathematica; %zeros(N,1) ;
 RHS_continuous(const_indices,1) = 0;
 
 norm(RHS_continuous - RHS_discrete,1)
@@ -90,6 +89,7 @@ plotScalarfield(RBFFD_WEIGHTS.lsfc * sph32_mathematica,nodes,'RBFFD WEIGHTS.lsfc
 figure(5)
 plotScalarfield(abs(Lapl_sph32_mathematica - (RBFFD_WEIGHTS.lsfc * sph32_mathematica)),nodes,'Abs(Lapl_{Mathematica} - RBFFD WEIGHTS.lsfc * sph32_mathematica');
 end
+if 0
 figure(6)
 plotVectorComponents(RHS_discrete, nodes, 'Discrete RHS'); 
 figure(7)
@@ -101,11 +101,7 @@ plotVectorComponents(abs(RHS_continuous-RHS_discrete), nodes, '|RHS_{continuous}
 figure(10)
 plotVectorComponents(abs(RHS_continuous-RHS_discrete)./abs(RHS_continuous), nodes, '|RHS_{continuous} - RHS_{discrete}| / |RHS_{continuous}'); 
 
-%% We want zero divergence. But our matrix does not give us that...
-%% If we enforce this then the divergence is 0, but the solution is not
-%% what we manufacture. Something missing here....
-%RHS(p_indices,1) = 0; 
-%RHS(const_indices,1) = 0;
+end
 
 end
 

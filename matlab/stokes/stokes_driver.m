@@ -1,18 +1,19 @@
 %function [] = driver()
 %% Build a differentiation matrix, test hyperviscosity and run the vortex
 %% roll PDE.
+clear all;
 addpath('../kdtree/')
 
-output_dir = './figures/N1024_31/';
+output_dir = './figs/N1024_101/';
 fprintf('Making directory: %s\n', output_dir);
 mkdir(output_dir); 
 
 constantViscosity = 1; 
 
 %fdsize = 17; c1 = 0.026; c2 = 0.08;  hv_k = 2; hv_gamma = 8;
-fdsize = 31; c1 = 0.035; c2 = 0.1 ; hv_k = 4; hv_gamma = 800;
+%fdsize = 31; c1 = 0.035; c2 = 0.1 ; hv_k = 4; hv_gamma = 800;
 %fdsize = 50; c1 = 0.044; c2 = 0.14; hv_k = 4; hv_gamma = 145;
-%fdsize = 101;c1 = 0.058; c2 = 0.16;  hv_k = 4; hv_gamma = 40;
+fdsize = 101;c1 = 0.058; c2 = 0.16;  hv_k = 4; hv_gamma = 40;
 
 % Switch Hyperviscosity ON (1) and OFF (0)
 useHV = 0;
@@ -106,6 +107,15 @@ cmax = max(RHS(:));
 hhh=figure('visible', 'off') ;
 plotVectorComponents(RHS, nodes, 'RHS (F)',cmin,cmax); 
 figFileName=[output_dir,'RHS'];
+fprintf('Printing figure: %s\n',figFileName);
+%print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+close(hhh);
+
+hhh=figure('visible', 'off');
+RHS_abs_err = abs(RHS_continuous-RHS_discrete);
+plotVectorComponents(RHS_abs_err, nodes, 'RHS Abs Error (|RHS_{continuous}-RHS_{discrete}|)'); 
+figFileName=[output_dir,'RHS_AbsError'];
 fprintf('Printing figure: %s\n',figFileName);
 %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
