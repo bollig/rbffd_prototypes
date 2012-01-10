@@ -34,7 +34,12 @@ Lapl_sph32_plus_sph1515 = -3 * sqrt(105/pi).*cos(2*Pphi).*cos(Ttheta).*sin(Tthet
 Lapl_cart_sph32_mathematica = (3.*sqrt(105./pi).*(-Xx.^2 + Yy.^2).*Zz)./(Xx.^2 + Yy.^2 + Zz.^2).^2.5;
 % This laplacian uses the explicit projection: 
 ProjLapl_cart_sph32 = (sqrt(105/pi).*(Xx - Yy).*(Xx + Yy).*Zz.*(Xx.^6 + Yy.^2.*(-6 + Yy.^2).*(2 + Yy.^2) - 4.*(3 - 10.*Yy.^2 + 4.*Yy.^4).*Zz.^2 - (16 + 11.*Yy.^2).*Zz.^4 + 6.*Zz.^6 - Xx.^4.*(4 + 21.*Yy.^2 + 16.*Zz.^2) - Xx.^2.*(12 - 52.*Yy.^2 + 21.*Yy.^4 + 8.*(-5 + 7.*Yy.^2).*Zz.^2 + 11.*Zz.^4)))./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^3.5);
-ddx_sph32_mathematica = -(sqrt(105./pi).*Xx.*Zz.*(Xx.^2 - 5.*Yy.^2 - 2.*Zz.^2))./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^2.5);
+
+%% These are from Mathematica: {pdx,pdy,pdz} = P.Grad[sphFullCart[3, 2], Cartesian] // FullSimplify
+pdx_sph32_mathematica = -(sqrt(105./pi).*Xx.*Zz.*(Xx.^2 - 5.*Yy.^2 - 2.*Zz.^2))./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^2.5);
+pdy_sph32_mathematica = (sqrt(105/pi).*Yy.*Zz.*(-5.*Xx.^2 + Yy.^2 - 2*Zz.^2))./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^2.5);
+pdz_sph32_mathematica = (sqrt(105/pi).*(Xx - Yy).*(Xx + Yy).*(Xx.^2 + Yy.^2 - 2*Zz.^2))./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^2.5);
+
 
 % Get these from SphericalHarmonic_Laplacians_For_Matlab.nb
 sph32_plus_sph2020 = (sqrt(105/pi) .* cos(2*Pphi) .* cos(Ttheta) .* sin(Ttheta).^2 ) ./ 4. + (3*sqrt(156991880045/(2.*pi)) .* cos(20*Pphi) .* sin(Ttheta).^20) ./ 524288.;
@@ -63,13 +68,13 @@ U_continuous(const_indices,1) = 0;
 %% manufacture a solution with the given exact solution
 RHS_discrete = LHS * U_continuous; 
 
-approx_ddx = RBFFD_WEIGHTS.xsfc * sph(l1,m1,th,lam);
+approx_ddx = RBFFD_WEIGHTS.ysfc * sph(l1,m1,th,lam);
 
 RHS_continuous(u_indices,1) = -Lapl_sph32_mathematica;
 RHS_continuous(v_indices,1) = approx_ddx; 
 %-(-l2*(l2+1)) * sph(l2,m2,th,lam);
-RHS_continuous(w_indices,1) = ddx_sph32_mathematica; %-Lapl_sph32_plus_sph2020;
-RHS_continuous(p_indices,1) = abs(approx_ddx + ddx_sph32_mathematica); %zeros(N,1) ;
+RHS_continuous(w_indices,1) = pdy_sph32_mathematica; %-Lapl_sph32_plus_sph2020;
+RHS_continuous(p_indices,1) = abs(approx_ddx - pdy_sph32_mathematica); %zeros(N,1) ;
 RHS_continuous(const_indices,1) = 0;
 
 norm(RHS_continuous - RHS_discrete,1)
@@ -89,7 +94,6 @@ figure(6)
 plotVectorComponents(RHS_discrete, nodes, 'Discrete RHS'); 
 figure(7)
 plotVectorComponents(RHS_continuous, nodes, 'Continuous RHS'); 
-return
 figure(8)
 plotVectorComponents(U_continuous, nodes, 'Continuous U'); 
 figure(9)

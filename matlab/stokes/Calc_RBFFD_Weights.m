@@ -175,7 +175,7 @@ for j=1:N
                 X = nodes(imat(1),:);
                 xTx_k = X_k * X'; 
                 % We seek: (x_k - x * (X'X_k)) {See handout}
-                xdv = X_k(:,1) - X(:,1).*xTx_k; 
+                xdv = X(:,1).*xTx_k - X_k(:,1); 
                 B(1:n,windx) = xdv .* rbf.Dphi_Dr_times_r_inv(ep, rdv);
             case 'ysfc'
                 % Same as X but we project the operator following Flyer,
@@ -186,7 +186,7 @@ for j=1:N
                 X = nodes(imat(1),:);
                 xTx_k = X_k * X';
                 % We seek: (y_k - y * (X'X_k)) {See handout}
-                ydv = X_k(:,2) - X(:,2).*xTx_k;
+                ydv = X(:,2).*xTx_k - X_k(:,2);
                 B(1:n,windx) = ydv .* rbf.Dphi_Dr_times_r_inv(ep, rdv);
             case 'zsfc'
                 % Same as X but we project the operator following Flyer,
@@ -197,7 +197,7 @@ for j=1:N
                 X = nodes(imat(1),:);
                 xTx_k = X_k * X';
                 % We seek: (z_k - z * (X'X_k)) {See handout}
-                xdv = X_k(:,3) - X(:,3).*xTx_k;
+                xdv = X(:,3).*xTx_k - X_k(:,3);
                 B(1:n,windx) = xdv .* rbf.Dphi_Dr_times_r_inv(ep, rdv);
             case 'y'
                 % Y separation
