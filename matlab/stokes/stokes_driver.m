@@ -4,11 +4,11 @@
 clear all;
 addpath('../kdtree/')
 
-output_dir = './figs/N1024_101/';
+output_dir = './figs/rand_eta_N1024_101/';
 fprintf('Making directory: %s\n', output_dir);
 mkdir(output_dir); 
 
-constantViscosity = 1; 
+constantViscosity = 0; 
 
 %fdsize = 17; c1 = 0.026; c2 = 0.08;  hv_k = 2; hv_gamma = 8;
 %fdsize = 31; c1 = 0.035; c2 = 0.1 ; hv_k = 4; hv_gamma = 800;

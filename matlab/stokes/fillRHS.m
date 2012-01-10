@@ -1,4 +1,4 @@
-function [RHS_continuous, RHS_discrete, U_continuous] = fillRHS(nodes, LHS, t)
+function [RHS_continuous, RHS_discrete, U_continuous] = fillRHS(nodes, LHS, constantViscosity, eta, t)
 global RBFFD_WEIGHTS;
 
 %% TODO: need an initial temperature profile to get the RHS.
@@ -68,11 +68,35 @@ U_continuous(const_indices,1) = 0;
 %% manufacture a solution with the given exact solution
 RHS_discrete = LHS * U_continuous; 
 
-approx_pdx = RBFFD_WEIGHTS.xsfc * sph(l1,m1,th,lam);
+%approx_pdx = RBFFD_WEIGHTS.xsfc * sph(l1,m1,th,lam);
 
+if constantViscosity
 RHS_continuous(u_indices,1) = -Lapl_sph32_mathematica +pdx_sph32_mathematica ;
 RHS_continuous(v_indices,1) = -Lapl_sph32_mathematica +pdy_sph32_mathematica ; %-(-l2*(l2+1)) * sph(l2,m2,th,lam);
 RHS_continuous(w_indices,1) = -Lapl_sph32_mathematica +pdz_sph32_mathematica ; %-Lapl_sph32_plus_sph2020;
+else 
+eta = cart_sph32_mathematica; 
+dEta_dx = pdx_sph32_mathematica; 
+dEta_dy = pdy_sph32_mathematica; 
+dEta_dz = pdz_sph32_mathematica; 
+
+%RHS_continuous(u_indices,1) = -(2 * diag(dEta_dx) * pdx_sph32_mathematica + diag(dEta_dy) * pdy_sph32_mathematica + diag(dEta_dz) * pdz_sph32_mathematica) - diag(eta) * Lapl_sph32_mathematica; 
+RHS_continuous(u_indices,1) = -(2 * dEta_dx .* pdx_sph32_mathematica + dEta_dy .* pdy_sph32_mathematica + dEta_dz .* pdz_sph32_mathematica) - eta .* Lapl_sph32_mathematica; 
+RHS_continuous(u_indices,1) = RHS_continuous(u_indices,1) - dEta_dx .* pdy_sph32_mathematica; 
+RHS_continuous(u_indices,1) = RHS_continuous(u_indices,1) - dEta_dx .* pdz_sph32_mathematica; 
+RHS_continuous(u_indices,1) = RHS_continuous(u_indices,1) + pdx_sph32_mathematica; 
+
+RHS_continuous(v_indices,1) = - dEta_dy .* pdx_sph32_mathematica; 
+RHS_continuous(v_indices,1) = RHS_continuous(v_indices,1) - (dEta_dx .* pdx_sph32_mathematica + 2 * dEta_dy .* pdy_sph32_mathematica + dEta_dz .* pdz_sph32_mathematica) - eta .* Lapl_sph32_mathematica; 
+RHS_continuous(v_indices,1) = RHS_continuous(v_indices,1) - dEta_dy .* pdz_sph32_mathematica; 
+RHS_continuous(v_indices,1) = RHS_continuous(v_indices,1) + pdy_sph32_mathematica; 
+
+RHS_continuous(w_indices,1) = - dEta_dz .* pdx_sph32_mathematica; 
+RHS_continuous(w_indices,1) = RHS_continuous(w_indices,1) - dEta_dz .* pdy_sph32_mathematica; 
+RHS_continuous(w_indices,1) = RHS_continuous(w_indices,1) - (dEta_dx .* pdx_sph32_mathematica + dEta_dy .* pdy_sph32_mathematica + 2*dEta_dz .* pdz_sph32_mathematica) - eta .* Lapl_sph32_mathematica; 
+RHS_continuous(w_indices,1) = RHS_continuous(w_indices,1) + pdz_sph32_mathematica; 
+
+end
 RHS_continuous(p_indices,1) = pdx_sph32_mathematica + pdy_sph32_mathematica + pdz_sph32_mathematica; %zeros(N,1) ;
 RHS_continuous(const_indices,1) = 0;
 
@@ -89,7 +113,7 @@ plotScalarfield(RBFFD_WEIGHTS.lsfc * sph32_mathematica,nodes,'RBFFD WEIGHTS.lsfc
 figure(5)
 plotScalarfield(abs(Lapl_sph32_mathematica - (RBFFD_WEIGHTS.lsfc * sph32_mathematica)),nodes,'Abs(Lapl_{Mathematica} - RBFFD WEIGHTS.lsfc * sph32_mathematica');
 end
-if 0
+if 1
 figure(6)
 plotVectorComponents(RHS_discrete, nodes, 'Discrete RHS'); 
 figure(7)

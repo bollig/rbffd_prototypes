@@ -1,4 +1,4 @@
-function [LHS, DIV_operator] = stokes(nodes, N, n, useHV, constantViscosity)
+function [LHS, DIV_operator, eta] = stokes(nodes, N, n, useHV, constantViscosity)
 %% Fills a large sparse matrix with 4x4 blocks. NOTE: it does this by
 %% COLUMN to make memory access more efficient in MATLAB. 
 
@@ -20,9 +20,25 @@ dEta_dx = zeros(N,1);
 dEta_dy = zeros(N,1);
 dEta_dz = zeros(N,1);
 else 
-dEta_dx = RBFFD_WEIGHTS.xsfc * eta; 
-dEta_dy = RBFFD_WEIGHTS.ysfc * eta; 
-dEta_dz = RBFFD_WEIGHTS.zsfc * eta; 
+
+Xx = nodes(:,1); 
+Yy = nodes(:,2); 
+Zz = nodes(:,3); 
+
+cart_sph32_mathematica = (sqrt(105/pi).*(Xx - Yy).*(Xx + Yy).*Zz)./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^1.5);    
+%% These are from Mathematica: {pdx,pdy,pdz} = P.Grad[sphFullCart[3, 2], Cartesian] // FullSimplify
+pdx_sph32_mathematica = -(sqrt(105./pi).*Xx.*Zz.*(Xx.^2 - 5.*Yy.^2 - 2.*Zz.^2))./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^2.5);
+pdy_sph32_mathematica = (sqrt(105/pi).*Yy.*Zz.*(-5.*Xx.^2 + Yy.^2 - 2*Zz.^2))./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^2.5);
+pdz_sph32_mathematica = (sqrt(105/pi).*(Xx - Yy).*(Xx + Yy).*(Xx.^2 + Yy.^2 - 2*Zz.^2))./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^2.5);
+
+eta = cart_sph32_mathematica; 
+dEta_dx = pdx_sph32_mathematica; 
+dEta_dy = pdy_sph32_mathematica; 
+dEta_dz = pdz_sph32_mathematica; 
+
+%dEta_dx = RBFFD_WEIGHTS.xsfc * eta; 
+%dEta_dy = RBFFD_WEIGHTS.ysfc * eta; 
+%dEta_dz = RBFFD_WEIGHTS.zsfc * eta; 
 end
 
 %% %%%%%%  Column 1 %%%%%%%%%%%%
