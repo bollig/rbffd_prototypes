@@ -24,6 +24,9 @@ function[weights_available nodes] = Calc_RBFFD_Weights(which, N, nodes, n, ep, h
 %       'xsfc'      => d/dx projected onto surface of the sphere
 %       'ysfc'      => d/dy projected onto surface of the sphere
 %       'zsfc'      => d/dz projected onto surface of the sphere
+%       'xsfc_alt'      => d/dx projected onto surface of the sphere using linear combination of computed of x,y,z Weights
+%       'ysfc_alt'      => d/dy projected onto surface of the sphere using linear combination of computed of x,y,z Weights
+%       'zsfc_alt'      => d/dz projected onto surface of the sphere using linear combination of computed of x,y,z Weights
 %       'x'         => d/dx (Cartesian Coordinates)
 %       'y'         => d/dy
 %       'z'         => d/dz
@@ -46,7 +49,7 @@ function[weights_available nodes] = Calc_RBFFD_Weights(which, N, nodes, n, ep, h
 global RBFFD_WEIGHTS;
 
 % Initialize all as unavailable (we'll flip these later)
-weights_available = struct('lambda', 0, 'theta', 0, 'lsfc', 0, 'hv', 0, 'x', 0, 'y', 0, 'z', 0, 'xsfc', 0, 'ysfc', 0, 'zsfc', 0);
+weights_available = struct('lambda', 0, 'theta', 0, 'lsfc', 0, 'hv', 0, 'x', 0, 'y', 0, 'z', 0, 'xsfc', 0, 'ysfc', 0, 'zsfc', 0, 'xsfc_alt', 0, 'ysfc_alt', 0, 'zsfc_alt', 0);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Gaussian RBF and its derivatives: 
@@ -88,12 +91,12 @@ B = zeros(n+1,1);
 
 root = kdtree_build(nodes);
 
-foundSFCOperators = cellfun(@(x) ~isempty(strfind(x,'xsfc'))|~isempty(strfind(x,'ysfc'))|~isempty(strfind(x,'zsfc')),which);
+foundSFCOperators = cellfun(@(x) ~isempty(strfind(x,'xsfc_alt'))|~isempty(strfind(x,'ysfc_alt'))|~isempty(strfind(x,'zsfc_alt')),which);
 computeSFCOperators = (sum(foundSFCOperators) > 0);
 if computeSFCOperators
-    willXCompute = sum(cellfun(@(x) ~isempty(strfind(x,'x'))&isempty(strfind(x,'xsfc')),which));
-    willYCompute = sum(cellfun(@(x) ~isempty(strfind(x,'y'))&isempty(strfind(x,'ysfc')),which));
-    willZCompute = sum(cellfun(@(x) ~isempty(strfind(x,'z'))&isempty(strfind(x,'zsfc')),which));
+    willXCompute = sum(cellfun(@(x) ~isempty(strfind(x,'x'))&isempty(strfind(x,'xsfc_alt')),which));
+    willYCompute = sum(cellfun(@(x) ~isempty(strfind(x,'y'))&isempty(strfind(x,'ysfc_alt')),which));
+    willZCompute = sum(cellfun(@(x) ~isempty(strfind(x,'z'))&isempty(strfind(x,'zsfc_alt')),which));
     
     % IF it wont compute then we need to call a sub compute
     if ~willXCompute
@@ -163,6 +166,39 @@ for j=1:N
                 % X separation
                 xdv = nodes(imat,1) - nodes(imat(1),1);
                 B(1:n,windx) = rbf.DphiDx(ep, rdv, xdv);
+            case 'xsfc'
+                % Same as X but we project the operator following Flyer,
+                % Wright 2009 (A Radial Basis Function Method for the
+                % Shallow Water Equations on a Sphere)
+                % This line is (X'X_k)' = (X_k'X)
+                X_k = nodes(imat,:); 
+                X = nodes(imat(1),:);
+                xTx_k = X_k * X'; 
+                % We seek: (x_k - x * (X'X_k)) {See handout}
+                xdv = X_k(:,1) - X(:,1).*xTx_k; 
+                B(1:n,windx) = xdv .* rbf.Dphi_Dr_times_r_inv(ep, rdv);
+            case 'ysfc'
+                % Same as X but we project the operator following Flyer,
+                % Wright 2009 (A Radial Basis Function Method for the
+                % Shallow Water Equations on a Sphere)
+                % This line is (X'X_k)' = (X_k'X)
+                X_k = nodes(imat,:);
+                X = nodes(imat(1),:);
+                xTx_k = X_k * X';
+                % We seek: (y_k - y * (X'X_k)) {See handout}
+                ydv = X_k(:,2) - X(:,2).*xTx_k;
+                B(1:n,windx) = ydv .* rbf.Dphi_Dr_times_r_inv(ep, rdv);
+            case 'zsfc'
+                % Same as X but we project the operator following Flyer,
+                % Wright 2009 (A Radial Basis Function Method for the
+                % Shallow Water Equations on a Sphere)
+                % This line is (X'X_k)' = (X_k'X)
+                X_k = nodes(imat,:);
+                X = nodes(imat(1),:);
+                xTx_k = X_k * X';
+                % We seek: (z_k - z * (X'X_k)) {See handout}
+                xdv = X_k(:,3) - X(:,3).*xTx_k;
+                B(1:n,windx) = xdv .* rbf.Dphi_Dr_times_r_inv(ep, rdv);
             case 'y'
                 % Y separation
                 xdv = nodes(imat,2) - nodes(imat(1),1);
@@ -215,17 +251,17 @@ for j=1:N
         zz = nodes(j,3); 
         
         % d/dx projected to sphere
-        weights_temp(1:n,j,length(which)+1) = (1-xx^2)*weights(1:n,foundX) + (-xx*yy) * weights(1:n,foundY) + (-xx*zz) * weights(1:n,foundZ);
+        weights_temp(1:n,j,length(which)+1) = (1-xx.^2)*weights(1:n,foundX) + (-xx.*yy) * weights(1:n,foundY) + (-xx.*zz) * weights(1:n,foundZ);
         % d/dy projected to sphere
-        weights_temp(1:n,j,length(which)+2) = (-xx*yy)*weights(1:n,foundX) + (1-yy^2)* weights(1:n,foundY) + (-yy*zz) * weights(1:n,foundZ);
+        weights_temp(1:n,j,length(which)+2) = (-xx.*yy)*weights(1:n,foundX) + (1-yy.^2)* weights(1:n,foundY) + (-yy.*zz) * weights(1:n,foundZ);
         % d/dz projected to sphere
-        weights_temp(1:n,j,length(which)+3) = (-xx*zz)*weights(1:n,foundX) + (-yy*zz) * weights(1:n,foundY) + (1-zz^2) * weights(1:n,foundZ);
+        weights_temp(1:n,j,length(which)+3) = (-xx.*zz)*weights(1:n,foundX) + (-yy.*zz) * weights(1:n,foundY) + (1-zz.^2) * weights(1:n,foundZ);
     end
 end
 
 % Add the operators again so we store them globally
 if computeSFCOperators
-which = [which 'xsfc', 'ysfc', 'zsfc'];     
+which = [which 'xsfc_alt', 'ysfc_alt', 'zsfc_alt'];     
 end
 
 windx=0;
