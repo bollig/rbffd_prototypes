@@ -1,19 +1,15 @@
-%function [] = driver()
 %% Build a differentiation matrix, test hyperviscosity and run the vortex
 %% roll PDE.
 clear all;
 addpath('../kdtree/')
 
-output_dir = './figs/rand_eta_N1024_101/';
-fprintf('Making directory: %s\n', output_dir);
-mkdir(output_dir); 
 
 constantViscosity = 0; 
 
 %fdsize = 17; c1 = 0.026; c2 = 0.08;  hv_k = 2; hv_gamma = 8;
-%fdsize = 31; c1 = 0.035; c2 = 0.1 ; hv_k = 4; hv_gamma = 800;
+fdsize = 31; c1 = 0.035; c2 = 0.1 ; hv_k = 4; hv_gamma = 800;
 %fdsize = 50; c1 = 0.044; c2 = 0.14; hv_k = 4; hv_gamma = 145;
-fdsize = 101;c1 = 0.058; c2 = 0.16;  hv_k = 4; hv_gamma = 40;
+%fdsize = 101;c1 = 0.058; c2 = 0.16;  hv_k = 4; hv_gamma = 40;
 
 % Switch Hyperviscosity ON (1) and OFF (0)
 useHV = 0;
@@ -30,13 +26,32 @@ nodes = load('~/GRIDS/md/md031.01024');
 %nodes = load('~/GRIDS/md/md059.03600'); 
 %nodes = load('~/GRIDS/md/md063.04096');
 %nodes = load('~/GRIDS/md/md079.06400');
+%nodes = load('~/GRIDS/md/md089.08100'); 
 %nodes = load('~/GRIDS/md/md099.10000');
 %nodes = load('~/GRIDS/md/md122.15129');
 %nodes = load('~/GRIDS/md/md159.25600');
 
 nodes=nodes(:,1:3);
 N = length(nodes);
+
+output_dir = sprintf('./handout/sph32_sph105_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
+fprintf('Making directory: %s\n', output_dir);
+mkdir(output_dir); 
+
+diary([output_dir,'runlog.txt'])
+diary on; 
+
+%% Simple profiling
+profile on -timer 'real'
+
+
 ep = c1 * sqrt(N) - c2
+
+% An attempt at determining epsilon based on condition number
+kappa = 1e13; 
+beta = (1/-(2 * floor( ( sqrt(8*fdsize - 7) - 1) / 2)));
+ep_alt = kappa^beta;
+
 
 % We declare this to be global so we can use the weights produced in the
 % following subroutine. 
@@ -62,7 +77,7 @@ fprintf('Calculating weights (N=%d, n=%d, ep=%f, hv_k=%d, hv_gamma=%e)\n', N, fd
 
 % plotSolution(RHS, RHS, nodes, 0);
 fprintf('Filling LHS Collocation Matrix\n'); 
-[LHS, DIV_operator] = stokes(nodes, N, fdsize, useHV, constantViscosity);
+[LHS, DIV_operator, eta] = stokes(nodes, N, fdsize, useHV, constantViscosity);
  
 hhh=figure('visible', 'off');
 % resize the window to most of my laptop screen
@@ -97,7 +112,7 @@ print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
 %% Test 2: Using a Spherical Harmonic on the RHS, lets get the steady state
 %% velocity
 fprintf('Filling RHS Vector\n'); 
-[RHS_continuous, RHS_discrete, U_exact] = fillRHS(nodes, LHS, 0);
+[RHS_continuous, RHS_discrete, U_exact] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
 
 RHS = RHS_continuous; 
 
@@ -123,7 +138,7 @@ close(hhh);
 
 %% SOLVE SYSTEM USING LU with Pivoting
 fprintf('Solving Lu=F\n'); 
-U = LHS \ RHS; 
+U = solve_system(LHS, RHS); 
 
 fprintf('Done Solving.\n'); 
 
@@ -212,32 +227,54 @@ clear rec_rel_err;
 
 %% Test the divergence
 div_U = DIV_operator * U; 
+div_U_exact = DIV_operator * U_exact; 
 
 div_l1_norm = norm(div_U, 1)
 div_l2_norm = norm(div_U, 2)
 div_linf_norm = norm(div_U, inf)
 
 hhh=figure('visible', 'off');
-plotScalarfield(div_U, nodes, 'Div( U )'); 
-figFileName=[output_dir,'Div_U'];
+plotScalarfield(div_U, nodes, 'Div_{op} * U_{computed} '); 
+figFileName=[output_dir,'Div_U_computed'];
 fprintf('Printing figure: %s\n',figFileName);
 %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
 close(hhh);
+
+hhh=figure('visible', 'off');
+plotScalarfield(div_U_exact, nodes, 'Div_{op} * U_{exact} '); 
+figFileName=[output_dir,'Div_U_exact'];
+fprintf('Printing figure: %s\n',figFileName);
+%print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+close(hhh);
+
 
 div_m_P_l1_norm = norm(div_U-RHS(3*N+1:4*N), 1)
 div_m_P_l2_norm = norm(div_U-RHS(3*N+1:4*N), 2)
 div_m_P_linf_norm = norm(div_U-RHS(3*N+1:4*N), inf)
 
 hhh=figure('visible', 'off');
-plotScalarfield(div_U-RHS(3*N+1:4*N), nodes, 'Div( U ) - RHS_P'); 
-figFileName=[output_dir,'Div_U_m_P'];
+plotScalarfield(div_U-RHS(3*N+1:4*N), nodes, 'Div_{op} * U_{computed} - RHS_P'); 
+figFileName=[output_dir,'Div_U_computed_minus_P'];
 fprintf('Printing figure: %s\n',figFileName);
 %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
 close(hhh);
 
+hhh=figure('visible', 'off');
+plotScalarfield(div_U_exact-RHS(3*N+1:4*N), nodes, 'Div_{op} * U_{exact} - RHS_P'); 
+figFileName=[output_dir,'Div_U_exact_minus_P'];
+fprintf('Printing figure: %s\n',figFileName);
+%print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+close(hhh);
 
+profile off 
+
+profsave(profile('info'), [output_dir, 'profiler_output']);
+
+diary off; 
 
 clear div_U; 
 

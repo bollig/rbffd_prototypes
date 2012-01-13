@@ -32,13 +32,17 @@ pdy_sph32_mathematica = (sqrt(105/pi).*Yy.*Zz.*(-5.*Xx.^2 + Yy.^2 - 2*Zz.^2))./(
 pdz_sph32_mathematica = (sqrt(105/pi).*(Xx - Yy).*(Xx + Yy).*(Xx.^2 + Yy.^2 - 2*Zz.^2))./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^2.5);
 
 eta = cart_sph32_mathematica; 
+
+if 1
 dEta_dx = pdx_sph32_mathematica; 
 dEta_dy = pdy_sph32_mathematica; 
 dEta_dz = pdz_sph32_mathematica; 
+else 
+dEta_dx = RBFFD_WEIGHTS.xsfc * eta; 
+dEta_dy = RBFFD_WEIGHTS.ysfc * eta; 
+dEta_dz = RBFFD_WEIGHTS.zsfc * eta; 
+end 
 
-%dEta_dx = RBFFD_WEIGHTS.xsfc * eta; 
-%dEta_dy = RBFFD_WEIGHTS.ysfc * eta; 
-%dEta_dz = RBFFD_WEIGHTS.zsfc * eta; 
 end
 
 %% %%%%%%  Column 1 %%%%%%%%%%%%
@@ -142,20 +146,32 @@ ind = (1:N)+3*N;
 LHS(ind, 4*N+4) = 1; 
 LHS(4*N+4, ind) = 1; 
 else 
-    %% DOeSNT work. it was an attempt to specify one point without
-    %% reworking all stencils
-LHS(3*N+1,:) = 0;
-LHS(3*N+1,3) = 1;
-ind = (1:N)+3*N; 
+% This case is too ill-conditioned.
+ind = (1:N)+0*N;
+% Right
 LHS(ind, 4*N+1) = 1; 
-LHS(4*N+1, ind) = 1;     
+% Bottom
+LHS(4*N+1, 4*N+1) = 1; 
+
+ind = (1:N)+1*N; 
+LHS(ind, 4*N+2) = 1; 
+LHS(4*N+2, 4*N+2) = 1; 
+
+ind = (1:N)+2*N; 
+LHS(ind, 4*N+3) = 1; 
+LHS(4*N+3, 4*N+3) = 1; 
+
+ind = (1:N)+3*N; 
+LHS(ind, 4*N+4) = 1; 
+LHS(4*N+4, 4*N+4) = 1; 
 end
 
 % 
-% 
+% Enable this to see nullspace of our LHS
+if 0
 [Usvd, Ssvd, Vsvd, flagSVD] = svds(LHS,10,0);
 sing_value_indices = find(max(Ssvd) < 1e-6)
-
+end
 
 DIV_operator = LHS(3*N+1:4*N,1:4*N+4);
 
