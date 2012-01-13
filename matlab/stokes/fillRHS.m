@@ -169,7 +169,7 @@ RHS_continuous(u_indices,1) = RHS_continuous(u_indices,1) - dEta_dz .* pdx_w;
 RHS_continuous(u_indices,1) = RHS_continuous(u_indices,1) + pdx_p;
 
 RHS_continuous(v_indices,1) = - dEta_dx .* pdy_u; 
-RHS_continuous(v_indices,1) = RHS_continuous(v_indices,1) - (dEta_dx .* pdx_v + 2 * dEta_dy .* pdy_v + dEta_dz .* pdz_v) - eta .* Lapl_sph32_mathematica; 
+RHS_continuous(v_indices,1) = RHS_continuous(v_indices,1) - (dEta_dx .* pdx_v + 2 * dEta_dy .* pdy_v + dEta_dz .* pdz_v) - eta .* Lapl_v; 
 RHS_continuous(v_indices,1) = RHS_continuous(v_indices,1) - dEta_dz .* pdy_w; 
 RHS_continuous(v_indices,1) = RHS_continuous(v_indices,1) + pdy_p; 
 
