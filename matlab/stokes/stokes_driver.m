@@ -1,8 +1,9 @@
 %% Build a differentiation matrix, test hyperviscosity and run the vortex
 %% roll PDE.
-clear all;
+%clear all;
 addpath('../kdtree/')
 
+[DoPar] = InitParallel()
 
 constantViscosity = 0; 
 
@@ -63,7 +64,7 @@ global RBFFD_WEIGHTS;
 % for cache optimality. 
 fprintf('Calculating weights (N=%d, n=%d, ep=%f, hv_k=%d, hv_gamma=%e)\n', N, fdsize, ep, hv_k, hv_gamma); 
 tic
-[weights_available, nodes] = Calc_RBFFD_Weights({'lsfc', 'xsfc', 'ysfc', 'zsfc'}, N, nodes, fdsize, ep, hv_k);
+[weights_available, nodes] = Calc_RBFFD_Weights(DoPar, {'lsfc', 'xsfc', 'ysfc', 'zsfc'}, N, nodes, fdsize, ep, hv_k);
 toc
 
 % NO need for hyperviscosity at this point
@@ -282,6 +283,8 @@ clear div_U;
 
 % Force all hidden figures to close: 
 close all hidden;
+
+DoPar = EndParallel(); 
 
 %% Test 3: Manufacture a solution with uniform velocity in one direction
 %% and try to recover it
