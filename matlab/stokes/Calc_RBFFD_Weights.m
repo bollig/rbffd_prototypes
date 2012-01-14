@@ -84,8 +84,8 @@ A = ones(n+1,n+1); A(end,end) = 0;
 % RHS
 B = zeros(n+1,1);
 
-root = kdtree_build(nodes);
-
+%root = kdtree_build(nodes);
+root = kdtreesearcher(nodes,'distance','euclidean');
 
 weights_temp = zeros(n*length(which),N);
 
@@ -109,17 +109,18 @@ else
 end
 
 
-for j=1:N
-    % Use KDTREE (BUGFIX: returns the nearest neighbors in reverse order)
-    idx(:,j) = kdtree_k_nearest_neighbors(root, nodes(j,:), n);
-    idx(:,j) = idx(n:-1:1,j);
-end
+% for j=1:N
+%     % Use KDTREE (BUGFIX: returns the nearest neighbors in reverse order)
+%     idx(:,j) = kdtree_k_nearest_neighbors(root, nodes(j,:), n);
+%     idx(:,j) = idx(n:-1:1,j);
+% end
 parfor j=1:N
+    idx = knnsearch(root,nodes(j,:),'k',n);
     
     % Euclidean distance matrix
     %dist = distmat(nodes(idx,:)); %sqrt(max(0,2*(1-nodes(idx,1)*nodes(idx,1).'-nodes(idx,2)*nodes(idx,2).'-nodes(idx,3)*nodes(idx,3).')));
     
-    imat = idx(1:n,j);
+    imat = idx(1:n);
     ind_i(:,j) = repmat(j,n,1);
     ind_j(:,j) = imat;
     % This is the distance matrix: sqrt(2*(1 - x'x))
@@ -133,7 +134,8 @@ parfor j=1:N
     
     % Fill multiple RHS (indexed by windx)
     windx=0;
-    B = zeros(n,size(which));
+    [m1 m2] = size(which);
+    B = zeros(n,m1);
      
     %wlength=length(which); 
     for w=which(1:end)
