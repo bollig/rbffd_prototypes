@@ -85,7 +85,8 @@ A = ones(n+1,n+1); A(end,end) = 0;
 B = zeros(n+1,1);
 
 %root = kdtree_build(nodes);
-root = kdtreesearcher(nodes,'distance','euclidean');
+
+root = KDTreeSearcher(nodes,'distance','euclidean');
 
 weights_temp = zeros(n*length(which),N);
 

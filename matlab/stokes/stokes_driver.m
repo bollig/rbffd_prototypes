@@ -25,11 +25,11 @@ dim = 2;
 %nodes = load('~/GRIDS/md/md031.01024');
 %nodes = load('~/GRIDS/md/md050.02601'); 
 %nodes = load('~/GRIDS/md/md059.03600'); 
-nodes = load('~/GRIDS/md/md063.04096');
+%nodes = load('~/GRIDS/md/md063.04096');
 %nodes = load('~/GRIDS/md/md079.06400');
 %nodes = load('~/GRIDS/md/md089.08100'); 
 %nodes = load('~/GRIDS/md/md099.10000');
-%nodes = load('~/GRIDS/md/md122.15129');
+nodes = load('~/GRIDS/md/md122.15129');
 %nodes = load('~/GRIDS/md/md159.25600');
 
 nodes=nodes(:,1:3);
