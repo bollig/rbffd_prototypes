@@ -1,12 +1,16 @@
 %% Build a differentiation matrix, test hyperviscosity and run the vortex
 %% roll PDE.
+clc;
 clear all;
+close all;
+
 addpath('../kdtree/')
+addpath('~/rbffd_gpu/scripts/')
 
 
-constantViscosity = 0; 
+constantViscosity = 1; 
 
-%fdsize = 17; c1 = 0.026; c2 = 0.08;  hv_k = 2; hv_gamma = 8;
+%fdsize = 13; c1 = 0.026; c2 = 0.08;  hv_k = 2; hv_gamma = 8;
 fdsize = 31; c1 = 0.035; c2 = 0.1 ; hv_k = 4; hv_gamma = 800;
 %fdsize = 50; c1 = 0.044; c2 = 0.14; hv_k = 4; hv_gamma = 145;
 %fdsize = 101;c1 = 0.058; c2 = 0.16;  hv_k = 4; hv_gamma = 40;
@@ -22,19 +26,20 @@ dim = 2;
 
 %nodes = load('~/GRIDS/md/md004.00025');
 %nodes = load('~/GRIDS/md/md031.01024');
+%nodes = load('~/GRIDS/md/md031.01024');
 %nodes = load('~/GRIDS/md/md050.02601'); 
 %nodes = load('~/GRIDS/md/md059.03600'); 
 %nodes = load('~/GRIDS/md/md063.04096');
 %nodes = load('~/GRIDS/md/md079.06400');
-%nodes = load('~/GRIDS/md/md089.08100'); 
+nodes = load('~/GRIDS/md/md089.08100'); 
 %nodes = load('~/GRIDS/md/md099.10000');
-nodes = load('~/GRIDS/md/md122.15129');
+%nodes = load('~/GRIDS/md/md122.15129');
 %nodes = load('~/GRIDS/md/md159.25600');
 
 nodes=nodes(:,1:3);
 N = length(nodes);
 
-output_dir = sprintf('./handout/sph32_sph105_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
+output_dir = sprintf('./precond/sph32_sph105_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
 fprintf('Making directory: %s\n', output_dir);
 mkdir(output_dir); 
 
@@ -116,14 +121,17 @@ print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
 fprintf('Filling RHS Vector\n'); 
 [RHS_continuous, RHS_discrete, U_exact] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
 
-RHS = RHS_continuous; 
-
-cmin = min(RHS(:));
-cmax = max(RHS(:));
+hhh=figure('visible', 'off') ;
+plotVectorComponents(RHS_continuous, nodes, 'RHS_{continuous} (F)'); 
+figFileName=[output_dir,'RHS'];
+fprintf('Printing figure: %s\n',figFileName);
+%print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+close(hhh);
 
 hhh=figure('visible', 'off') ;
-plotVectorComponents(RHS, nodes, 'RHS (F)',cmin,cmax); 
-figFileName=[output_dir,'RHS'];
+plotVectorComponents(RHS_discrete, nodes, 'RHS_{discrete} (F)'); 
+figFileName=[output_dir,'RHS_discrete'];
 fprintf('Printing figure: %s\n',figFileName);
 %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
@@ -138,11 +146,17 @@ fprintf('Printing figure: %s\n',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
 close(hhh);
 
+dlmwrite(sprintf('%sRHS_continuous_%d.mtx',output_dir,N),RHS_continuous); 
+dlmwrite(sprintf('%sU_exact_%d.mtx',output_dir, N),U_exact); 
+mmwrite(sprintf('%sLHS_%d.mtx',output_dir, N),LHS);
+return; 
+
 %% SOLVE SYSTEM USING LU with Pivoting
 fprintf('Solving Lu=F\n'); 
-U = solve_system(LHS, RHS); 
-
-fprintf('Done Solving.\n'); 
+tic
+U = solve_system(LHS, RHS_continuous); 
+tt = toc;
+fprintf('Done Solving.\tElapsed Time: %f seconds\n', tt); 
 
 %% Check error in solution
 hhh=figure('visible', 'off') ;
@@ -187,94 +201,97 @@ close(hhh);
 clear U_rel_err; 
 clear U_abs_err; 
 
-
-r2d2 = LHS * U; 
-
-rel_l1_err = norm(RHS-r2d2, 1)./norm(RHS,1)
-rel_l2_err = norm(RHS-r2d2, 2)./norm(RHS,2)
-rel_li_err = norm(RHS-r2d2, inf)./norm(RHS,inf)
-
-hhh=figure('visible', 'off');
-plotVectorComponents(r2d2,nodes,'Reconstructed RHS (R2 = L*U_{computed})', cmin, cmax)
-figFileName=[output_dir,'Reconstructed_RHS'];
-fprintf('Printing figure: %s\n',figFileName);
-%print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
-print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
-close(hhh);
-
-hhh=figure('visible', 'off');
-rec_abs_err = abs(RHS-r2d2);
-plotVectorComponents(rec_abs_err, nodes, 'Reconstructed Abs Error (|RHS-Reconstructed|)'); 
-figFileName=[output_dir,'Reconstructed_AbsError'];
-fprintf('Printing figure: %s\n',figFileName);
-%print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
-print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
-close(hhh);
-
-clear rec_rel_err; 
-clear r2d2;
-
-hhh=figure('visible', 'off');
-rec_rel_err = rec_abs_err ./ abs(RHS); 
-rec_rel_err(abs(RHS) < 1e-12) = rec_abs_err(abs(RHS) < 1e-12); 
-plotVectorComponents(rec_rel_err, nodes, 'Reconstructed Rel Error (|RHS-Reconstructed|/|RHS|)'); 
-figFileName=[output_dir,'Reconstructed_RelError'];
-fprintf('Printing figure: %s\n',figFileName);
-%print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
-print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
-close(hhh);
-
-clear rec_rel_err; 
+dlmwrite(sprintf('%sU_%d.mtx',output_dir, N),U); 
 
 
-%% Test the divergence
-div_U = DIV_operator * U; 
-div_U_exact = DIV_operator * U_exact; 
+% 
+% r2d2 = LHS * U; 
+% 
+% rel_l1_err = norm(RHS-r2d2, 1)./norm(RHS,1)
+% rel_l2_err = norm(RHS-r2d2, 2)./norm(RHS,2)
+% rel_li_err = norm(RHS-r2d2, inf)./norm(RHS,inf)
+% 
+% hhh=figure('visible', 'off');
+% plotVectorComponents(r2d2,nodes,'Reconstructed RHS (R2 = L*U_{computed})', cmin, cmax)
+% figFileName=[output_dir,'Reconstructed_RHS'];
+% fprintf('Printing figure: %s\n',figFileName);
+% %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
+% print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+% close(hhh);
+% 
+% hhh=figure('visible', 'off');
+% rec_abs_err = abs(RHS-r2d2);
+% plotVectorComponents(rec_abs_err, nodes, 'Reconstructed Abs Error (|RHS-Reconstructed|)'); 
+% figFileName=[output_dir,'Reconstructed_AbsError'];
+% fprintf('Printing figure: %s\n',figFileName);
+% %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
+% print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+% close(hhh);
+% 
+% clear rec_rel_err; 
+% clear r2d2;
+% 
+% hhh=figure('visible', 'off');
+% rec_rel_err = rec_abs_err ./ abs(RHS); 
+% rec_rel_err(abs(RHS) < 1e-12) = rec_abs_err(abs(RHS) < 1e-12); 
+% plotVectorComponents(rec_rel_err, nodes, 'Reconstructed Rel Error (|RHS-Reconstructed|/|RHS|)'); 
+% figFileName=[output_dir,'Reconstructed_RelError'];
+% fprintf('Printing figure: %s\n',figFileName);
+% %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
+% print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+% close(hhh);
+% 
+% clear rec_rel_err; 
 
-div_l1_norm = norm(div_U, 1)
-div_l2_norm = norm(div_U, 2)
-div_linf_norm = norm(div_U, inf)
 
-hhh=figure('visible', 'off');
-plotScalarfield(div_U, nodes, 'Div_{op} * U_{computed} '); 
-figFileName=[output_dir,'Div_U_computed'];
-fprintf('Printing figure: %s\n',figFileName);
-%print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
-print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
-close(hhh);
-
-hhh=figure('visible', 'off');
-plotScalarfield(div_U_exact, nodes, 'Div_{op} * U_{exact} '); 
-figFileName=[output_dir,'Div_U_exact'];
-fprintf('Printing figure: %s\n',figFileName);
-%print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
-print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
-close(hhh);
-
-
-div_m_P_l1_norm = norm(div_U-RHS(3*N+1:4*N), 1)
-div_m_P_l2_norm = norm(div_U-RHS(3*N+1:4*N), 2)
-div_m_P_linf_norm = norm(div_U-RHS(3*N+1:4*N), inf)
-
-hhh=figure('visible', 'off');
-plotScalarfield(div_U-RHS(3*N+1:4*N), nodes, 'Div_{op} * U_{computed} - RHS_P'); 
-figFileName=[output_dir,'Div_U_computed_minus_P'];
-fprintf('Printing figure: %s\n',figFileName);
-%print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
-print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
-close(hhh);
-
-hhh=figure('visible', 'off');
-plotScalarfield(div_U_exact-RHS(3*N+1:4*N), nodes, 'Div_{op} * U_{exact} - RHS_P'); 
-figFileName=[output_dir,'Div_U_exact_minus_P'];
-fprintf('Printing figure: %s\n',figFileName);
-%print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
-print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
-close(hhh);
+% %% Test the divergence
+% div_U = DIV_operator * U; 
+% div_U_exact = DIV_operator * U_exact; 
+% 
+% div_l1_norm = norm(div_U, 1)
+% div_l2_norm = norm(div_U, 2)
+% div_linf_norm = norm(div_U, inf)
+% 
+% hhh=figure('visible', 'off');
+% plotScalarfield(div_U, nodes, 'Div_{op} * U_{computed} '); 
+% figFileName=[output_dir,'Div_U_computed'];
+% fprintf('Printing figure: %s\n',figFileName);
+% %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
+% print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+% close(hhh);
+% 
+% hhh=figure('visible', 'off');
+% plotScalarfield(div_U_exact, nodes, 'Div_{op} * U_{exact} '); 
+% figFileName=[output_dir,'Div_U_exact'];
+% fprintf('Printing figure: %s\n',figFileName);
+% %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
+% print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+% close(hhh);
+% 
+% 
+% div_m_P_l1_norm = norm(div_U-RHS_continuous(3*N+1:4*N), 1)
+% div_m_P_l2_norm = norm(div_U-RHS_continuous(3*N+1:4*N), 2)
+% div_m_P_linf_norm = norm(div_U-RHS_continuous(3*N+1:4*N), inf)
+% 
+% hhh=figure('visible', 'off');
+% plotScalarfield(div_U-RHS_continuous(3*N+1:4*N), nodes, 'Div_{op} * U_{computed} - RHS_P'); 
+% figFileName=[output_dir,'Div_U_computed_minus_P'];
+% fprintf('Printing figure: %s\n',figFileName);
+% %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
+% print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+% close(hhh);
+% 
+% hhh=figure('visible', 'off');
+% plotScalarfield(div_U_exact-RHS_continuous(3*N+1:4*N), nodes, 'Div_{op} * U_{exact} - RHS_P'); 
+% figFileName=[output_dir,'Div_U_exact_minus_P'];
+% fprintf('Printing figure: %s\n',figFileName);
+% %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
+% print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+% close(hhh);
 
 profile off 
 
-profsave(profile('info'), [output_dir, 'profiler_output']);
+%profsave(profile('info'), [output_dir, 'profiler_output']);
 
 diary off; 
 

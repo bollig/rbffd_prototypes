@@ -21,7 +21,7 @@ maxDims = get(0,'ScreenSize');
 
 % resize the window to most of my laptop screen
 set(gcf,'Units', 'normalized'); 
-set(gcf,'Position',[0 0 0.5 1]);
+set(gcf,'Position',[0 0 0.6 0.55]);
 % Get the window size in terms of inches of realestate
 set(gcf,'Units','inches');
 figpos = get(gcf,'Position');
@@ -44,7 +44,7 @@ if scaleColormap
     caxis([cmin, cmax]);
 end
 title('U direction', 'FontSize',22); 
-set(gca,'FontSize',18);
+set(gca,'FontSize',22);
 a1 = gca;
 
 subplot(2, 2, 2); 
@@ -65,7 +65,7 @@ if scaleColormap
     caxis([cmin, cmax]);
 end
 title('V direction', 'FontSize',22); 
-set(gca,'FontSize',18);
+set(gca,'FontSize',22);
 a2 = gca;
 
 
@@ -84,7 +84,7 @@ if scaleColormap
     caxis([cmin, cmax]);
 end
 title('W direction', 'FontSize',22); 
-set(gca,'FontSize',18);
+set(gca,'FontSize',22);
 a3 = gca;
 
 subplot(2, 2, 4); 
@@ -102,17 +102,18 @@ if scaleColormap
     caxis([cmin, cmax]);
 end
 title('Pressure', 'FontSize',22); 
-set(gca,'FontSize',18);
+set(gca,'FontSize',22);
 a4 = gca;
 
 [ax,hh] = suplabel(figTitle,'t');
-set(hh,'FontSize',26);
+set(hh,'FontSize',28);
 
-% set(a1,'Unit', 'normalized','Position',[0.05 0.55 0.45 1])
-% set(a2,'Unit', 'normalized'); 
-% set(a2,'Position',[0.55 0 1 0.45])
-% set(a3,'Unit', 'normalized'); 
-% set(a3,'Position',[0 0.45 0.45 1])
-% set(a4,'Unit', 'normalized'); 
-% set(a4,'Position',[0 0.55 1 1])
+set(a1,'Units', 'normalized');
+set(a1,'Position',[0.035 0.5 0.37 0.42])
+set(a2,'Units', 'normalized'); 
+set(a2,'Position',[0.535 0.5 0.37 0.42])
+set(a3,'Units', 'normalized'); 
+set(a3,'Position',[0.035 0.01 0.37 0.42])
+set(a4,'Units', 'normalized'); 
+set(a4,'Position',[0.535 0.01 0.37 0.42])
 end
