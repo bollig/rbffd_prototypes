@@ -9,7 +9,7 @@ clear all;
 close all;
 
 restart = 100;
-tol = 1e-8;
+tol = 1e-6;
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -17,7 +17,7 @@ tol = 1e-8;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %load west0479;
 fdsize = 31;
-if 0
+if 1
     if 1
         A = mmread('../precond/sph32_sph105_N8100_n31_eta1/LHS_8100.mtx');
         x_true = load('../precond/sph32_sph105_N8100_n31_eta1/U_exact_8100.mtx');

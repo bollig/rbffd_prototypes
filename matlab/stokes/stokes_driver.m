@@ -11,9 +11,9 @@ addpath('~/rbffd_gpu/scripts/')
 constantViscosity = 1; 
 
 %fdsize = 13; c1 = 0.026; c2 = 0.08;  hv_k = 2; hv_gamma = 8;
-fdsize = 31; c1 = 0.035; c2 = 0.1 ; hv_k = 4; hv_gamma = 800;
+%fdsize = 31; c1 = 0.035; c2 = 0.1 ; hv_k = 4; hv_gamma = 800;
 %fdsize = 50; c1 = 0.044; c2 = 0.14; hv_k = 4; hv_gamma = 145;
-%fdsize = 101;c1 = 0.058; c2 = 0.16;  hv_k = 4; hv_gamma = 40;
+fdsize = 101;c1 = 0.058; c2 = 0.16;  hv_k = 4; hv_gamma = 40;
 
 % Switch Hyperviscosity ON (1) and OFF (0)
 useHV = 0;
@@ -149,7 +149,10 @@ close(hhh);
 dlmwrite(sprintf('%sRHS_continuous_%d.mtx',output_dir,N),RHS_continuous); 
 dlmwrite(sprintf('%sU_exact_%d.mtx',output_dir, N),U_exact); 
 mmwrite(sprintf('%sLHS_%d.mtx',output_dir, N),LHS);
+
+if 1
 return; 
+end
 
 %% SOLVE SYSTEM USING LU with Pivoting
 fprintf('Solving Lu=F\n'); 
