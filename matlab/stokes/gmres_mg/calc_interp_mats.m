@@ -4,7 +4,7 @@
 %         A_int * A_rbf^-1 * coarse_sol = interp_sol
 % Where A_int = 
 
-function [W_c2f, W_f2c, coarse_LHS] = interpolate_coarse(nodes, ep, N)
+function [W_c2f, W_f2c, coarse_LHS] = calc_interp_mats(nodes, ep, N)
 
 rbf   = @(ep,rd) exp(-(ep*rd).^2);
 

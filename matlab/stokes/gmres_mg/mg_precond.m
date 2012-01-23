@@ -1,4 +1,4 @@
-function [y] = myprecond(x)
+function [y] = mg_precond(x)
 global W_f2c; 
 global W_c2f; 
 global coarse_LHS; 
