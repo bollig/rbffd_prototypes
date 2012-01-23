@@ -4,33 +4,36 @@
 %         A_int * A_rbf^-1 * coarse_sol = interp_sol
 % Where A_int = 
 
-function [W_c2f, W_f2c, coarse_LHS] = calc_interp_mats(nodes, ep, N)
+function [W_f2c, W_c2f] = calc_interp_mats(fine_nodes, coarse_nodes, ep)
 
 rbf   = @(ep,rd) exp(-(ep*rd).^2);
 
-global W_c2f; 
-global W_f2c; 
-global coarse_LHS;
-global N; 
+% global W_c2f; 
+% global W_f2c; 
+% global coarse_LHS;
 
-tic
-%% Load the coarse solution
-if 1
-coarse_nodes = load('~/GRIDS/md/md031.01024');
-coarse_sol = load('./precond/sph32_sph105_N1024_n31_eta1/U_1024.mtx'); 
-coarse_exact = load('./precond/sph32_sph105_N1024_n31_eta1/U_exact_1024.mtx'); 
-coarse_LHS = mmread('./precond/sph32_sph105_N1024_n31_eta1/LHS_1024.mtx'); 
-fprintf('Loaded coarse info. \tElapsed Time: %f seconds\n', toc);
-else 
-coarse_nodes = load('~/GRIDS/md/md063.04096');
-coarse_sol = load('./precond/sph32_sph105_N4096_n13_eta1/U_4096.mtx'); 
-coarse_exact = load('./precond/sph32_sph105_N4096_n13_eta1/U_exact_4096.mtx'); 
-coarse_LHS = mmread('./precond/sph32_sph105_N4096_n13_eta1/LHS_4096.mtx'); 
-fprintf('Loaded coarse info. \tElapsed Time: %f seconds\n', toc);
-end
+N = size(fine_nodes,1); 
+M = size(coarse_nodes,1); 
 
-%% Interpolate coarse to fine grid
-fine_nodes = nodes(:,1:3); 
+% 
+% tic
+% %% Load the coarse solution
+% if 1
+% coarse_nodes = load('~/GRIDS/md/md031.01024');
+% coarse_sol = load('./precond/sph32_sph105_N1024_n31_eta1/U_1024.mtx'); 
+% coarse_exact = load('./precond/sph32_sph105_N1024_n31_eta1/U_exact_1024.mtx'); 
+% coarse_LHS = mmread('./precond/sph32_sph105_N1024_n31_eta1/LHS_1024.mtx'); 
+% fprintf('Loaded coarse info. \tElapsed Time: %f seconds\n', toc);
+% else 
+% coarse_nodes = load('~/GRIDS/md/md063.04096');
+% coarse_sol = load('./precond/sph32_sph105_N4096_n13_eta1/U_4096.mtx'); 
+% coarse_exact = load('./precond/sph32_sph105_N4096_n13_eta1/U_exact_4096.mtx'); 
+% coarse_LHS = mmread('./precond/sph32_sph105_N4096_n13_eta1/LHS_4096.mtx'); 
+% fprintf('Loaded coarse info. \tElapsed Time: %f seconds\n', toc);
+% end
+% 
+% %% Interpolate coarse to fine grid
+% fine_nodes = nodes(:,1:3); 
 
 tic
 %% Distance from Test->Trial Points
