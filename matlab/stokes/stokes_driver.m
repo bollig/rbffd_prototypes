@@ -31,26 +31,40 @@ dim = 2;
 %nodes = load('~/GRIDS/md/md059.03600'); 
 %nodes = load('~/GRIDS/md/md063.04096');
 %nodes = load('~/GRIDS/md/md079.06400');
-nodes = load('~/GRIDS/md/md089.08100'); 
+%nodes = load('~/GRIDS/md/md089.08100'); 
 %nodes = load('~/GRIDS/md/md099.10000');
 %nodes = load('~/GRIDS/md/md122.15129');
-%nodes = load('~/GRIDS/md/md159.25600');
+nodes = load('~/GRIDS/md/md159.25600');
+
+%nodes = load('~/GRIDS/icos/icos42.mat');
+%nodes = load('~/GRIDS/icos/icos162.mat');
+%nodes = load('~/GRIDS/icos/icos642.mat');
+%nodes = load('~/GRIDS/icos/icos2562.mat');
+%nodes = load('~/GRIDS/icos/icos10242.mat');
+%nodes = load('~/GRIDS/icos/icos40962.mat');
+%nodes = load('~/GRIDS/icos/icos163842.mat');
+
+%% Handle the case when icos grids are read in from mat files and they are structures
+if isstruct(nodes) 
+    nodes = nodes.nodes;
+end
 
 nodes=nodes(:,1:3);
 N = length(nodes);
 
-output_dir = sprintf('./precond/sph32_sph105_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
+output_dir = sprintf('./headless/gmres/sph32_sph105_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
 fprintf('Making directory: %s\n', output_dir);
 mkdir(output_dir); 
 
+delete([output_dir,'runlog.txt'])
 diary([output_dir,'runlog.txt'])
 diary on; 
 
 %% Simple profiling
 profile on -timer 'real'
 
-
-ep = c1 * sqrt(N) - c2
+ep = c1 * sqrt(N) - c2;
+fprintf('Using RBF Support Parameter ep=%f\n', ep); 
 
 % An attempt at determining epsilon based on condition number
 kappa = 1e13; 
@@ -100,8 +114,8 @@ title('LHS (L)', 'FontSize', 26);
 set(gca, 'FontSize', 22); 
 figFileName=[output_dir,'LHS'];
 fprintf('Printing figure: %s\n',figFileName);
-%print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']); 
 
 % Spend some time reordering initially. 
 %r = symrcm(LHS); 
@@ -125,16 +139,16 @@ hhh=figure('visible', 'off') ;
 plotVectorComponents(RHS_continuous, nodes, 'RHS_{continuous} (F)'); 
 figFileName=[output_dir,'RHS'];
 fprintf('Printing figure: %s\n',figFileName);
-%print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']); 
 close(hhh);
 
 hhh=figure('visible', 'off') ;
 plotVectorComponents(RHS_discrete, nodes, 'RHS_{discrete} (F)'); 
 figFileName=[output_dir,'RHS_discrete'];
 fprintf('Printing figure: %s\n',figFileName);
-%print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']); 
 close(hhh);
 
 hhh=figure('visible', 'off');
@@ -142,8 +156,8 @@ RHS_abs_err = abs(RHS_continuous-RHS_discrete);
 plotVectorComponents(RHS_abs_err, nodes, 'RHS Abs Error (|RHS_{continuous}-RHS_{discrete}|)'); 
 figFileName=[output_dir,'RHS_AbsError'];
 fprintf('Printing figure: %s\n',figFileName);
-%print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']); 
 close(hhh);
 
 if 0
@@ -156,39 +170,45 @@ end
 
 %% SOLVE SYSTEM USING LU with Pivoting
 fprintf('Solving Lu=F\n'); 
-tic
 U = solve_system(LHS, RHS_continuous, 'gmres'); 
-tt = toc;
-fprintf('Done Solving.\tElapsed Time: %f seconds\n', tt); 
 
 %% Check error in solution
 hhh=figure('visible', 'off') ;
 plotVectorComponents(U, nodes, 'Computed Solution (U = L^{-1}F)'); 
 figFileName=[output_dir,'U_computed'];
 fprintf('Printing figure: %s\n',figFileName);
-%print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']); 
 close(hhh);
 
 hhh=figure('visible', 'off') ;
 plotVectorComponents(U_exact, nodes, 'Manufactured Solution'); 
 figFileName=[output_dir,'U_exact'];
 fprintf('Printing figure: %s\n',figFileName);
-%print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']); 
 close(hhh);
 
-U_rel_l1_err = norm(U-U_exact, 1)./norm(U_exact,1)
-U_rel_l2_err = norm(U-U_exact, 2)./norm(U_exact,2)
-U_rel_li_err = norm(U-U_exact, inf)./norm(U_exact,inf)
+U_abs_err = abs(U-U_exact);
+
+fprintf('\n\n--> Checking Absolute Error of Computed Solution: \n');
+U_abs_err_l1 = norm(U_abs_err, 1)
+U_abs_err_l2 = norm(U_abs_err, 2)
+U_abs_err_linf = norm(U_abs_err, inf)
+
+fprintf('\n\n--> Checking Relative Error of Computed Solution: \n');
+U_rel_err_l1 = U_abs_err_l1 / norm(U_exact,1)
+U_rel_err_l2 = U_abs_err_l2 / norm(U_exact,2)
+U_rel_err_linf = U_abs_err_linf / norm(U_exact,inf)
+
+fprintf('\n\n');
 
 hhh=figure('visible', 'off');
-U_abs_err = abs(U-U_exact);
 plotVectorComponents(U_abs_err, nodes, 'Solution Abs Error (|U-U_{exact}|)'); 
 figFileName=[output_dir,'U_AbsError'];
 fprintf('Printing figure: %s\n',figFileName);
-%print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']); 
 close(hhh);
 
 hhh=figure('visible', 'off');
@@ -197,12 +217,51 @@ U_rel_err(abs(U_exact) < 1e-12) = U_abs_err(abs(U_exact) < 1e-12);
 plotVectorComponents(U_rel_err, nodes, 'Solution Rel Error (|U-U_{exact}|/|U_{exact}|)'); 
 figFileName=[output_dir,'U_RelError'];
 fprintf('Printing figure: %s\n',figFileName);
-%print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']); 
 close(hhh);
 
 clear U_rel_err; 
 clear U_abs_err; 
+
+
+%%% Test Pressure
+
+%% The lapl(P) should equal projected_div(T)
+lapl_p = RBFFD_WEIGHTS.lsfc * U(3*N+1:4*N); 
+p_div_T = RBFFD_WEIGHTS.xsfc * RHS_continuous(1:N) + RBFFD_WEIGHTS.ysfc * RHS_continuous(1*N+1:2*N) + RBFFD_WEIGHTS.zsfc * RHS_continuous(2*N+1:3*N); 
+
+p_abs_err = (lapl_p - p_div_T); 
+
+p_error_l1 = norm(p_abs_err,1)
+p_error_l2 = norm(p_abs_err,2)
+p_error_linf = norm(p_abs_err,inf)
+
+hhh=figure('visible', 'off');
+plotScalarfield(lapl_p, nodes, 'lapl(P)'); 
+figFileName=[output_dir,'P_lapl'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']); 
+close(hhh);
+
+
+hhh=figure('visible', 'off');
+plotScalarfield(p_div_T, nodes, 'div(RHS)'); 
+figFileName=[output_dir,'RHS_div'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']); 
+close(hhh);
+
+hhh=figure('visible', 'off');
+plotScalarfield(p_abs_err, nodes, '| lapl(P) - div(RHS) |'); 
+figFileName=[output_dir,'P_AbsError'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']); 
+close(hhh);
+
 
 if 0
 dlmwrite(sprintf('%sU_%d.mtx',output_dir, N),U); 

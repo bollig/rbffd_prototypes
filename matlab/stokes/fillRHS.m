@@ -9,7 +9,7 @@ allsph32 = 0;
 
 
 %% TODO: need an initial temperature profile to get the RHS.
-N = length(nodes)
+N = length(nodes);
 u_indices = (1:N) + 0*N;
 v_indices = (1:N) + 1*N;
 w_indices = (1:N) + 2*N;
@@ -182,7 +182,7 @@ end
 RHS_continuous(p_indices,1) = pdx_u + pdy_v + pdz_w; %zeros(N,1) ;
 RHS_continuous(const_indices,1) = 0;
 
-norm(RHS_continuous - RHS_discrete,1)
+% norm(RHS_continuous - RHS_discrete,1)
 %norm(U_continuous - U_discrete,1)
 
 if 0

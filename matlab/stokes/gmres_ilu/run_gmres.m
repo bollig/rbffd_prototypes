@@ -10,21 +10,21 @@
 % Sungwoo Park
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [x1,flag,relres,iter] = run_gmres(A,b,restart,tol,L,U,W,option)
+function [x1,flag,relres,iter,resvec] = run_gmres(A,b,restart,tol,L,U,W,option)
     if strcmp(option,'left'),
         bhat = U\(L\b);
-        [x1,flag,relres,iter] = gmres(@afun_left,bhat,restart,tol);
+        [x1,flag,relres,iter,resvec] = gmres(@afun_left,bhat,restart,tol);
     elseif strcmp(option,'right'),
         bhat = b;
-        [x1,flag,relres,iter] = gmres(@afun_right,bhat,restart,tol);
+        [x1,flag,relres,iter,resvec] = gmres(@afun_right,bhat,restart,tol);
         
     elseif strcmp(option,'two'),
         bhat = L\b;
-        [x1,flag,relres,iter] = gmres(@afun_two,bhat,restart,tol);        
+        [x1,flag,relres,iter,resvec] = gmres(@afun_two,bhat,restart,tol);        
         
     elseif strcmp(option,'right_aip'),
         bhat = b;
-        [x1,flag,relres,iter] = gmres(@afun_raip,bhat,restart,tol);        
+        [x1,flag,relres,iter,resvec] = gmres(@afun_raip,bhat,restart,tol);        
     end
         function y = afun_left(x)
              y = U\(L\(A*x));
