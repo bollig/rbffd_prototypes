@@ -8,46 +8,56 @@ clc;
 clear all;
 close all;
 
+addpath('~/rbffd_gpu/scripts/')
+
+
 restart = 100;
-tol = 1e-6;
+tol = 1e-8;
 
-
+test_case = 5; 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Generate the problem A*x = b
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %load west0479;
 fdsize = 31;
-if 1
-    if 1
+switch test_case 
+    case 0 
         A = mmread('../precond/sph32_sph105_N8100_n31_eta1/LHS_8100.mtx');
         x_true = load('../precond/sph32_sph105_N8100_n31_eta1/U_exact_8100.mtx');
         b = load('../precond/sph32_sph105_N8100_n31_eta1/RHS_continuous_8100.mtx');
         nodes = load('~/GRIDS/md/md089.08100');
-    elseif 1
+    case 1
         A = mmread('../precond/sph32_sph105_N4096_n31_eta1/LHS_4096.mtx');
         x_true = load('../precond/sph32_sph105_N4096_n31_eta1/U_exact_4096.mtx');
         b = load('../precond/sph32_sph105_N4096_n31_eta1/RHS_continuous_4096.mtx');
         nodes = load('~/GRIDS/md/md063.04096');
-    else
+    case 2
         A = mmread('../precond/sph32_sph105_N1024_n31_eta1/LHS_1024.mtx');
         x_true = load('../precond/sph32_sph105_N1024_n31_eta1/U_exact_1024.mtx');
         b = load('../precond/sph32_sph105_N1024_n31_eta1/RHS_continuous_1024.mtx');
         nodes = load('~/GRIDS/md/md031.01024');
-    end
-else
-    if 1
+    case 3
         A = mmread('../precond/sph32_sph105_N6400_n31_eta1/LHS_6400.mtx');
         x_true = load('../precond/sph32_sph105_N6400_n31_eta1/U_exact_6400.mtx');
         b = load('../precond/sph32_sph105_N6400_n31_eta1/RHS_continuous_6400.mtx');
         nodes = load('~/GRIDS/md/md079.06400');
-    else
+    case 4
         A = mmread('../precond/sph32_sph105_N6400_n101_eta1/LHS_6400.mtx');
         x_true = load('../precond/sph32_sph105_N6400_n101_eta1/U_exact_6400.mtx');
         b = load('../precond/sph32_sph105_N6400_n101_eta1/RHS_continuous_6400.mtx');
         nodes = load('~/GRIDS/md/md079.06400');
         fdsize = 101;
-    end
+    case 5
+        A = mmread('../precond/sph32_sph105_N8100_n101_eta1/LHS_8100.mtx');
+        x_true = load('../precond/sph32_sph105_N8100_n101_eta1/U_exact_8100.mtx');
+        b = load('../precond/sph32_sph105_N8100_n101_eta1/RHS_continuous_8100.mtx');
+        nodes = load('~/GRIDS/md/md089.08100');
+        fdsize = 101;
+    otherwise 
+        fprintf('Unknown test case\n'); 
+        return 
 end
+
 n = size(A,1);
 N = size(nodes,1);
 
@@ -55,6 +65,7 @@ output_dir = sprintf('N%d_n%d_tol_%1.1e/',N,fdsize,tol);
 fprintf('Making directory: %s\n', output_dir);
 mkdir(output_dir);
 
+delete([output_dir,'runlog.txt']); 
 diary([output_dir,'runlog.txt'])
 diary on; 
 
@@ -78,6 +89,7 @@ figFileName=[output_dir,'ResVec_GMRES'];
 fprintf('Printing figure: %s\n',figFileName);
 %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']); 
 close(hhh);
 
 abs_err = abs(x-x_true);
@@ -88,6 +100,7 @@ figFileName=[output_dir,'AbsError_GMRES'];
 fprintf('Printing figure: %s\n',figFileName);
 %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']); 
 close(hhh);
 
 
@@ -126,16 +139,18 @@ figFileName=[output_dir,'ResVec_ILU'];
 fprintf('Printing figure: %s\n',figFileName);
 %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']); 
 close(hhh);
 
 abs_err = abs(x1-x_true); 
 
 hhh=figure('visible', 'off') ;
-plotVectorComponents(abs_err, nodes, sprintf('ILU Preconditioned GMRES Absolute Error (%3.2f seconds)', t2));
+plotVectorComponents(abs_err, nodes, sprintf('ILU Preconditioned GMRES Absolute Error \n(ILU: %3.2f seconds, GMRES: %3.2f seconds)', t1, t2));
 figFileName=[output_dir,'AbsError_ILU'];
 fprintf('Printing figure: %s\n',figFileName);
 %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']); 
 close(hhh);
 
 
@@ -161,6 +176,7 @@ figFileName=[output_dir,'AbsError_Direct'];
 fprintf('Printing figure: %s\n',figFileName);
 %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']); 
 close(hhh)
 
 abs_err_l1 = norm(abs_err,1) 
