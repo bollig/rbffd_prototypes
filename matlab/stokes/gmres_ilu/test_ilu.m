@@ -11,15 +11,15 @@ close all;
 addpath('~/rbffd_gpu/scripts/')
 
 
-restart = 100;
+restart = 250;
 tol = 1e-8;
 
-test_case = 2;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Generate the problem A*x = b
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %load west0479;
 fdsize = 31;
+test_case = 5;
 switch test_case
     case 0
         A = mmread('../precond/sph32_sph105_N8100_n31_eta1/LHS_8100.mtx');
@@ -157,7 +157,6 @@ if 0
     abs_err_l1 = norm(abs_err,1)
     abs_err_l2 = norm(abs_err,2)
     abs_err_linf = norm(abs_err,inf)
-end
 
 
 
@@ -183,6 +182,7 @@ close(hhh)
 abs_err_l1 = norm(abs_err,1)
 abs_err_l2 = norm(abs_err,2)
 abs_err_linf = norm(abs_err,inf)
+end
 
 diary off;
 return

@@ -1,18 +1,18 @@
-function [U] = solve_system(L,F,type)
+function [U] = solve_system(L,F,N,type)
 
 switch type
-    case 'gmres' 
+    case 'gmres'
         restart = 200;
         tol = 1e-8;
-        tic; 
+        tic;
         [U,flag,relres,iter,resvec]= gmres(L,F,restart,tol);
         tt = toc;
         if flag
-           fprintf('GMRES+ILU failed to converge in Outer: %d, Inner: %d iterations to requested tolerance of %e\n\n', iter(1), iter(2), tol);
-        else 
-            fprintf('GMRES converged in Outer: %d, Inner: %d. \n\n Elapsed Time: %f seconds\n\n', iter(1), iter(2), tt); 
+            fprintf('GMRES+ILU failed to converge in Outer: %d, Inner: %d iterations to requested tolerance of %e\n\n', iter(1), iter(2), tol);
+        else
+            fprintf('GMRES converged in Outer: %d, Inner: %d. \n\n Elapsed Time: %f seconds\n\n', iter(1), iter(2), tt);
         end
-    case 'gmres+ilu' 
+    case 'gmres+ilu'
         restart = 200;
         tol = 1e-8;
         
@@ -20,28 +20,58 @@ switch type
         options.udiag=1;
         options.type = 'ilutp';
         options.droptol = 1e-3;
-
+        
         tic;
         [L1,U1] = ilu(L,options);
         t1 = toc;
         
         tic;
         [U,flag,relres,iter,resvec] = gmres(L,F,restart,tol,[],L1,U1);
-        t2 = toc; 
+        t2 = toc;
         
         if flag
-           fprintf('GMRES+ILU failed to converge in Outer: %d, Inner: %d iterations to requested tolerance of %3.2e (Made it to: %3.2e)\n\n', iter(1), iter(2), tol, relres);
-        else 
-            fprintf('GMRES+ILU converged in Outer: %d, Inner: %d. \n\n ILU Time: %f seconds, GMRES Time: %f seconds, Total Elapsed: %f seconds\n\n', iter(1), iter(2), t1, t2, t1+t2); 
+            fprintf('GMRES+ILU failed to converge in Outer: %d, Inner: %d iterations to requested tolerance of %3.2e (Made it to: %3.2e)\n\n', iter(1), iter(2), tol, relres);
+        else
+            fprintf('GMRES+ILU converged in Outer: %d, Inner: %d. \n\n ILU Time: %f seconds, GMRES Time: %f seconds, Total Elapsed: %f seconds\n\n', iter(1), iter(2), t1, t2, t1+t2);
         end
-                      
+    case 'gmres+ilu_k'
+        restart = 200;
+        tol = 1e-8;
+        options = [];
+        options.milu = 'off';
+        %options.udiag=1;
+        options.type = 'nofill';
+        %options.droptol = 1e-3;
+        
+        tic;
+        [L1,U1] = ilu(L(1:3*N,1:3*N),options);
+        t1 = toc;
+        tic; 
+        M1 = [L1 sparse(3*N,N+4); sparse(N+4,3*N) speye(N+4,N+4)];
+        M2 = [U1 sparse(3*N,N+4); sparse(N+4,3*N) speye(N+4,N+4)];
+        t2 = toc; 
+        
+        clear L1; 
+        clear U1; 
+        
+        tic;
+        [U,flag,relres,iter,resvec] = gmres(L,F,restart,tol,[],M1,M2);
+        t3 = toc;
+        
+        if flag
+            fprintf('GMRES+ILU failed to converge in Outer: %d, Inner: %d iterations to requested tolerance of %3.2e (Made it to: %3.2e)\n\n', iter(1), iter(2), tol, relres);
+        else
+            fprintf('GMRES+ILU converged in Outer: %d, Inner: %d. \n\n ILU Time: %f seconds, Precond Build: %f seconds, GMRES Time: %f seconds, Total Elapsed: %f seconds\n\n', iter(1), iter(2), t1, t2, t3, t1+t2+t3);
+        end
+        
+        
     otherwise
         % Direct solve
         tic;
         U = L\F;
-        tt = toc; 
-        fprintf('Direct Solve\t\t Elapsed Time: %f seconds\n', tt); 
-end 
+        tt = toc;
+        fprintf('Direct Solve\t\t Elapsed Time: %f seconds\n', tt);
+end
 %U2 = gmres(
 
 end

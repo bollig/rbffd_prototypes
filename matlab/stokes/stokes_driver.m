@@ -52,7 +52,7 @@ end
 nodes=nodes(:,1:3);
 N = length(nodes);
 
-output_dir = sprintf('./headless/gmres/sph32_sph105_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
+output_dir = sprintf('./headless/gmres_ilu_k/sph32_sph105_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
 fprintf('Making directory: %s\n', output_dir);
 mkdir(output_dir); 
 
@@ -168,9 +168,19 @@ mmwrite(sprintf('%sLHS_%d.mtx',output_dir, N),LHS);
 return; 
 end
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 %% SOLVE SYSTEM USING LU with Pivoting
 fprintf('Solving Lu=F\n'); 
-U = solve_system(LHS, RHS_continuous, 'gmres'); 
+U = solve_system(LHS, RHS_continuous, N, 'gmres+ilu_k'); 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 %% Check error in solution
 hhh=figure('visible', 'off') ;
