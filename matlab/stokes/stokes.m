@@ -17,13 +17,12 @@ N = length(nodes);
 
 eta = ones(N,1);
 
-fprintf('Allocate LHS\t'); 
-tic
+fprintf('Allocate LHS\n'); 
 if constantViscosity
 
     % The third term is for constant eta (3*N added for extra constraints on RIGHT and 3*N for BOTTOM)
     %LHS = spalloc(4*N+4, 4*N+4, (2*N*n) + (2*N*n) + (2*N*n) + (3*N*n) + 3*N + 3*N); 
-    NNZ =  (2*N*n) + (2*N*n) + (2*N*n) + (3*N*n) + 3*N + 3*N; 
+    NNZ =  (2*N*n) + (2*N*n) + (2*N*n) + (3*N*n) + 4*N + 4*N; 
 
     dEta_dx = zeros(N,1); 
     dEta_dy = zeros(N,1);
@@ -31,21 +30,22 @@ if constantViscosity
 else 
     % MUCH more nonzeros than above.  
     %LHS = spalloc(4*N+4, 4*N+4, (4*N*n) + (4*N*n) + (4*N*n) + (3*N*n) + 3*N + 3*N); 
-    NNZ =  (4*N*n) + (4*N*n) + (4*N*n) + (3*N*n) + 3*N + 3*N; 
+    NNZ =  (4*N*n) + (4*N*n) + (4*N*n) + (3*N*n) + 4*N + 4*N; 
 
     Xx = nodes(:,1); 
     Yy = nodes(:,2); 
     Zz = nodes(:,3); 
 
     cart_sph32_mathematica = (sqrt(105/pi).*(Xx - Yy).*(Xx + Yy).*Zz)./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^1.5);    
-    %% These are from Mathematica: {pdx,pdy,pdz} = P.Grad[sphFullCart[3, 2], Cartesian] // FullSimplify
-    pdx_sph32_mathematica = -(sqrt(105./pi).*Xx.*Zz.*(Xx.^2 - 5.*Yy.^2 - 2.*Zz.^2))./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^2.5);
-    pdy_sph32_mathematica = (sqrt(105/pi).*Yy.*Zz.*(-5.*Xx.^2 + Yy.^2 - 2*Zz.^2))./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^2.5);
-    pdz_sph32_mathematica = (sqrt(105/pi).*(Xx - Yy).*(Xx + Yy).*(Xx.^2 + Yy.^2 - 2*Zz.^2))./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^2.5);
-
     eta = cart_sph32_mathematica; 
 
     if etaContinuous
+        %% These are from Mathematica: {pdx,pdy,pdz} = P.Grad[sphFullCart[3, 2], Cartesian] // FullSimplify
+        pdx_sph32_mathematica = -(sqrt(105./pi).*Xx.*Zz.*(Xx.^2 - 5.*Yy.^2 - 2.*Zz.^2))./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^2.5);
+        pdy_sph32_mathematica = (sqrt(105/pi).*Yy.*Zz.*(-5.*Xx.^2 + Yy.^2 - 2*Zz.^2))./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^2.5);
+        pdz_sph32_mathematica = (sqrt(105/pi).*(Xx - Yy).*(Xx + Yy).*(Xx.^2 + Yy.^2 - 2*Zz.^2))./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^2.5);
+
+
         dEta_dx = pdx_sph32_mathematica; 
         dEta_dy = pdy_sph32_mathematica; 
         dEta_dz = pdz_sph32_mathematica; 
@@ -56,13 +56,11 @@ else
         dEta_dz = RBFFD_WEIGHTS.zsfc * eta; 
     end 
 end
-toc
 
 
 %% %%%%%%  Column 1 %%%%%%%%%%%%
 
-fprintf('Fill COL 1\t'); 
-tic
+fprintf('Fill COL 1\n'); 
 
 %% i and j indices for nonzero elements in sparse matrix values (VV) 
 II = zeros(NNZ,1); 
@@ -114,12 +112,10 @@ if li
     cur_ind = cur_ind + li; 
 end
 
-toc
 
 %% %%%%%%  Column 2 %%%%%%%%%%%%
 
-fprintf('Fill COL 2\t'); 
-tic
+fprintf('Fill COL 2\n'); 
 
 [i_ind, j_ind, v_val] = find( -spdiags(dEta_dy,0,N,N) * RBFFD_WEIGHTS.xsfc );
 li = length(i_ind);
@@ -161,14 +157,12 @@ if li
     cur_ind = cur_ind + li;
 end
 
-toc
 
 
 %% %%%%%%  Column 3 %%%%%%%%%%%%
 
 
-fprintf('Fill COL 3\t'); 
-tic
+fprintf('Fill COL 3\n'); 
 
 [i_ind, j_ind, v_val] = find(  -spdiags(dEta_dz,0,N,N) * RBFFD_WEIGHTS.xsfc  );
 li = length(i_ind);
@@ -213,12 +207,10 @@ if li
     cur_ind = cur_ind + li;
 end
 
-toc
 
 %% %%%%%%  Column 4 %%%%%%%%%%%%
 
-fprintf('Fill COL 4\t'); 
-tic
+fprintf('Fill COL 4\n'); 
 
 [i_ind, j_ind, v_val] = find( RBFFD_WEIGHTS.xsfc  ); 
 li = length(i_ind);
@@ -251,7 +243,6 @@ if li
     cur_ind = cur_ind + li;
 end
 
-toc
 
 % L = L(1:3*N, 1:3*N);
 
@@ -265,8 +256,7 @@ toc
 % diag_col_ind = (1:4*N) + 0*N;
 % LHS(diag_row_ind, diag_col_ind) = 1; 
 
-fprintf('Fill EXTRA CONSTRAINTS\t'); 
-tic
+fprintf('Fill EXTRA CONSTRAINTS\n'); 
 
 %% Far right columns, and bottom rows (integral over each vector component
 %% is 0)
@@ -340,12 +330,26 @@ else
     LHS(4*N+4, 4*N+4) = 1; 
 end
 
-toc
 
-fprintf('Construct Sparse From Tuples\t'); 
-tic
-LHS = sparse(II(1:cur_ind-1), JJ(1:cur_ind-1), VV(1:cur_ind-1), 4*N+4, 4*N+4); 
-toc
+% Shrink inline. This will avoid allocating extra mem. If we put these inline
+% on the call to sparse it doubles the allocation for the sparse matrix. 
+II = II(1:cur_ind-1); 
+JJ = JJ(1:cur_ind-1); 
+VV = VV(1:cur_ind-1); 
+
+fprintf('Construct Sparse From Tuples\n'); 
+
+% 8 bytes per double. I = 1 double, J = 1 double, V = 1 double. Where is the extra memory coming from? 
+anticipated_mem = 3 * NNZ * 8;
+%fprintf('Anticipated Allocation (%d -> %d): %3.2fMB\n', NNZ, cur_ind-1, anticipated_mem); 
+
+start_mem = meminfo;
+
+LHS = sparse(II, JJ, VV, 4*N+4, 4*N+4, cur_ind-1);
+
+end_mem = meminfo;
+
+fprintf('Over-Allocation for LHS (%d expected - %d actual elements): %3.2f KB\n', NNZ, cur_ind-1, ( anticipated_mem - (end_mem - start_mem)) / 1024); 
 
 % 
 % Enable this to see nullspace of our LHS
@@ -354,9 +358,25 @@ if 0
     sing_value_indices = find(max(Ssvd) < 1e-6)
 end
 
-fprintf('Sample DIV Operator\t'); 
-tic
+fprintf('Sample DIV Operator\n'); 
 DIV_operator = LHS(3*N+1:4*N,1:4*N+4);
-toc
 
 end
+
+%% FROM: http://stackoverflow.com/questions/5932598/how-to-check-available-memory-in-matlab-2010b-or-later
+function [thisused] = meminfo()
+% get the parent process id
+[s,ppid] = unix(['ps -p $PPID -l | ' awkCol('PPID') ]); 
+% get memory used by the parent process (resident set size)
+[s,thisused] = unix(['ps -O rss -p ' strtrim(ppid) ' | awk ''NR>1 {print$2}'' ']); 
+% rss is in kB, convert to bytes 
+thisused = str2double(thisused)*1024;
+%fprintf('Used Memory: %3.2f MB\n', thisused); 
+
+end
+
+
+function theStr = awkCol(colname)
+theStr  = ['awk ''{ if(NR==1) for(i=1;i<=NF;i++) { if($i~/' colname '/) { colnum=i;break} } else print $colnum }'' '];
+end
+

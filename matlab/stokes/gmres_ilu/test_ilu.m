@@ -19,7 +19,7 @@ tol = 1e-8;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %load west0479;
 fdsize = 31;
-test_case = 5;
+test_case = 2;
 switch test_case
     case 0
         A = mmread('../precond/sph32_sph105_N8100_n31_eta1/LHS_8100.mtx');
