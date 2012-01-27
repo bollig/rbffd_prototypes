@@ -5,7 +5,7 @@ clear all;
 close all;
 
 addpath('../kdtree/')
-addpath('~/rbffd_gpu/scripts/')
+%addpath('~/rbffd_gpu/scripts/')
 
 
 constantViscosity = 1; 
@@ -28,10 +28,10 @@ dim = 2;
 %nodes = load('~/GRIDS/md/md006.00049');
 %nodes = load('~/GRIDS/md/md009.00100');
 %nodes = load('~/GRIDS/md/md031.01024');
-nodes = load('~/GRIDS/md/md031.01024');
+%nodes = load('~/GRIDS/md/md031.01024');
 %nodes = load('~/GRIDS/md/md050.02601'); 
 %nodes = load('~/GRIDS/md/md059.03600'); 
-%nodes = load('~/GRIDS/md/md063.04096');
+nodes = load('~/GRIDS/md/md063.04096');
 %nodes = load('~/GRIDS/md/md079.06400');
 %nodes = load('~/GRIDS/md/md089.08100'); 
 %nodes = load('~/GRIDS/md/md099.10000');
@@ -177,9 +177,9 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%% SOLVE SYSTEM USING LU with Pivoting
+%% SOLVE SYSTEM (Solver types: 'lsq', 'gmres', 'direct', 'gmres+ilu', 'gmres+ilu_k'
 fprintf('Solving Lu=F\n'); 
-U = solve_system(LHS, RHS_continuous, N, 'lsq'); 
+U = solve_system(LHS, RHS_continuous, N, 'direct'); 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -243,9 +243,10 @@ clear U_abs_err;
 
 %% The lapl(P) should equal projected_div(T)
 lapl_p = RBFFD_WEIGHTS.lsfc * U(3*N+1:4*N); 
+lapl_g = RBFFD_WEIGHTS.lsfc * RHS_continuous(3*N+1:4*N); 
 p_div_T = RBFFD_WEIGHTS.xsfc * RHS_continuous(1:N) + RBFFD_WEIGHTS.ysfc * RHS_continuous(1*N+1:2*N) + RBFFD_WEIGHTS.zsfc * RHS_continuous(2*N+1:3*N); 
 
-p_abs_err = (lapl_p - p_div_T); 
+p_abs_err = ((lapl_p) - (p_div_T + lapl_g)); 
 
 p_error_l1 = norm(p_abs_err,1)
 p_error_l2 = norm(p_abs_err,2)
@@ -259,10 +260,25 @@ print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
 hgsave(hhh,[figFileName,'.fig']); 
 close(hhh);
 
-
 hhh=figure('visible', 'off');
 plotScalarfield(p_div_T, nodes, 'div(RHS)'); 
 figFileName=[output_dir,'RHS_div'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']); 
+close(hhh);
+
+hhh=figure('visible', 'off');
+plotScalarfield((lapl_p + lapl_g), nodes, 'lapl(p)+lapl(g)'); 
+figFileName=[output_dir,'lP_lG'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']); 
+close(hhh);
+
+hhh=figure('visible', 'off');
+plotScalarfield((p_div_T + lapl_g), nodes, 'div(RHS)+lapl(g)'); 
+figFileName=[output_dir,'dR_lg'];
 fprintf('Printing figure: %s\n',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
 hgsave(hhh,[figFileName,'.fig']); 
