@@ -1,8 +1,8 @@
 %% Build a differentiation matrix, test hyperviscosity and run the vortex
 %% roll PDE.
-clc;
-clear all;
-close all;
+% clc;
+% clear all;
+% close all;
 
 addpath('../kdtree/')
 %addpath('~/rbffd_gpu/scripts/')
@@ -26,12 +26,12 @@ dim = 2;
 
 %nodes = load('~/GRIDS/md/md004.00025');
 %nodes = load('~/GRIDS/md/md006.00049');
-%nodes = load('~/GRIDS/md/md009.00100');
+nodes = load('~/GRIDS/md/md009.00100');
 %nodes = load('~/GRIDS/md/md031.01024');
 %nodes = load('~/GRIDS/md/md031.01024');
 %nodes = load('~/GRIDS/md/md050.02601'); 
 %nodes = load('~/GRIDS/md/md059.03600'); 
-nodes = load('~/GRIDS/md/md063.04096');
+%nodes = load('~/GRIDS/md/md063.04096');
 %nodes = load('~/GRIDS/md/md079.06400');
 %nodes = load('~/GRIDS/md/md089.08100'); 
 %nodes = load('~/GRIDS/md/md099.10000');
@@ -54,7 +54,7 @@ end
 nodes=nodes(:,1:3);
 N = length(nodes);
 
-output_dir = sprintf('./vics/lsq/sph32_sph105_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
+output_dir = sprintf('~/testcases/1var/sph32_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
 fprintf('Making directory: %s\n', output_dir);
 mkdir(output_dir); 
 
@@ -104,6 +104,25 @@ tic
 [LHS, DIV_operator, eta] = stokes(nodes, N, fdsize, useHV, constantViscosity);
 toc
 
+
+
+% Spend some time reordering initially. 
+%r = symrcm(LHS); 
+%LHS = LHS(r,r); 
+
+% Fill the RHS vector and shrink our system
+fprintf('Filling RHS Vector\n'); 
+[RHS_continuous, RHS_discrete, U_exact] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
+
+zB =  [zeros(N,N) ones(N,1);]
+[ones(1,N) 0 0]; 
+
+LHS_1var = [LHS(1:N,1:N) LHS(1:N,3*N+1:4*N+2); 
+            LHS(3*N+1:4*N+2,1:N);
+        
+RHS_1var = [RHS_continuous(1:N); RHS_continuous(3*N+1:4*N+2)];
+
+
 hhh=figure('visible', 'off');
 % resize the window to most of my laptop screen
 set(hhh,'Units', 'normalized'); 
@@ -121,23 +140,6 @@ fprintf('Printing figure: %s\n',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
 hgsave(hhh,[figFileName,'.fig']); 
 
-% Spend some time reordering initially. 
-%r = symrcm(LHS); 
-%LHS = LHS(r,r); 
-
-% Manufacture a RHS given our LHS
-
-% %% Test 1: If we have uniform density and uniform temperature, we should
-% %% get 0 velocity everywhere. 
-% RHS = [ones(N,1); 
-%         ones(N,1); 
-%         ones(N,1); 
-%         zeros(N,1)]; 
-    
-%% Test 2: Using a Spherical Harmonic on the RHS, lets get the steady state
-%% velocity
-fprintf('Filling RHS Vector\n'); 
-[RHS_continuous, RHS_discrete, U_exact] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
 
 hhh=figure('visible', 'off') ;
 plotVectorComponents(RHS_continuous, nodes, 'RHS_{continuous} (F)'); 
@@ -177,9 +179,15 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+
+figure
+spy(LHS_1var)
+figure
+plotScalarfield(RHS_1var, nodes, 'RHS (1Var)'); 
+
 %% SOLVE SYSTEM (Solver types: 'lsq', 'gmres', 'direct', 'gmres+ilu', 'gmres+ilu_k'
 fprintf('Solving Lu=F\n'); 
-U = solve_system(LHS, RHS_continuous, N, 'direct'); 
+U = solve_system(LHS_1var, RHS_1var, N, 'direct'); 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
