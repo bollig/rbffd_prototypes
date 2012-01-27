@@ -192,8 +192,14 @@ figure(2)
 plotScalarfield(Lapl_sph32_mathematica,nodes,'Mathematica Lapl(SPH(3,2))');
 figure(4)
 plotScalarfield(RBFFD_WEIGHTS.lsfc * sph32_mathematica,nodes,'RBFFD WEIGHTS.lsfc * sph32_mathematica');
-figure(5)
-plotScalarfield(abs(Lapl_sph32_mathematica - (RBFFD_WEIGHTS.lsfc * sph32_mathematica)),nodes,'Abs(Lapl_{Mathematica} - RBFFD WEIGHTS.lsfc * sph32_mathematica');
+end
+
+if 1
+l2_norm = norm(abs(Lapl_sph32_mathematica - (RBFFD_WEIGHTS.lsfc * sph32_mathematica)), 2)
+
+figure
+plotScalarfield(abs(Lapl_sph32_mathematica - (RBFFD_WEIGHTS.lsfc * sph32_mathematica)),nodes,sprintf('Abs(Lapl_{exact} - Lapl_{approx}) l2=%f', l2_norm));
+
 end
 if 0
 figure(6)
