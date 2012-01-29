@@ -48,7 +48,14 @@ A = ones(n+1,n+1); A(end,end) = 0;
 % RHS
 B = zeros(n+1,1);
 
-root = kdtree_build(nodes);
+%root = kdtree_build(nodes);
+
+root = KDTreeSearcher(nodes,'distance','euclidean');
+
+
+% Use KDTREE (BUGFIX: returns the nearest neighbors in reverse order)
+%idx_all = kdtree_k_nearest_neighbors(root, nodes(j,:), n);
+idx_all = knnsearch(root,nodes,'k',n);
 
 cond_sum = 0;
 cond_log10_sum = 0;
@@ -63,14 +70,12 @@ cond_log10_sum = 0;
 %     root = kdtree_build(nodes);
 for j=1:N
     
-    % Use KDTREE (BUGFIX: returns the nearest neighbors in reverse order)
-    idx = kdtree_k_nearest_neighbors(root, nodes(j,:), n);
-    idx = idx(n:-1:1);
+    
     
     % Euclidean distance matrix
     %dist = distmat(nodes(idx,:)); %sqrt(max(0,2*(1-nodes(idx,1)*nodes(idx,1).'-nodes(idx,2)*nodes(idx,2).'-nodes(idx,3)*nodes(idx,3).')));
     
-    imat = idx(1:n);
+    imat = idx_all(j, 1:n);
     ind_i((j-1)*n+1:j*n) = j;
     ind_j((j-1)*n+1:j*n) = imat;
     % This is the distance matrix: sqrt(2*(1 - x'x))

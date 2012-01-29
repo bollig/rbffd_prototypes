@@ -1,10 +1,18 @@
-function [eps_params avg_cond_num h C SQRT_N EP] = getContourParams(n)
-
+function [eps_params avg_cond_num h C SQRT_N EP] = getContourParams(n, output_dir)
 % Returns contours of log_10(avg_kappa) where avg_kappa is the
 % AVERAGE condition number for all RBFFD LHS matrices when calculating
 % weights.
 
-[h C SQRT_N EP avg_cond_num] = generate_contours(n);
+if nargin < 2
+    output_dir = './generated_figs/';
+end
+
+delete([output_dir,sprintf('params_n%d.txt',n)])
+diary([output_dir,sprintf('params_n%d.txt',n)])
+diary on; 
+
+fprintf('Generating Contours for n=%d\n', n); 
+[hhh h C SQRT_N EP avg_cond_num] = generate_contours(n);
 
 end_contours = length(C);
 start_contour = 1;
@@ -34,7 +42,7 @@ while start_contour < end_contours
         % Intercept
         B = CY(1) - M*CX(1);
         
-        fprintf('Contour %d, params: c1 = %3.3f, c2 = %3.3f\n', level, M, -B);
+        fprintf('log_10(Mean Condition Number) = %d, params: c1 = %3.3f, c2 = %3.3f\n', level, M, -B);
         
         % Store for output
         %eps_params.levels(i) = level;
@@ -57,7 +65,7 @@ set(h,'TextListMode', 'auto');
 
 % Each contour may have one or more text_handle elements associated with
 % it. We want to get the middle text_handle and replace it with the slope
-% of the line. 
+% of the line.
 text_handle = clabel(C,h);
 
 for i = 1:length(display_list)
@@ -67,7 +75,7 @@ for i = 1:length(display_list)
         %fprintf('%s ? %d\n', get(text_handle(j),'String'), display_list(i));
         j=j+1;
     end
-    k = j; 
+    k = j;
     while k < length(text_handle) & strcmp(get(text_handle(k+1),'String'),int2str(display_list(i)))
         k=k+1;
     end
@@ -77,7 +85,7 @@ for i = 1:length(display_list)
     %set(text_handle(i), 'String', sprintf('c1 = %3.3f, c2 = %3.3f', eps_params.(lev).c1, eps_params.(lev).c2));
     textM1 = get(text_handle(j), 'Rotation');
     textM2 = get(text_handle(k), 'Rotation');
-    textM = (textM1 + textM2) / 2; 
+    textM = (textM1 + textM2) / 2;
     
     textPt1 = get(text_handle(j), 'Position');
     textPt2 = get(text_handle(k), 'Position');
@@ -95,4 +103,12 @@ set(text_handle,'FontSize',18);
 %pbaspect([1 1 1]); % change to a square view (everything will be visible)
 %pbaspect('auto');  % Scale back out to the window size, but keep everything visible
 set(gca,'Unit', 'normalized','Position',[0.08 0.1 0.80 0.80])
+
+figFileName=[output_dir,sprintf('/labeled_contours_n%d', n)];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']);
+close(hhh);
+
+diary off; 
 end

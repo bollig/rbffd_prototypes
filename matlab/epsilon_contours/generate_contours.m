@@ -1,4 +1,4 @@
-function [h, C, SQRT_N, EP, avg_conds] = generate_contours(n)
+function [hhh, h, C, SQRT_N, EP, avg_conds] = generate_contours(n)
 %SQRT_N EP contours
 
 %% MD Nodes are N=[2:166].^2
@@ -12,7 +12,7 @@ EP = 1:0.5:10;
 avg_cond_num = zeros(length(EP), length(SQRT_N));
 avg_log10_cond_num = zeros(length(EP), length(SQRT_N));
 for i = 1:length(SQRT_N)
-    SQRT_N(i)
+    fprintf('sqrt(N) = %d\n', SQRT_N(i)); 
     N = SQRT_N(i)^2;
     node_filename = sprintf('~/GRIDS/md/md%03d.%05d',SQRT_N(i)-1, N);
     nodes = load(node_filename);
@@ -26,7 +26,7 @@ end
 avg_conds = avg_log10_cond_num; 
 
 
-    figure
+    hhh = figure('visible', 'off');
     set(gcf,'Position', [50   321   810   579]);
     [C,h] = contour(X, Y, avg_conds);
     %pbaspect([1 1 1]); 
@@ -39,5 +39,6 @@ avg_conds = avg_log10_cond_num;
     title(mytitle, 'Interpreter', 'latex','FontSize',26);
     xlabel('$\sqrt{N}$', 'Interpreter', 'Latex','FontSize',22);
     ylabel('$\epsilon$', 'Interpreter', 'Latex','FontSize',22);
+   
 
 end
