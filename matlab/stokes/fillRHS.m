@@ -1,4 +1,4 @@
-function [RHS_continuous, RHS_discrete, U_continuous, l2_lapl_sph32, l2_dx_sph32, l2_dy_sph32, l2_dz_sph32, l2_residual_u, l2_residual_v, l2_residual_w, l2_residual_p] = fillRHS(nodes, LHS, constantViscosity, eta, t)
+function [RHS_continuous, RHS_discrete, U_continuous, l2_lapl_v, l2_dx_v, l2_dy_v, l2_dz_v, l2_residual_u, l2_residual_v, l2_residual_w, l2_residual_p] = fillRHS(nodes, LHS, constantViscosity, eta, t)
 global RBFFD_WEIGHTS;
 
 
@@ -46,6 +46,7 @@ pdz_sph32_mathematica = (sqrt(105/pi).*(Xx - Yy).*(Xx + Yy).*(Xx.^2 + Yy.^2 - 2*
 Lapl_cart_sph32_mathematica = (3.*sqrt(105./pi).*(-Xx.^2 + Yy.^2).*Zz)./(Xx.^2 + Yy.^2 + Zz.^2).^2.5;
 
 
+%% Cartesian SPH(3,2,10,5) {i.e., 3,2 plus 10,5
 cart_sph32_105 = (sqrt(105/pi).*(Xx - Yy).*(Xx + Yy).*Zz)./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^1.5) - (3*sqrt(1001./(2.*pi)).*(Xx.^2 + Yy.^2).^2.5.*Zz.*sqrt(1./(Xx.^2 + Yy.^2 + Zz.^2)).*(15*(Xx.^2 + Yy.^2).^2 - 140*(Xx.^2 + Yy.^2).*Zz.^2 + 168*Zz.^4).*cos(5*atan2(Yy,Xx)))./(128.*(Xx.^2 + Yy.^2 + Zz.^2).^4.5);
 
 Lapl_sph32_105 =  (-3.*sqrt(7/pi).*Zz.*(128*sqrt(15).*(Xx - Yy).*(Xx + Yy).*(Xx.^2 + Yy.^2 + Zz.^2).^3 - 55.*sqrt(286)*(Xx.^2 + Yy.^2).^2.5.*sqrt(1./(Xx.^2 + Yy.^2 + Zz.^2)).*(15.*(Xx.^2 + Yy.^2).^2 - 140*(Xx.^2 + Yy.^2).*Zz.^2 + 168.*Zz.^4).*cos(5*atan2(Yy,Xx))))./(128.*(Xx.^2 + Yy.^2 + Zz.^2).^5.5);
@@ -55,6 +56,15 @@ pdx_sph32_sph105 = (sqrt(7/pi).*Zz.*(-64.*sqrt(15).*Xx.*(Xx.^2 - 5.*Yy.^2 - 2.*Z
 pdy_sph32_sph105 = (sqrt(7/pi).*Zz.*(64.*sqrt(15).*Yy.*(-5.*Xx.^2 + Yy.^2 - 2.*Zz.^2).*(Xx.^2 + Yy.^2 + Zz.^2).^3 + 15.*sqrt(286).*(Xx.^2 + Yy.^2).^1.5.*sqrt(1./(Xx.^2 + Yy.^2 + Zz.^2)).* (Yy.*(3.*(Xx.^2 + Yy.^2).^3 - 111.*(Xx.^2 + Yy.^2).^2.*Zz.^2 + 364.*(Xx.^2 + Yy.^2).*Zz.^4 - 168.*Zz.^6).*cos(5.*atan2(Yy,Xx)) + Xx.*(15.*(Xx.^2 + Yy.^2).^3 - 125.*(Xx.^2 + Yy.^2).^2.*Zz.^2 + 28.*(Xx.^2 + Yy.^2).*Zz.^4 + 168.*Zz.^6).*sin(5.*atan2(Yy,Xx)))))./(256..*(Xx.^2 + Yy.^2 + Zz.^2).^5.5);  
 
 pdz_sph32_sph105 = (sqrt(7/pi).*(64.*sqrt(15).*(Xx - Yy).*(Xx + Yy).*(Xx.^2 + Yy.^2 - 2.*Zz.^2).*(Xx.^2 + Yy.^2 + Zz.^2).^3 - 15.*sqrt(286).*(Xx.^2 + Yy.^2).^2.5.*sqrt(1./(Xx.^2 + Yy.^2 + Zz.^2)).*(3.*(Xx.^2 + Yy.^2).^3 - 111.*(Xx.^2 + Yy.^2).^2.*Zz.^2 + 364.*(Xx.^2 + Yy.^2).*Zz.^4 - 168.*Zz.^6).* cos(5.*atan2(Yy,Xx))))./(256..*(Xx.^2 + Yy.^2 + Zz.^2).^5.5);  
+
+
+
+%% Cartesian SPH(10,5) only. 
+cart_sph105 = (-3*sqrt(1001./(2.*pi)).*(Xx.^2 + Yy.^2).^2.5.*Zz.*sqrt(1./(Xx.^2 + Yy.^2 + Zz.^2)).*(15.*(Xx.^2 + Yy.^2).^2 - 140.*(Xx.^2 + Yy.^2).*Zz.^2 + 168.*Zz.^4).*cos(5*atan2(Yy,Xx)))./(128.*(Xx.^2 + Yy.^2 + Zz.^2).^4.5);
+Lapl_sph105 = (165*sqrt(1001./(2.*pi)).*(Xx.^2 + Yy.^2).^2.5.*Zz.*sqrt(1./(Xx.^2 + Yy.^2 + Zz.^2)).*(15.*(Xx.^2 + Yy.^2).^2 - 140.*(Xx.^2 + Yy.^2).*Zz.^2 + 168.*Zz.^4).*cos(5*atan2(Yy,Xx)))./(64.*(Xx.^2 + Yy.^2 + Zz.^2).^5.5);
+pdx_sph105 = (15.*sqrt(1001./(2.*pi)).*(Xx.^2 + Yy.^2).^1.5.*Zz.*sqrt(1./(Xx.^2 + Yy.^2 + Zz.^2)).*(Xx.*(3.*(Xx.^2 + Yy.^2).^3 - 111.*(Xx.^2 + Yy.^2).^2.*Zz.^2 + 364.*(Xx.^2 + Yy.^2).*Zz.^4 - 168.*Zz.^6).*cos(5.*atan2(Yy,Xx)) - Yy.*(15.*(Xx.^2 + Yy.^2).^3 - 125.*(Xx.^2 + Yy.^2).^2.*Zz.^2 + 28.*(Xx.^2 + Yy.^2).*Zz.^4 + 168.*Zz.^6).*sin(5.*atan2(Yy,Xx))))./(128.*(Xx.^2 + Yy.^2 + Zz.^2).^5.5);
+pdy_sph105 = (15.*sqrt(1001./(2.*pi)).*(Xx.^2 + Yy.^2).^1.5.*Zz.*sqrt(1./(Xx.^2 + Yy.^2 + Zz.^2)).*(Yy.*(3.*(Xx.^2 + Yy.^2).^3 - 111.*(Xx.^2 + Yy.^2).^2.*Zz.^2 + 364.*(Xx.^2 + Yy.^2).*Zz.^4 - 168.*Zz.^6).*cos(5.*atan2(Yy,Xx)) + Xx.*(15.*(Xx.^2 + Yy.^2).^3 - 125.*(Xx.^2 + Yy.^2).^2.*Zz.^2 + 28.*(Xx.^2 + Yy.^2).*Zz.^4 + 168.*Zz.^6).*sin(5.*atan2(Yy,Xx))))./(128.*(Xx.^2 + Yy.^2 + Zz.^2).^5.5);
+pdz_sph105 = (-15.*sqrt(1001./(2.*pi)).*(Xx.^2 + Yy.^2).^2.5.*sqrt(1./(Xx.^2 + Yy.^2 + Zz.^2)).*(3.*(Xx.^2 + Yy.^2).^3 - 111.*(Xx.^2 + Yy.^2).^2.*Zz.^2 + 364.*(Xx.^2 + Yy.^2).*Zz.^4 - 168.*Zz.^6).*cos(5*atan2(Yy,Xx)))./(128.*(Xx.^2 + Yy.^2 + Zz.^2).^5.5);
 
 
 
@@ -108,12 +118,19 @@ pdy_u = pdy_sph32_mathematica;
 pdz_u = pdz_sph32_mathematica; 
 
 % Sph(3,2) + Sph(10,5)
-v = cart_sph32_105;
-Lapl_v = Lapl_sph32_105; 
-pdx_v = pdx_sph32_sph105; 
-pdy_v = pdy_sph32_sph105; 
-pdz_v = pdz_sph32_sph105; 
+% v = cart_sph32_105;
+% Lapl_v = Lapl_sph32_105; 
+% pdx_v = pdx_sph32_sph105; 
+% pdy_v = pdy_sph32_sph105; 
+% pdz_v = pdz_sph32_sph105; 
 
+
+% Sph(10,5)
+v = cart_sph105;
+Lapl_v = Lapl_sph105; 
+pdx_v = pdx_sph105; 
+pdy_v = pdy_sph105; 
+pdz_v = pdz_sph105; 
 
 w = cart_sph32_mathematica;
 Lapl_w = Lapl_sph32_mathematica; 
@@ -198,11 +215,17 @@ plotScalarfield(abs(Lapl_sph32_mathematica - (RBFFD_WEIGHTS.lsfc * sph32_mathema
 end
 
 if 1
-    
-l2_lapl_sph32 = norm(abs(Lapl_sph32_mathematica - (RBFFD_WEIGHTS.lsfc * sph32_mathematica)), 2)
-l2_dx_sph32 = norm(abs(pdx_sph32_mathematica - (RBFFD_WEIGHTS.xsfc * sph32_mathematica)), 2)
-l2_dy_sph32 = norm(abs(pdy_sph32_mathematica - (RBFFD_WEIGHTS.ysfc * sph32_mathematica)), 2)
-l2_dz_sph32 = norm(abs(pdz_sph32_mathematica - (RBFFD_WEIGHTS.zsfc * sph32_mathematica)), 2)
+%     
+% l2_lapl_sph32 = norm(abs(Lapl_sph32_mathematica - (RBFFD_WEIGHTS.lsfc * sph32_mathematica)), 2)
+% l2_dx_sph32 = norm(abs(pdx_sph32_mathematica - (RBFFD_WEIGHTS.xsfc * sph32_mathematica)), 2)
+% l2_dy_sph32 = norm(abs(pdy_sph32_mathematica - (RBFFD_WEIGHTS.ysfc * sph32_mathematica)), 2)
+% l2_dz_sph32 = norm(abs(pdz_sph32_mathematica - (RBFFD_WEIGHTS.zsfc * sph32_mathematica)), 2)
+
+l2_lapl_v = norm(abs(Lapl_sph105 - (RBFFD_WEIGHTS.lsfc * cart_sph105)), 2)
+l2_dx_v = norm(abs(pdx_sph105 - (RBFFD_WEIGHTS.xsfc * cart_sph105)), 2)
+l2_dy_v = norm(abs(pdy_sph105 - (RBFFD_WEIGHTS.ysfc * cart_sph105)), 2)
+l2_dz_v = norm(abs(pdz_sph105 - (RBFFD_WEIGHTS.zsfc * cart_sph105)), 2)
+
 
 RHS_DIS = LHS(1:4*N, 1:4*N) * U_continuous(1:4*N); 
 
