@@ -1,11 +1,9 @@
+
 %% Build a differentiation matrix, test hyperviscosity and run the vortex
 %% roll PDE.
-% clc;
-% clear all;
-% close all;
-
-addpath('../kdtree/')
-%addpath('~/rbffd_gpu/scripts/')
+clc;
+clear all;
+close all;
 
 
 constantViscosity = 1; 
@@ -91,16 +89,7 @@ toc
 
 % NO need for hyperviscosity at this point
 %RBFFD_WEIGHTS.scaled_hv = - ( hv_gamma / N^(hv_k) ) * RBFFD_WEIGHTS.hv; 
-%NOT NEEDED: addpath('~/repos-rbffd_gpu/scripts');
 
-%runTest(@stokes, nodes, N, fdsize, useHV);
-
-% RHS = fillRHS(nodes, 0);
-% 
-% % Show initial solution:
-% %interpolateToSphere(initial_condition, initial_condition, nodes, t);
-
-% plotSolution(RHS, RHS, nodes, 0);
 fprintf('Filling LHS Collocation Matrix\n'); 
 tic
 [LHS, DIV_operator, eta] = stokes(nodes, N, fdsize, useHV, constantViscosity);

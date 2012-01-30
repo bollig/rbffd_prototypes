@@ -134,7 +134,5 @@ title('Exact Solution', 'FontSize', 14);
 %    l1norm, l2norm, linfnorm, ...
 %    rel_l1norm, rel_l2norm, rel_linfnorm);
 
-%addpath('./mtit');
-%p=mtit(figtitle,'fontsize',20, 'xoff',0, 'yoff',.035);
 
 end
