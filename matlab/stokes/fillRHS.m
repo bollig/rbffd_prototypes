@@ -1,4 +1,4 @@
-function [RHS_continuous, RHS_discrete, U_continuous] = fillRHS(nodes, LHS, constantViscosity, eta, t)
+function [RHS_continuous, RHS_discrete, U_continuous, l2_lapl_sph32, l2_dx_sph32, l2_dy_sph32, l2_dz_sph32] = fillRHS(nodes, LHS, constantViscosity, eta, t)
 global RBFFD_WEIGHTS;
 
 
@@ -192,13 +192,17 @@ figure(2)
 plotScalarfield(Lapl_sph32_mathematica,nodes,'Mathematica Lapl(SPH(3,2))');
 figure(4)
 plotScalarfield(RBFFD_WEIGHTS.lsfc * sph32_mathematica,nodes,'RBFFD WEIGHTS.lsfc * sph32_mathematica');
+figure
+plotScalarfield(abs(Lapl_sph32_mathematica - (RBFFD_WEIGHTS.lsfc * sph32_mathematica)),nodes,sprintf('Abs(Lapl_{exact} - Lapl_{approx}) l2=%f', l2_norm));
+
 end
 
 if 1
-l2_norm = norm(abs(Lapl_sph32_mathematica - (RBFFD_WEIGHTS.lsfc * sph32_mathematica)), 2)
-
-figure
-plotScalarfield(abs(Lapl_sph32_mathematica - (RBFFD_WEIGHTS.lsfc * sph32_mathematica)),nodes,sprintf('Abs(Lapl_{exact} - Lapl_{approx}) l2=%f', l2_norm));
+    
+l2_lapl_sph32 = norm(abs(Lapl_sph32_mathematica - (RBFFD_WEIGHTS.lsfc * sph32_mathematica)), 2)
+l2_dx_sph32 = norm(abs(pdx_sph32_mathematica - (RBFFD_WEIGHTS.xsfc * sph32_mathematica)), 2)
+l2_dy_sph32 = norm(abs(pdy_sph32_mathematica - (RBFFD_WEIGHTS.ysfc * sph32_mathematica)), 2)
+l2_dz_sph32 = norm(abs(pdz_sph32_mathematica - (RBFFD_WEIGHTS.zsfc * sph32_mathematica)), 2)
 
 end
 if 0
