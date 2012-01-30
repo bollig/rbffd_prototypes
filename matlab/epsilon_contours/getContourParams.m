@@ -63,15 +63,17 @@ disp_indx = 0;
 
 set(h,'TextListMode', 'auto');
 
-% Each contour may have one or more text_handle elements associated with
+% Each contour may have zero or more text_handle elements associated with
 % it. We want to get the middle text_handle and replace it with the slope
 % of the line.
 text_handle = clabel(C,h);
 
 for i = 1:length(display_list)
     j=1;
-    
-    while ~strcmp(get(text_handle(j),'String'),int2str(display_list(i)))
+    %% BUGFIX: let j go beyond length of text_handle because we need to know when we dont actually have a label on the contour. 
+    % When there is no label we actually have a segment that is visible but
+    % too small for matlab to want to label. 
+    while j <= length(text_handle) & ~strcmp(get(text_handle(j),'String'),int2str(display_list(i)))
         %fprintf('%s ? %d\n', get(text_handle(j),'String'), display_list(i));
         j=j+1;
     end
@@ -80,22 +82,24 @@ for i = 1:length(display_list)
         k=k+1;
     end
     
-    %display({'no',display_list(i)});
-    
-    %set(text_handle(i), 'String', sprintf('c1 = %3.3f, c2 = %3.3f', eps_params.(lev).c1, eps_params.(lev).c2));
-    textM1 = get(text_handle(j), 'Rotation');
-    textM2 = get(text_handle(k), 'Rotation');
-    textM = (textM1 + textM2) / 2;
-    
-    textPt1 = get(text_handle(j), 'Position');
-    textPt2 = get(text_handle(k), 'Position');
-    
-    draw_pt_x = textPt1(1) + (textPt2(1) - textPt1(1)) / 2;
-    draw_pt_y = textPt1(2) + (textPt2(2) - textPt1(2)) / 2;
-    
-    lev = sprintf('l%d',display_list(i));
-    params = sprintf('c1 = %3.3f, c2 = %3.3f', eps_params.(lev).c1, eps_params.(lev).c2);
-    text(draw_pt_x, draw_pt_y+0.3, params, 'Rotation', textM1, 'FontSize', 18, 'HorizontalAlignment', 'Center', 'Clipping', 'off');
+    if j <= length(text_handle) && k <= length(text_handle)
+        %display({'no',display_list(i)});
+        
+        %set(text_handle(i), 'String', sprintf('c1 = %3.3f, c2 = %3.3f', eps_params.(lev).c1, eps_params.(lev).c2));
+        textM1 = get(text_handle(j), 'Rotation');
+        textM2 = get(text_handle(k), 'Rotation');
+        textM = (textM1 + textM2) / 2;
+        
+        textPt1 = get(text_handle(j), 'Position');
+        textPt2 = get(text_handle(k), 'Position');
+        
+        draw_pt_x = textPt1(1) + (textPt2(1) - textPt1(1)) / 2;
+        draw_pt_y = textPt1(2) + (textPt2(2) - textPt1(2)) / 2;
+        
+        lev = sprintf('l%d',display_list(i));
+        params = sprintf('c1 = %3.3f, c2 = %3.3f', eps_params.(lev).c1, eps_params.(lev).c2);
+        text(draw_pt_x, draw_pt_y+0.3, params, 'Rotation', textM1, 'FontSize', 18, 'HorizontalAlignment', 'Center', 'Clipping', 'off');
+    end
 end
 set(text_handle,'FontSize',18);
 

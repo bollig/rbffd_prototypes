@@ -1,0 +1,73 @@
+Generating Contours for n=5
+sqrt(N) = 40
+sqrt(N) = 50
+sqrt(N) = 60
+sqrt(N) = 70
+sqrt(N) = 80
+sqrt(N) = 90
+sqrt(N) = 100
+Assuming variable epsilon is calculated as ep = c1 * sqrt(N) - c2
+NOTE: the minus sign before c2
+log_10(Mean Condition Number) = 2, params: c1 = 0.122, c2 = 0.003
+log_10(Mean Condition Number) = 4, params: c1 = 0.038, c2 = 0.041
+log_10(Mean Condition Number) = 6, params: c1 = 0.014, c2 = 0.221
+<a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/epsilon_contours/getContourParams.m',71,1)">71  </a>for i = 2:length(display_list)
+dbquit all
+for i = 1:length(display_list)
+    j=1;
+    
+    while ~strcmp(get(text_handle(j),'String'),int2str(display_list(i)))
+        %fprintf('%s ? %d\n', get(text_handle(j),'String'), display_list(i));
+        j=j+1;
+    end
+    k = j;
+    while k < length(text_handle) & strcmp(get(text_handle(k+1),'String'),int2str(display_list(i)))
+        k=k+1;
+    end
+    
+    %display({'no',display_list(i)});
+    
+    %set(text_handle(i), 'String', sprintf('c1 = %3.3f, c2 = %3.3f', eps_params.(lev).c1, eps_params.(lev).c2));
+    textM1 = get(text_handle(j), 'Rotation');
+    textM2 = get(text_handle(k), 'Rotation');
+    textM = (textM1 + textM2) / 2;
+    
+    textPt1 = get(text_handle(j), 'Position');
+    textPt2 = get(text_handle(k), 'Position');
+    
+    draw_pt_x = textPt1(1) + (textPt2(1) - textPt1(1)) / 2;
+    draw_pt_y = textPt1(2) + (textPt2(2) - textPt1(2)) / 2;
+    
+    lev = sprintf('l%d',display_list(i));
+    params = sprintf('c1 = %3.3f, c2 = %3.3f', eps_params.(lev).c1, eps_params.(lev).c2);
+    text(draw_pt_x, draw_pt_y+0.3, params, 'Rotation', textM1, 'FontSize', 18, 'HorizontalAlignment', 'Center', 'Clipping', 'off');
+end
+{??? Undefined function or variable 'display_list'.
+} 
+getContourParams
+{??? Undefined function or variable 'output_dir'.
+
+Error in ==> <a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/epsilon_contours/getContourParams.m',10,0)">getContourParams at 10</a>
+delete([output_dir,sprintf('params_n%d.txt',n)])
+} 
+n = 5
+n =
+     5
+clear all 
+close all 
+n = 5
+n =
+     5
+getContourParams
+{??? Undefined function or variable 'output_dir'.
+
+Error in ==> <a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/epsilon_contours/getContourParams.m',10,0)">getContourParams at 10</a>
+delete([output_dir,sprintf('params_n%d.txt',n)])
+} 
+output_dir = './junk/';
+n = 5
+n =
+     5
+getContourParams
+{Warning: File './junk/params_n5.txt' not found.} 
+> In <a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/epsilon_contours/getContourParams.m',10,1)">getContourParams at 10</a>

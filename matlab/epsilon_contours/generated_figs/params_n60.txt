@@ -1,0 +1,20 @@
+Generating Contours for n=60
+sqrt(N) = 40
+sqrt(N) = 50
+sqrt(N) = 60
+sqrt(N) = 70
+sqrt(N) = 80
+sqrt(N) = 90
+sqrt(N) = 100
+Assuming variable epsilon is calculated as ep = c1 * sqrt(N) - c2
+NOTE: the minus sign before c2
+log_10(Mean Condition Number) = 2, params: c1 = 0.258, c2 = 0.635
+log_10(Mean Condition Number) = 4, params: c1 = 0.156, c2 = 0.043
+log_10(Mean Condition Number) = 6, params: c1 = 0.116, c2 = 0.162
+log_10(Mean Condition Number) = 8, params: c1 = 0.088, c2 = 0.228
+log_10(Mean Condition Number) = 10, params: c1 = 0.067, c2 = 0.244
+log_10(Mean Condition Number) = 12, params: c1 = 0.050, c2 = 0.255
+log_10(Mean Condition Number) = 14, params: c1 = 0.037, c2 = 0.262
+log_10(Mean Condition Number) = 16, params: c1 = 0.028, c2 = 0.306
+log_10(Mean Condition Number) = 18, params: c1 = 0.018, c2 = 0.423
+Printing figure: ./generated_figs//labeled_contours_n60

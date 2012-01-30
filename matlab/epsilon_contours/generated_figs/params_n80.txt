@@ -1,0 +1,41 @@
+Generating Contours for n=80
+sqrt(N) = 40
+sqrt(N) = 50
+sqrt(N) = 60
+sqrt(N) = 70
+sqrt(N) = 80
+sqrt(N) = 90
+sqrt(N) = 100
+Assuming variable epsilon is calculated as ep = c1 * sqrt(N) - c2
+NOTE: the minus sign before c2
+log_10(Mean Condition Number) = 2, params: c1 = 0.260, c2 = 0.497
+log_10(Mean Condition Number) = 4, params: c1 = 0.161, c2 = 0.051
+log_10(Mean Condition Number) = 6, params: c1 = 0.122, c2 = 0.160
+log_10(Mean Condition Number) = 8, params: c1 = 0.095, c2 = 0.251
+log_10(Mean Condition Number) = 10, params: c1 = 0.074, c2 = 0.251
+log_10(Mean Condition Number) = 12, params: c1 = 0.058, c2 = 0.285
+log_10(Mean Condition Number) = 14, params: c1 = 0.045, c2 = 0.311
+log_10(Mean Condition Number) = 16, params: c1 = 0.035, c2 = 0.289
+log_10(Mean Condition Number) = 18, params: c1 = 0.023, c2 = 0.309
+{??? Index exceeds matrix dimensions.
+
+Error in ==> <a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/epsilon_contours/getContourParams.m',74,0)">getContourParams at 74</a>
+    while ~strcmp(get(text_handle(j),'String'),int2str(display_list(i)))
+
+Error in ==> <a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/epsilon_contours/epsilon_driver.m',3,0)">epsilon_driver at 3</a>
+    [eps_params avg_K, h, C, sqrtN, EP] = getContourParams(nn);
+} 
+figure
+figure(1)
+text_handle = clabel(C,h)
+text_handle =
+     []
+display_list = get(h,'LevelList');
+{??? Error using ==> get
+Invalid handle object.
+} 
+
+h 
+h =
+  174.0050
+diary off
