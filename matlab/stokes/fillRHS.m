@@ -1,4 +1,4 @@
-function [RHS_continuous, RHS_discrete, U_continuous, l2_lapl_sph32, l2_dx_sph32, l2_dy_sph32, l2_dz_sph32] = fillRHS(nodes, LHS, constantViscosity, eta, t)
+function [RHS_continuous, RHS_discrete, U_continuous, l2_lapl_sph32, l2_dx_sph32, l2_dy_sph32, l2_dz_sph32, l2_residual_u, l2_residual_v, l2_residual_w, l2_residual_p] = fillRHS(nodes, LHS, constantViscosity, eta, t)
 global RBFFD_WEIGHTS;
 
 
@@ -203,6 +203,14 @@ l2_lapl_sph32 = norm(abs(Lapl_sph32_mathematica - (RBFFD_WEIGHTS.lsfc * sph32_ma
 l2_dx_sph32 = norm(abs(pdx_sph32_mathematica - (RBFFD_WEIGHTS.xsfc * sph32_mathematica)), 2)
 l2_dy_sph32 = norm(abs(pdy_sph32_mathematica - (RBFFD_WEIGHTS.ysfc * sph32_mathematica)), 2)
 l2_dz_sph32 = norm(abs(pdz_sph32_mathematica - (RBFFD_WEIGHTS.zsfc * sph32_mathematica)), 2)
+
+RHS_DIS = LHS(1:4*N, 1:4*N) * U_continuous(1:4*N); 
+
+l2_residual_u = norm(abs(RHS_continuous(1:N)-RHS_DIS(1:N)), 2); 
+l2_residual_v = norm(abs(RHS_continuous(N+1:2*N)-RHS_DIS(N+1:2*N)), 2); 
+l2_residual_w = norm(abs(RHS_continuous(2*N+1:3*N)-RHS_DIS(2*N+1:3*N)), 2); 
+l2_residual_p = norm(abs(RHS_continuous(3*N+1:4*N)-RHS_DIS(3*N+1:4*N)), 2); 
+
 
 end
 if 0

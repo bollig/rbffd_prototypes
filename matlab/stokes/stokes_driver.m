@@ -1,14 +1,14 @@
 
 %% Build a differentiation matrix, test hyperviscosity and run the vortex
 %% roll PDE.
-% clc;
-% clear all;
-% close all;
+clc;
+clear all;
+close all;
 
 
 constantViscosity = 1;
 
-output_dir = sprintf('./verification/');
+output_dir = sprintf('./verify_params/');
 fprintf('Making directory: %s\n', output_dir);
 mkdir(output_dir);
 
@@ -67,27 +67,26 @@ c2_kappa.n100 = [0.067, 0.178, 0.248, 0.263, 0.283, 0.308, 0.293, 0.326, 0.305];
 kappa.n100 = [4, 6, 8, 10, 12, 14, 16, 18];
 
 
-colors = ['b', 'g', 'r', 'c', 'm'] 
-
-figure(1);
-figure(2); 
-figure(3); 
-figure(4); 
-figure(5); 
-jj = 1; 
+jj = 1;
+nvals = 0;
+l2_lapl_vals = 0;
+l2_dx_vals = 0;
+l2_dy_vals = 0;
+l2_dz_vals = 0;
+l2_res_u_vals = 0;
+l2_res_v_vals = 0;
+l2_res_w_vals = 0;
+l2_res_p_vals = 0;
+cond_nums = 0;
+log10_cond_nums = 0;
 for nn = 20:20:100
     
     c1_vals = getfield(c1_kappa,sprintf('n%d',nn));
     c2_vals = getfield(c2_kappa,sprintf('n%d',nn));
     fdsize = nn;
-    c1 = c1_vals(end)
-    c2 = c2_vals(end)
+    c1 = c1_vals(end);
+    c2 = c2_vals(end);
     
-    nvals = 0;
-    l2_lapl_vals = 0;
-    l2_dx_vals = 0;
-    l2_dy_vals = 0;
-    l2_dz_vals = 0;
     ii = 1;
     for NN = 20:10:100
         
@@ -150,6 +149,10 @@ for nn = 20:20:100
         tic
         [weights_available, nodes] = Calc_RBFFD_Weights({'lsfc', 'xsfc', 'ysfc', 'zsfc'}, N, nodes, fdsize, ep, hv_k);
         toc
+        [avg_cond_num avg_log10_cond_num] = Calc_RBFFD_CondNums(N, nodes, fdsize, ep);
+        
+        cond_nums(jj, ii) = avg_cond_num; 
+        log10_cond_nums(jj, ii) = avg_log10_cond_num; 
         
         % NO need for hyperviscosity at this point
         %RBFFD_WEIGHTS.scaled_hv = - ( hv_gamma / N^(hv_k) ) * RBFFD_WEIGHTS.hv;
@@ -162,68 +165,109 @@ for nn = 20:20:100
         %% Test 2: Using a Spherical Harmonic on the RHS, lets get the steady state
         %% velocity
         fprintf('Filling RHS Vector\n');
-        [RHS_continuous, RHS_discrete, U_exact, l2_lapl_sph32, l2_dx_sph32, l2_dy_sph32, l2_dz_sph32] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
+        [RHS_continuous, RHS_discrete, U_exact, l2_lapl_sph32, l2_dx_sph32, l2_dy_sph32, l2_dz_sph32, l2_residual_u, l2_residual_v, l2_residual_w, l2_residual_p] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
         
         ii
         nvals(ii) = sqrt(N);
-        l2_lapl_vals(ii) = l2_lapl_sph32;
-        l2_dx_vals(ii) = l2_dx_sph32;
-        l2_dy_vals(ii) = l2_dy_sph32;
-        l2_dz_vals(ii) = l2_dz_sph32;
+        l2_lapl_vals(jj, ii) = l2_lapl_sph32;
+        l2_dx_vals(jj, ii) = l2_dx_sph32;
+        l2_dy_vals(jj, ii) = l2_dy_sph32;
+        l2_dz_vals(jj, ii) = l2_dz_sph32;
+        l2_res_u_vals(jj, ii) = l2_residual_u;
+        l2_res_v_vals(jj, ii) = l2_residual_v;
+        l2_res_w_vals(jj, ii) = l2_residual_w;
+        l2_res_p_vals(jj, ii) = l2_residual_p;
         
         fprintf('Done.\n');
         
         ii = ii + 1;
     end
     
-    figure(1)
-    hold on; 
-    loglog(nvals, l2_lapl_vals, ['-o',colors(jj)]);
-    title(sprintf('l2 Abs Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', c1, c2), 'FontSize', 22);
-    %title(sprintf('n=%d,  l2 Abs Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
-    xlabel('sqrt(N)', 'FontSize', 22);
-    ylabel('l2', 'FontSize', 22);
-    set(gca, 'FontSize', 22);
-    
-    
-    figure(2)
-    hold on; 
-    loglog(nvals, l2_dx_vals, ['-o',colors(jj)]);
-    title(sprintf('l2 Abs Error d/dx(Sph(3,2))\nc1=%4.4f, c2=%4.4f', c1, c2), 'FontSize', 22);
-    %title(sprintf('n=%d,  l2 Abs Error d/dx(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
-    xlabel('sqrt(N)', 'FontSize', 22);
-    ylabel('l2', 'FontSize', 22);
-    set(gca, 'FontSize', 22);
-    
-    figure(3)
-    hold on; 
-    loglog(nvals, l2_dy_vals, ['-o',colors(jj)]);
-    title(sprintf('l2 Abs Error d/dy(Sph(3,2))\nc1=%4.4f, c2=%4.4f', c1, c2), 'FontSize', 22);
-    %title(sprintf('n=%d,  l2 Abs Error d/dy(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
-    xlabel('sqrt(N)', 'FontSize', 22);
-    ylabel('l2', 'FontSize', 22);
-    set(gca, 'FontSize', 22);
-    
-    figure(4)
-    hold on; 
-    loglog(nvals, l2_dz_vals, ['-o',colors(jj)]);
-    title(sprintf('l2 Abs Error d/dz(Sph(3,2))\nc1=%4.4f, c2=%4.4f', c1, c2), 'FontSize', 22);
-    %title(sprintf('n=%d,  l2 Abs Error d/dz(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
-    xlabel('sqrt(N)', 'FontSize', 22);
-    ylabel('l2', 'FontSize', 22);
-    set(gca, 'FontSize', 22);
-    
-    jj=jj+1; 
+    jj=jj+1;
 end
 
 figure(1)
-legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');  
-figure(2)
-legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100'); 
-figure(3)
-legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100'); 
-figure(4)
+semilogy(nvals, l2_lapl_vals, '-o');
 legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
+title(sprintf('l2 Abs Error Lapl(Sph(3,2))'), 'FontSize', 22);
+%title(sprintf('n=%d,  l2 Abs Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
+xlabel('sqrt(N)', 'FontSize', 22);
+ylabel('l2', 'FontSize', 22);
+set(gca, 'FontSize', 22);
+
+
+figure(2)
+semilogy(nvals, l2_dx_vals, '-o');
+legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
+title(sprintf('l2 Abs Error d/dx(Sph(3,2))'), 'FontSize', 22);
+%title(sprintf('n=%d,  l2 Abs Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
+xlabel('sqrt(N)', 'FontSize', 22);
+ylabel('l2', 'FontSize', 22);
+set(gca, 'FontSize', 22);
+
+figure(3)
+semilogy(nvals, l2_dy_vals, '-o');
+legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
+title(sprintf('l2 Abs Error d/dy(Sph(3,2))'), 'FontSize', 22);
+%title(sprintf('n=%d,  l2 Abs Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
+xlabel('sqrt(N)', 'FontSize', 22);
+ylabel('l2', 'FontSize', 22);
+set(gca, 'FontSize', 22);
+
+
+figure(4)
+semilogy(nvals, l2_dz_vals, '-o');
+legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
+title(sprintf('l2 Abs Error d/dz(Sph(3,2))'), 'FontSize', 22);
+%title(sprintf('n=%d,  l2 Abs Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
+xlabel('sqrt(N)', 'FontSize', 22);
+ylabel('l2', 'FontSize', 22);
+set(gca, 'FontSize', 22);
+
+figure(5)
+semilogy(nvals, l2_res_u_vals, '-o');
+legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
+title(sprintf('l2 Abs Error Residual U (exact U=Y_3^2)'), 'FontSize', 22);
+%title(sprintf('n=%d,  l2 Abs Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
+xlabel('sqrt(N)', 'FontSize', 22);
+ylabel('l2', 'FontSize', 22);
+set(gca, 'FontSize', 22);
+
+figure(6)
+semilogy(nvals, l2_res_v_vals, '-o');
+legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
+title(sprintf('l2 Abs Error Residual V (exact V=Y_3^2+Y_{10}^5)'), 'FontSize', 22);
+%title(sprintf('n=%d,  l2 Abs Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
+xlabel('sqrt(N)', 'FontSize', 22);
+ylabel('l2', 'FontSize', 22);
+set(gca, 'FontSize', 22);
+
+figure(7)
+semilogy(nvals, l2_res_w_vals, '-o');
+legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
+title(sprintf('l2 Abs Error Residual W (exact W=Y_3^2)'), 'FontSize', 22);
+%title(sprintf('n=%d,  l2 Abs Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
+xlabel('sqrt(N)', 'FontSize', 22);
+ylabel('l2', 'FontSize', 22);
+set(gca, 'FontSize', 22);
+
+figure(8)
+semilogy(nvals, l2_res_p_vals, '-o');
+legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
+title(sprintf('l2 Abs Error Residual P (exact P=Y_3^2)'), 'FontSize', 22);
+%title(sprintf('n=%d,  l2 Abs Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
+xlabel('sqrt(N)', 'FontSize', 22);
+ylabel('l2', 'FontSize', 22);
+set(gca, 'FontSize', 22);
+
+figure(9)
+plot(nvals, log10_cond_nums, '-o');
+legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
+title('$\log_{10} \bar{\mathcal{K}}_A$', 'Interpreter', 'Latex', 'FontSize', 22);
+%title(sprintf('n=%d,  l2 Abs Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
+xlabel('sqrt(N)', 'FontSize', 22);
+ylabel('l2', 'FontSize', 22);
+set(gca, 'FontSize', 22);
 
 diary off;
 
