@@ -2,7 +2,7 @@ node_file =
 ~/GRIDS/md/md019.00400
 Using RBF Support Parameter ep=0.190000
 Calculating weights (N=400, n=20, ep=0.190000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 0.510452 seconds.
+Elapsed time is 0.377871 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -11,18 +11,18 @@ Fill COL 3
 Fill COL 4
 Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
-Over-Allocation for LHS (75200 expected - 75160 actual elements): -37.50 KB
+Over-Allocation for LHS (75200 expected - 75160 actual elements): -1.50 KB
 Sample DIV Operator
-Elapsed time is 0.226346 seconds.
+Elapsed time is 0.125472 seconds.
 Filling RHS Vector
 l2_lapl_v =
-  48.234216456620963
+   9.5279e-05
 l2_dx_v =
-   5.248012124085720
+    0.1600
 l2_dy_v =
-   6.182993610553636
+    0.1900
 l2_dz_v =
-   6.182235944632872
+    0.1678
 ii =
      1
 Done.
@@ -30,7 +30,7 @@ node_file =
 ~/GRIDS/md/md029.00900
 Using RBF Support Parameter ep=0.290000
 Calculating weights (N=900, n=20, ep=0.290000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 0.548264 seconds.
+Elapsed time is 0.524421 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -41,16 +41,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (169200 expected - 169160 actual elements): 3965.62 KB
 Sample DIV Operator
-Elapsed time is 0.136073 seconds.
+Elapsed time is 0.104543 seconds.
 Filling RHS Vector
 l2_lapl_v =
-  14.092964454468428
+   2.2987e-05
 l2_dx_v =
-   1.652342106719183
+    0.0337
 l2_dy_v =
-   1.875256560075137
+    0.0382
 l2_dz_v =
-   1.668993244506317
+    0.0302
 ii =
      2
 Done.
@@ -58,7 +58,7 @@ node_file =
 ~/GRIDS/md/md039.01600
 Using RBF Support Parameter ep=0.390000
 Calculating weights (N=1600, n=20, ep=0.390000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 0.976074 seconds.
+Elapsed time is 0.921856 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -69,16 +69,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (300800 expected - 300760 actual elements): -2.00 KB
 Sample DIV Operator
-Elapsed time is 0.173340 seconds.
+Elapsed time is 0.154333 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   6.033126931041078
+   7.3951e-06
 l2_dx_v =
-   0.666935456647977
+    0.0102
 l2_dy_v =
-   0.695872246381392
+    0.0106
 l2_dz_v =
-   0.703947063553408
+    0.0096
 ii =
      3
 Done.
@@ -86,7 +86,7 @@ node_file =
 ~/GRIDS/md/md049.02500
 Using RBF Support Parameter ep=0.490000
 Calculating weights (N=2500, n=20, ep=0.490000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 1.497331 seconds.
+Elapsed time is 1.444105 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -97,16 +97,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (470000 expected - 469960 actual elements): -0.38 KB
 Sample DIV Operator
-Elapsed time is 0.239010 seconds.
+Elapsed time is 0.227901 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   3.293824378534196
+   7.9014e-06
 l2_dx_v =
-   0.311543505220602
+    0.0038
 l2_dy_v =
-   0.304502603694009
+    0.0037
 l2_dz_v =
-   0.314991790156858
+    0.0034
 ii =
      4
 Done.
@@ -114,7 +114,7 @@ node_file =
 ~/GRIDS/md/md059.03600
 Using RBF Support Parameter ep=0.590000
 Calculating weights (N=3600, n=20, ep=0.590000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 2.216032 seconds.
+Elapsed time is 2.088540 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -125,16 +125,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (676800 expected - 676760 actual elements): -1.50 KB
 Sample DIV Operator
-Elapsed time is 0.343252 seconds.
+Elapsed time is 0.326408 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   1.873986428742249
+   6.3558e-06
 l2_dx_v =
-   0.171413639504055
+    0.0017
 l2_dy_v =
-   0.167298755133332
+    0.0017
 l2_dz_v =
-   0.171059482747527
+    0.0015
 ii =
      5
 Done.
@@ -142,7 +142,7 @@ node_file =
 ~/GRIDS/md/md069.04900
 Using RBF Support Parameter ep=0.690000
 Calculating weights (N=4900, n=20, ep=0.690000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 2.964528 seconds.
+Elapsed time is 2.842227 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -153,16 +153,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (921200 expected - 921160 actual elements): -157.38 KB
 Sample DIV Operator
-Elapsed time is 0.469509 seconds.
+Elapsed time is 0.441416 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   1.189389478499048
+   4.8932e-06
 l2_dx_v =
-   0.099660517611783
+   8.6917e-04
 l2_dy_v =
-   0.098680752870549
+   8.6097e-04
 l2_dz_v =
-   0.098066889920102
+   7.6053e-04
 ii =
      6
 Done.
@@ -170,7 +170,7 @@ node_file =
 ~/GRIDS/md/md079.06400
 Using RBF Support Parameter ep=0.790000
 Calculating weights (N=6400, n=20, ep=0.790000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 4.133429 seconds.
+Elapsed time is 3.730114 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -181,16 +181,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (1203200 expected - 1203160 actual elements): -204.00 KB
 Sample DIV Operator
-Elapsed time is 0.570833 seconds.
+Elapsed time is 0.540919 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   0.798200842786635
+   3.8350e-06
 l2_dx_v =
-   0.062487706948378
+   4.7708e-04
 l2_dy_v =
-   0.062568320755873
+   4.7759e-04
 l2_dz_v =
-   0.064315228036459
+   4.3654e-04
 ii =
      7
 Done.
@@ -198,7 +198,7 @@ node_file =
 ~/GRIDS/md/md089.08100
 Using RBF Support Parameter ep=0.890000
 Calculating weights (N=8100, n=20, ep=0.890000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 4.904866 seconds.
+Elapsed time is 4.727911 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -209,16 +209,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (1522800 expected - 1522760 actual elements): -257.38 KB
 Sample DIV Operator
-Elapsed time is 0.719506 seconds.
+Elapsed time is 0.698944 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   0.546004509195841
+   3.0807e-06
 l2_dx_v =
-   0.041058291688580
+   2.7859e-04
 l2_dy_v =
-   0.040439531189677
+   2.7446e-04
 l2_dz_v =
-   0.041392212887506
+   2.4976e-04
 ii =
      8
 Done.
@@ -226,7 +226,7 @@ node_file =
 ~/GRIDS/md/md099.10000
 Using RBF Support Parameter ep=0.990000
 Calculating weights (N=10000, n=20, ep=0.990000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 6.124383 seconds.
+Elapsed time is 5.825318 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -235,18 +235,18 @@ Fill COL 3
 Fill COL 4
 Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
-Over-Allocation for LHS (1880000 expected - 1879960 actual elements): -313.50 KB
+Over-Allocation for LHS (1880000 expected - 1879960 actual elements): -317.50 KB
 Sample DIV Operator
-Elapsed time is 1.014234 seconds.
+Elapsed time is 0.844827 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   0.386668178386879
+   2.4904e-06
 l2_dx_v =
-   0.028869018715137
+   1.7634e-04
 l2_dy_v =
-   0.029246085126759
+   1.7863e-04
 l2_dz_v =
-   0.029796844031373
+   1.6178e-04
 ii =
      9
 Done.
@@ -254,7 +254,7 @@ node_file =
 ~/GRIDS/md/md019.00400
 Using RBF Support Parameter ep=0.266000
 Calculating weights (N=400, n=40, ep=0.266000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 0.376773 seconds.
+Elapsed time is 0.335651 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -263,18 +263,18 @@ Fill COL 3
 Fill COL 4
 Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
-Over-Allocation for LHS (147200 expected - 147120 actual elements): -74.00 KB
+Over-Allocation for LHS (147200 expected - 147120 actual elements): -2.00 KB
 Sample DIV Operator
-Elapsed time is 0.108592 seconds.
+Elapsed time is 0.096510 seconds.
 Filling RHS Vector
 l2_lapl_v =
-     1.610510016317014e+02
+   3.3163e-06
 l2_dx_v =
-  10.732860446543553
+    0.3272
 l2_dy_v =
-  13.590822343915159
+    0.4176
 l2_dz_v =
-  11.564737643731918
+    0.3139
 ii =
      1
 Done.
@@ -282,7 +282,7 @@ node_file =
 ~/GRIDS/md/md029.00900
 Using RBF Support Parameter ep=0.536000
 Calculating weights (N=900, n=40, ep=0.536000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 1.197064 seconds.
+Elapsed time is 0.772652 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -293,16 +293,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (331200 expected - 331120 actual elements): 7762.50 KB
 Sample DIV Operator
-Elapsed time is 0.180992 seconds.
+Elapsed time is 0.171459 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   1.481527087311091
+   3.5978e-07
 l2_dx_v =
-   0.120664250978749
+    0.0025
 l2_dy_v =
-   0.121929118976121
+    0.0025
 l2_dz_v =
-   0.123459384959183
+    0.0022
 ii =
      2
 Done.
@@ -310,7 +310,7 @@ node_file =
 ~/GRIDS/md/md039.01600
 Using RBF Support Parameter ep=0.806000
 Calculating weights (N=1600, n=40, ep=0.806000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 2.022432 seconds.
+Elapsed time is 1.337308 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -321,16 +321,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (588800 expected - 588720 actual elements): 0.00 KB
 Sample DIV Operator
-Elapsed time is 0.462826 seconds.
+Elapsed time is 0.275144 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   0.230359481531448
+   3.4963e-07
 l2_dx_v =
-   0.015434671778505
+   2.3558e-04
 l2_dy_v =
-   0.016505282835002
+   2.5190e-04
 l2_dz_v =
-   0.017257191843683
+   2.3419e-04
 ii =
      3
 Done.
@@ -338,7 +338,7 @@ node_file =
 ~/GRIDS/md/md049.02500
 Using RBF Support Parameter ep=1.076000
 Calculating weights (N=2500, n=40, ep=1.076000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 5.351196 seconds.
+Elapsed time is 2.115709 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -349,16 +349,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (920000 expected - 919920 actual elements): -1.50 KB
 Sample DIV Operator
-Elapsed time is 0.443345 seconds.
+Elapsed time is 0.413287 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   0.047954934468461
+   1.9247e-07
 l2_dx_v =
-   0.002844354382724
+   3.4749e-05
 l2_dy_v =
-   0.002753551919915
+   3.3646e-05
 l2_dz_v =
-   0.002946021228957
+   3.1990e-05
 ii =
      4
 Done.
@@ -366,7 +366,7 @@ node_file =
 ~/GRIDS/md/md059.03600
 Using RBF Support Parameter ep=1.346000
 Calculating weights (N=3600, n=40, ep=1.346000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 3.401318 seconds.
+Elapsed time is 3.098633 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -377,16 +377,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (1324800 expected - 1324720 actual elements): -2.00 KB
 Sample DIV Operator
-Elapsed time is 0.654972 seconds.
+Elapsed time is 0.611434 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   0.008343184365262
+   1.9185e-07
 l2_dx_v =
-     5.284550176180372e-04
+   5.3787e-06
 l2_dy_v =
-     5.076274088316117e-04
+   5.1643e-06
 l2_dz_v =
-     5.437121103980051e-04
+   4.9221e-06
 ii =
      5
 Done.
@@ -394,7 +394,7 @@ node_file =
 ~/GRIDS/md/md069.04900
 Using RBF Support Parameter ep=1.616000
 Calculating weights (N=4900, n=40, ep=1.616000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 5.032633 seconds.
+Elapsed time is 4.575843 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -405,16 +405,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (1803200 expected - 1803120 actual elements): -157.50 KB
 Sample DIV Operator
-Elapsed time is 0.836026 seconds.
+Elapsed time is 0.815729 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   0.003728334700862
+   4.6434e-07
 l2_dx_v =
-     1.641597837390008e-04
+   1.4317e-06
 l2_dy_v =
-     1.682775732474876e-04
+   1.4682e-06
 l2_dz_v =
-     1.765874573437208e-04
+   1.3695e-06
 ii =
      6
 Done.
@@ -422,7 +422,7 @@ node_file =
 ~/GRIDS/md/md079.06400
 Using RBF Support Parameter ep=1.886000
 Calculating weights (N=6400, n=40, ep=1.886000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 6.497539 seconds.
+Elapsed time is 5.529321 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -433,16 +433,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (2355200 expected - 2355120 actual elements): -204.00 KB
 Sample DIV Operator
-Elapsed time is 1.355366 seconds.
+Elapsed time is 1.097906 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   0.003352585749797
+   7.2773e-07
 l2_dx_v =
-     1.278643950695290e-04
+   9.7621e-07
 l2_dy_v =
-     1.306482106911339e-04
+   9.9725e-07
 l2_dz_v =
-     1.291610417316016e-04
+   8.7668e-07
 ii =
      7
 Done.
@@ -450,7 +450,7 @@ node_file =
 ~/GRIDS/md/md089.08100
 Using RBF Support Parameter ep=2.156000
 Calculating weights (N=8100, n=40, ep=2.156000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 8.254427 seconds.
+Elapsed time is 6.887774 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -461,16 +461,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (2980800 expected - 2980720 actual elements): -257.50 KB
 Sample DIV Operator
-Elapsed time is 1.626704 seconds.
+Elapsed time is 1.355862 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   0.001973913194939
+   9.5688e-07
 l2_dx_v =
-     8.360427806066722e-05
+   5.6727e-07
 l2_dy_v =
-     8.189831157092865e-05
+   5.5584e-07
 l2_dz_v =
-     8.530397911809784e-05
+   5.1472e-07
 ii =
      8
 Done.
@@ -478,7 +478,7 @@ node_file =
 ~/GRIDS/md/md099.10000
 Using RBF Support Parameter ep=2.426000
 Calculating weights (N=10000, n=40, ep=2.426000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 12.129907 seconds.
+Elapsed time is 8.643102 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -487,18 +487,18 @@ Fill COL 3
 Fill COL 4
 Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
-Over-Allocation for LHS (3680000 expected - 3679920 actual elements): -318.00 KB
+Over-Allocation for LHS (3680000 expected - 3679920 actual elements): -306.00 KB
 Sample DIV Operator
-Elapsed time is 1.930604 seconds.
+Elapsed time is 1.697202 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   0.001218370069897
+   1.1544e-06
 l2_dx_v =
-     5.585344208322173e-05
+   3.4117e-07
 l2_dy_v =
-     5.796207845803020e-05
+   3.5403e-07
 l2_dz_v =
-     5.806767136034626e-05
+   3.1528e-07
 ii =
      9
 Done.
@@ -506,7 +506,7 @@ node_file =
 ~/GRIDS/md/md019.00400
 Using RBF Support Parameter ep=0.478000
 Calculating weights (N=400, n=60, ep=0.478000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 0.485692 seconds.
+Elapsed time is 0.452883 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -517,16 +517,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (219200 expected - 219080 actual elements): 1.50 KB
 Sample DIV Operator
-Elapsed time is 0.163041 seconds.
+Elapsed time is 0.155938 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   2.830522662474634
+   1.6881e-07
 l2_dx_v =
-   0.384100605733511
+    0.0117
 l2_dy_v =
-   0.375863555167967
+    0.0116
 l2_dz_v =
-   0.427216604119079
+    0.0116
 ii =
      1
 Done.
@@ -534,7 +534,7 @@ node_file =
 ~/GRIDS/md/md029.00900
 Using RBF Support Parameter ep=0.848000
 Calculating weights (N=900, n=60, ep=0.848000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 1.151576 seconds.
+Elapsed time is 1.022671 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -545,16 +545,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (493200 expected - 493080 actual elements): -0.62 KB
 Sample DIV Operator
-Elapsed time is 0.290144 seconds.
+Elapsed time is 0.252485 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   0.061401496325333
+   1.2084e-07
 l2_dx_v =
-   0.006508153948629
+   1.3257e-04
 l2_dy_v =
-   0.006055923232960
+   1.2334e-04
 l2_dz_v =
-   0.006809939538332
+   1.2313e-04
 ii =
      2
 Done.
@@ -562,7 +562,7 @@ node_file =
 ~/GRIDS/md/md039.01600
 Using RBF Support Parameter ep=1.218000
 Calculating weights (N=1600, n=60, ep=1.218000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 2.158527 seconds.
+Elapsed time is 1.905056 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -573,16 +573,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (876800 expected - 876680 actual elements): 2.00 KB
 Sample DIV Operator
-Elapsed time is 0.416619 seconds.
+Elapsed time is 0.392134 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   0.003845526015753
+   8.7582e-08
 l2_dx_v =
-     3.298490004000283e-04
+   5.0346e-06
 l2_dy_v =
-     3.422203395940219e-04
+   5.2228e-06
 l2_dz_v =
-     3.534182257839401e-04
+   4.7961e-06
 ii =
      3
 Done.
@@ -590,7 +590,7 @@ node_file =
 ~/GRIDS/md/md049.02500
 Using RBF Support Parameter ep=1.588000
 Calculating weights (N=2500, n=60, ep=1.588000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 4.447832 seconds.
+Elapsed time is 2.998428 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -601,16 +601,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (1370000 expected - 1369880 actual elements): 1.38 KB
 Sample DIV Operator
-Elapsed time is 0.628692 seconds.
+Elapsed time is 0.598866 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   0.001448564693039
+   1.0447e-07
 l2_dx_v =
-     1.081791837274506e-04
+   1.3216e-06
 l2_dy_v =
-     1.035971708501456e-04
+   1.2659e-06
 l2_dz_v =
-     1.185201745162699e-04
+   1.2870e-06
 ii =
      4
 Done.
@@ -618,7 +618,7 @@ node_file =
 ~/GRIDS/md/md059.03600
 Using RBF Support Parameter ep=1.958000
 Calculating weights (N=3600, n=60, ep=1.958000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 5.107055 seconds.
+Elapsed time is 4.291680 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -629,16 +629,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (1972800 expected - 1972680 actual elements): 1.50 KB
 Sample DIV Operator
-Elapsed time is 0.966837 seconds.
+Elapsed time is 0.882104 seconds.
 Filling RHS Vector
 l2_lapl_v =
-     5.702901094550932e-04
+   2.5211e-07
 l2_dx_v =
-     3.617941010081651e-05
+   3.6824e-07
 l2_dy_v =
-     3.489330978827004e-05
+   3.5498e-07
 l2_dz_v =
-     3.876729713526029e-05
+   3.5095e-07
 ii =
      5
 Done.
@@ -646,7 +646,7 @@ node_file =
 ~/GRIDS/md/md069.04900
 Using RBF Support Parameter ep=2.328000
 Calculating weights (N=4900, n=60, ep=2.328000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 6.895156 seconds.
+Elapsed time is 5.802565 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -657,16 +657,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (2685200 expected - 2685080 actual elements): -153.62 KB
 Sample DIV Operator
-Elapsed time is 1.508722 seconds.
+Elapsed time is 1.186951 seconds.
 Filling RHS Vector
 l2_lapl_v =
-     5.173068621423003e-04
+   3.7332e-07
 l2_dx_v =
-     2.896782102753378e-05
+   2.5264e-07
 l2_dy_v =
-     2.823068129447272e-05
+   2.4631e-07
 l2_dz_v =
-     2.863360838351375e-05
+   2.2206e-07
 ii =
      6
 Done.
@@ -674,7 +674,7 @@ node_file =
 ~/GRIDS/md/md079.06400
 Using RBF Support Parameter ep=2.698000
 Calculating weights (N=6400, n=60, ep=2.698000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 11.091950 seconds.
+Elapsed time is 7.719474 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -685,16 +685,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (3507200 expected - 3507080 actual elements): -204.00 KB
 Sample DIV Operator
-Elapsed time is 1.737806 seconds.
+Elapsed time is 1.596476 seconds.
 Filling RHS Vector
 l2_lapl_v =
-     3.152493797326480e-04
+   4.8510e-07
 l2_dx_v =
-     1.996823756003477e-05
+   1.5245e-07
 l2_dy_v =
-     2.060072224794617e-05
+   1.5725e-07
 l2_dz_v =
-     1.966903361557070e-05
+   1.3350e-07
 ii =
      7
 Done.
@@ -702,7 +702,7 @@ node_file =
 ~/GRIDS/md/md089.08100
 Using RBF Support Parameter ep=3.068000
 Calculating weights (N=8100, n=60, ep=3.068000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 13.200224 seconds.
+Elapsed time is 9.754431 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -713,16 +713,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (4438800 expected - 4438680 actual elements): -253.62 KB
 Sample DIV Operator
-Elapsed time is 2.306533 seconds.
+Elapsed time is 2.014368 seconds.
 Filling RHS Vector
 l2_lapl_v =
-     3.826799750976511e-04
+   5.7667e-07
 l2_dx_v =
-     1.662639076263670e-05
+   1.1281e-07
 l2_dy_v =
-     1.629125301274227e-05
+   1.1057e-07
 l2_dz_v =
-     1.655355294553324e-05
+   9.9884e-08
 ii =
      8
 Done.
@@ -730,7 +730,7 @@ node_file =
 ~/GRIDS/md/md099.10000
 Using RBF Support Parameter ep=3.438000
 Calculating weights (N=10000, n=60, ep=3.438000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 14.508186 seconds.
+Elapsed time is 11.988646 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -741,16 +741,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (5480000 expected - 5479880 actual elements): -314.50 KB
 Sample DIV Operator
-Elapsed time is 2.729083 seconds.
+Elapsed time is 2.527883 seconds.
 Filling RHS Vector
 l2_lapl_v =
-     5.240950311884943e-04
+   6.5042e-07
 l2_dx_v =
-     1.734843020133439e-05
+   1.0597e-07
 l2_dy_v =
-     1.738531356437787e-05
+   1.0619e-07
 l2_dz_v =
-     1.698046858911308e-05
+   9.2196e-08
 ii =
      9
 Done.
@@ -758,7 +758,7 @@ node_file =
 ~/GRIDS/md/md019.00400
 Using RBF Support Parameter ep=0.589000
 Calculating weights (N=400, n=80, ep=0.589000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 0.670213 seconds.
+Elapsed time is 0.651388 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -769,16 +769,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (291200 expected - 291040 actual elements): 1.00 KB
 Sample DIV Operator
-Elapsed time is 0.225374 seconds.
+Elapsed time is 0.198858 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   1.361745350646770
+   1.2939e-07
 l2_dx_v =
-   0.113136517203813
+    0.0034
 l2_dy_v =
-   0.101290701146279
+    0.0031
 l2_dz_v =
-   0.086599257500030
+    0.0024
 ii =
      1
 Done.
@@ -786,7 +786,7 @@ node_file =
 ~/GRIDS/md/md029.00900
 Using RBF Support Parameter ep=1.039000
 Calculating weights (N=900, n=80, ep=1.039000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 1.638718 seconds.
+Elapsed time is 1.423803 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -797,16 +797,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (655200 expected - 655040 actual elements): 0.25 KB
 Sample DIV Operator
-Elapsed time is 0.313836 seconds.
+Elapsed time is 0.312800 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   0.006298137311633
+   8.1539e-08
 l2_dx_v =
-     6.969947556078556e-04
+   1.4198e-05
 l2_dy_v =
-     6.919190145826740e-04
+   1.4092e-05
 l2_dz_v =
-     7.163809812554145e-04
+   1.2953e-05
 ii =
      2
 Done.
@@ -814,7 +814,7 @@ node_file =
 ~/GRIDS/md/md039.01600
 Using RBF Support Parameter ep=1.489000
 Calculating weights (N=1600, n=80, ep=1.489000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 3.019227 seconds.
+Elapsed time is 2.586572 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -825,16 +825,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (1164800 expected - 1164640 actual elements): 0.00 KB
 Sample DIV Operator
-Elapsed time is 0.650784 seconds.
+Elapsed time is 0.532735 seconds.
 Filling RHS Vector
 l2_lapl_v =
-     6.222044941720398e-04
+   5.4859e-08
 l2_dx_v =
-     5.448283514133621e-05
+   8.3159e-07
 l2_dy_v =
-     5.594746807394138e-05
+   8.5384e-07
 l2_dz_v =
-     5.976219421161237e-05
+   8.1100e-07
 ii =
      3
 Done.
@@ -842,7 +842,7 @@ node_file =
 ~/GRIDS/md/md049.02500
 Using RBF Support Parameter ep=1.939000
 Calculating weights (N=2500, n=80, ep=1.939000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 4.726591 seconds.
+Elapsed time is 4.004480 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -853,16 +853,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (1820000 expected - 1819840 actual elements): 0.25 KB
 Sample DIV Operator
-Elapsed time is 0.991521 seconds.
+Elapsed time is 0.819808 seconds.
 Filling RHS Vector
 l2_lapl_v =
-     2.775383574435096e-04
+   1.0740e-07
 l2_dx_v =
-     2.616861699442186e-05
+   3.1970e-07
 l2_dy_v =
-     2.558928682869284e-05
+   3.1268e-07
 l2_dz_v =
-     2.819788811019841e-05
+   3.0620e-07
 ii =
      4
 Done.
@@ -870,7 +870,7 @@ node_file =
 ~/GRIDS/md/md059.03600
 Using RBF Support Parameter ep=2.389000
 Calculating weights (N=3600, n=80, ep=2.389000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 8.207261 seconds.
+Elapsed time is 5.851633 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -881,16 +881,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (2620800 expected - 2620640 actual elements): 1.00 KB
 Sample DIV Operator
-Elapsed time is 1.205134 seconds.
+Elapsed time is 1.177966 seconds.
 Filling RHS Vector
 l2_lapl_v =
-     1.986909159480923e-04
+   1.9214e-07
 l2_dx_v =
-     1.150883131945285e-05
+   1.1714e-07
 l2_dy_v =
-     1.128934029507521e-05
+   1.1485e-07
 l2_dz_v =
-     1.224964195785397e-05
+   1.1089e-07
 ii =
      5
 Done.
@@ -898,7 +898,7 @@ node_file =
 ~/GRIDS/md/md069.04900
 Using RBF Support Parameter ep=2.839000
 Calculating weights (N=4900, n=80, ep=2.839000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 9.730479 seconds.
+Elapsed time is 8.133413 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -909,16 +909,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (3567200 expected - 3567040 actual elements): -153.75 KB
 Sample DIV Operator
-Elapsed time is 1.629011 seconds.
+Elapsed time is 1.619061 seconds.
 Filling RHS Vector
 l2_lapl_v =
-     1.724263636907857e-04
+   2.6933e-07
 l2_dx_v =
-     1.207115249991283e-05
+   1.0528e-07
 l2_dy_v =
-     1.219943913481362e-05
+   1.0644e-07
 l2_dz_v =
-     1.244778396328272e-05
+   9.6535e-08
 ii =
      6
 Done.
@@ -926,7 +926,7 @@ node_file =
 ~/GRIDS/md/md079.06400
 Using RBF Support Parameter ep=3.289000
 Calculating weights (N=6400, n=80, ep=3.289000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 13.201515 seconds.
+Elapsed time is 11.240604 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -937,16 +937,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (4659200 expected - 4659040 actual elements): -204.00 KB
 Sample DIV Operator
-Elapsed time is 2.328684 seconds.
+Elapsed time is 2.288800 seconds.
 Filling RHS Vector
 l2_lapl_v =
-     1.660576502873112e-04
+   3.3624e-07
 l2_dx_v =
-     9.359489078169920e-06
+   7.1457e-08
 l2_dy_v =
-     9.547114333410627e-06
+   7.2874e-08
 l2_dz_v =
-     9.286562973850857e-06
+   6.3033e-08
 ii =
      7
 Done.
@@ -954,7 +954,7 @@ node_file =
 ~/GRIDS/md/md089.08100
 Using RBF Support Parameter ep=3.739000
 Calculating weights (N=8100, n=80, ep=3.739000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 15.238246 seconds.
+Elapsed time is 14.903376 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -965,16 +965,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (5896800 expected - 5896640 actual elements): 137950.25 KB
 Sample DIV Operator
-Elapsed time is 2.886600 seconds.
+Elapsed time is 2.724083 seconds.
 Filling RHS Vector
 l2_lapl_v =
-     2.250826191860766e-04
+   4.0188e-07
 l2_dx_v =
-     8.292790579668540e-06
+   5.6268e-08
 l2_dy_v =
-     8.239617722824662e-06
+   5.5922e-08
 l2_dz_v =
-     8.300547123546894e-06
+   5.0085e-08
 ii =
      8
 Done.
@@ -982,7 +982,7 @@ node_file =
 ~/GRIDS/md/md099.10000
 Using RBF Support Parameter ep=4.189000
 Calculating weights (N=10000, n=80, ep=4.189000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 18.607989 seconds.
+Elapsed time is 16.544608 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -993,16 +993,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (7280000 expected - 7279840 actual elements): 170309.00 KB
 Sample DIV Operator
-Elapsed time is 3.568014 seconds.
+Elapsed time is 3.368996 seconds.
 Filling RHS Vector
 l2_lapl_v =
-     2.651674830990487e-04
+   4.6403e-07
 l2_dx_v =
-     1.133580259442711e-05
+   6.9243e-08
 l2_dy_v =
-     1.123478424588034e-05
+   6.8621e-08
 l2_dz_v =
-     1.155101042157988e-05
+   6.2717e-08
 ii =
      9
 Done.
@@ -1010,7 +1010,7 @@ node_file =
 ~/GRIDS/md/md019.00400
 Using RBF Support Parameter ep=0.692000
 Calculating weights (N=400, n=100, ep=0.692000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 0.888192 seconds.
+Elapsed time is 0.844232 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -1021,16 +1021,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (363200 expected - 363000 actual elements): 4.50 KB
 Sample DIV Operator
-Elapsed time is 0.233544 seconds.
+Elapsed time is 0.228788 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   0.106158074214479
+   5.7283e-08
 l2_dx_v =
-   0.022716834643128
+   6.9256e-04
 l2_dy_v =
-   0.014946979757373
+   4.5932e-04
 l2_dz_v =
-   0.051010431001459
+    0.0014
 ii =
      1
 Done.
@@ -1038,7 +1038,7 @@ node_file =
 ~/GRIDS/md/md029.00900
 Using RBF Support Parameter ep=1.192000
 Calculating weights (N=900, n=100, ep=1.192000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 2.220477 seconds.
+Elapsed time is 1.910071 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -1049,16 +1049,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (817200 expected - 817000 actual elements): 1.12 KB
 Sample DIV Operator
-Elapsed time is 0.375531 seconds.
+Elapsed time is 0.362604 seconds.
 Filling RHS Vector
 l2_lapl_v =
-   0.001008220844401
+   6.0687e-08
 l2_dx_v =
-     1.081014967493785e-04
+   2.2020e-06
 l2_dy_v =
-     1.149175306164693e-04
+   2.3405e-06
 l2_dz_v =
-     1.154521853938089e-04
+   2.0875e-06
 ii =
      2
 Done.
@@ -1066,7 +1066,7 @@ node_file =
 ~/GRIDS/md/md039.01600
 Using RBF Support Parameter ep=1.692000
 Calculating weights (N=1600, n=100, ep=1.692000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 3.924551 seconds.
+Elapsed time is 3.369448 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -1077,16 +1077,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (1452800 expected - 1452600 actual elements): 2.00 KB
 Sample DIV Operator
-Elapsed time is 0.685905 seconds.
+Elapsed time is 0.673543 seconds.
 Filling RHS Vector
 l2_lapl_v =
-     2.915662064471076e-04
+   6.8959e-08
 l2_dx_v =
-     2.484996075333712e-05
+   3.7929e-07
 l2_dy_v =
-     2.581178892694299e-05
+   3.9393e-07
 l2_dz_v =
-     2.668038500321004e-05
+   3.6207e-07
 ii =
      3
 Done.
@@ -1094,7 +1094,7 @@ node_file =
 ~/GRIDS/md/md049.02500
 Using RBF Support Parameter ep=2.192000
 Calculating weights (N=2500, n=100, ep=2.192000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 6.956381 seconds.
+Elapsed time is 5.373085 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -1105,16 +1105,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (2270000 expected - 2269800 actual elements): 3.12 KB
 Sample DIV Operator
-Elapsed time is 1.141962 seconds.
+Elapsed time is 1.000314 seconds.
 Filling RHS Vector
 l2_lapl_v =
-     1.538810359288191e-04
+   8.6280e-08
 l2_dx_v =
-     1.216233551703422e-05
+   1.4858e-07
 l2_dy_v =
-     1.198955787419963e-05
+   1.4650e-07
 l2_dz_v =
-     1.303822039353022e-05
+   1.4158e-07
 ii =
      4
 Done.
@@ -1122,7 +1122,7 @@ node_file =
 ~/GRIDS/md/md059.03600
 Using RBF Support Parameter ep=2.692000
 Calculating weights (N=3600, n=100, ep=2.692000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 9.642078 seconds.
+Elapsed time is 7.824596 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -1131,18 +1131,18 @@ Fill COL 3
 Fill COL 4
 Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
-Over-Allocation for LHS (3268800 expected - 3268600 actual elements): 4.50 KB
+Over-Allocation for LHS (3268800 expected - 3268600 actual elements): -7.50 KB
 Sample DIV Operator
-Elapsed time is 1.736505 seconds.
+Elapsed time is 1.574826 seconds.
 Filling RHS Vector
 l2_lapl_v =
-     1.008723028630023e-04
+   1.1415e-07
 l2_dx_v =
-     4.487833538843607e-06
+   4.5678e-08
 l2_dy_v =
-     4.527090031945031e-06
+   4.6056e-08
 l2_dz_v =
-     4.727264232477075e-06
+   4.2795e-08
 ii =
      5
 Done.
@@ -1150,7 +1150,7 @@ node_file =
 ~/GRIDS/md/md069.04900
 Using RBF Support Parameter ep=3.192000
 Calculating weights (N=4900, n=100, ep=3.192000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 12.592380 seconds.
+Elapsed time is 12.807239 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -1161,16 +1161,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (4449200 expected - 4449000 actual elements): -153.88 KB
 Sample DIV Operator
-Elapsed time is 2.363547 seconds.
+Elapsed time is 2.115182 seconds.
 Filling RHS Vector
 l2_lapl_v =
-     1.162774619273332e-04
+   1.4964e-07
 l2_dx_v =
-     6.782020430295832e-06
+   5.9148e-08
 l2_dy_v =
-     6.850439665037411e-06
+   5.9769e-08
 l2_dz_v =
-     7.173208586613110e-06
+   5.5630e-08
 ii =
      6
 Done.
@@ -1178,7 +1178,7 @@ node_file =
 ~/GRIDS/md/md079.06400
 Using RBF Support Parameter ep=3.692000
 Calculating weights (N=6400, n=100, ep=3.692000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 17.722628 seconds.
+Elapsed time is 16.998048 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -1189,16 +1189,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (5811200 expected - 5811000 actual elements): 135996.00 KB
 Sample DIV Operator
-Elapsed time is 2.878578 seconds.
+Elapsed time is 3.078357 seconds.
 Filling RHS Vector
 l2_lapl_v =
-     1.329666346266357e-04
+   1.9378e-07
 l2_dx_v =
-     5.364065955618992e-06
+   4.0953e-08
 l2_dy_v =
-     5.281963207523744e-06
+   4.0318e-08
 l2_dz_v =
-     5.398651478351138e-06
+   3.6643e-08
 ii =
      7
 Done.
@@ -1206,7 +1206,7 @@ node_file =
 ~/GRIDS/md/md089.08100
 Using RBF Support Parameter ep=4.192000
 Calculating weights (N=8100, n=100, ep=4.192000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 29.043385 seconds.
+Elapsed time is 19.952556 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -1217,16 +1217,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (7354800 expected - 7354600 actual elements): 172122.12 KB
 Sample DIV Operator
-Elapsed time is 3.867053 seconds.
+Elapsed time is 5.075171 seconds.
 Filling RHS Vector
 l2_lapl_v =
-     1.431380198086438e-04
+   2.3899e-07
 l2_dx_v =
-     4.773792285429503e-06
+   3.2391e-08
 l2_dy_v =
-     4.892088985741276e-06
+   3.3202e-08
 l2_dz_v =
-     5.045257675234596e-06
+   3.0443e-08
 ii =
      8
 Done.
@@ -1234,7 +1234,7 @@ node_file =
 ~/GRIDS/md/md099.10000
 Using RBF Support Parameter ep=4.692000
 Calculating weights (N=10000, n=100, ep=4.692000, hv_k=4, hv_gamma=1.450000e+02)
-Elapsed time is 27.868926 seconds.
+Elapsed time is 26.369690 seconds.
 Filling LHS Collocation Matrix
 Allocate LHS
 Fill COL 1
@@ -1245,16 +1245,16 @@ Fill EXTRA CONSTRAINTS
 Construct Sparse From Tuples
 Over-Allocation for LHS (9080000 expected - 9079800 actual elements): 212496.50 KB
 Sample DIV Operator
-Elapsed time is 4.540227 seconds.
+Elapsed time is 4.278496 seconds.
 Filling RHS Vector
 l2_lapl_v =
-     1.756020277702158e-04
+   2.8992e-07
 l2_dx_v =
-     7.538335362132508e-06
+   4.6046e-08
 l2_dy_v =
-     7.538094680095108e-06
+   4.6042e-08
 l2_dz_v =
-     7.951124244544490e-06
+   4.3171e-08
 ii =
      9
 Done.

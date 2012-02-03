@@ -36,8 +36,8 @@ dim = 2;
 % l2 on the laplacian
 %
 %% BEST: end of list;
-c1_kappa.n20 = [0.216, 0.126, 0.082, 0.051, 0.031, 0.020, 0.01];
-c2_kappa.n20 = [0.089, 0.048, 0.171, 0.195, 0.156, 0.0209, 0.01];
+c1_kappa.n20 = [0.216, 0.126, 0.082, 0.051, 0.031, 0.020,  0.01, 0.01];
+c2_kappa.n20 = [0.089, 0.048, 0.171, 0.195, 0.156, 0.0209, 0.01, 0.01];
 kappa.n20 = [2, 4, 6, 8, 10, 12];
 
 
@@ -84,8 +84,8 @@ for nn = 20:20:100
     c1_vals = getfield(c1_kappa,sprintf('n%d',nn));
     c2_vals = getfield(c2_kappa,sprintf('n%d',nn));
     fdsize = nn;
-    c1 = c1_vals(end);
-    c2 = c2_vals(end);
+    c1 = c1_vals(end-1);
+    c2 = c2_vals(end-1);
     
     ii = 1;
     for NN = 20:10:100
@@ -189,7 +189,7 @@ end
 figure(1)
 semilogy(nvals, l2_lapl_vals, '-o');
 legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
-title(sprintf('l2 Abs Error Lapl(Sph(10,5))'), 'FontSize', 22);
+title(sprintf('l2 Rel Error Lapl(Sph(10,5))'), 'FontSize', 22);
 %title(sprintf('n=%d,  l2 Abs Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
 xlabel('sqrt(N)', 'FontSize', 22);
 ylabel('l2', 'FontSize', 22);
@@ -199,7 +199,7 @@ set(gca, 'FontSize', 22);
 figure(2)
 semilogy(nvals, l2_dx_vals, '-o');
 legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
-title(sprintf('l2 Abs Error d/dx(Sph(10,5))'), 'FontSize', 22);
+title(sprintf('l2 Rel Error d/dx(Sph(10,5))'), 'FontSize', 22);
 %title(sprintf('n=%d,  l2 Abs Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
 xlabel('sqrt(N)', 'FontSize', 22);
 ylabel('l2', 'FontSize', 22);
@@ -208,7 +208,7 @@ set(gca, 'FontSize', 22);
 figure(3)
 semilogy(nvals, l2_dy_vals, '-o');
 legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
-title(sprintf('l2 Abs Error d/dy(Sph(10,5))'), 'FontSize', 22);
+title(sprintf('l2 Rel Error d/dy(Sph(10,5))'), 'FontSize', 22);
 %title(sprintf('n=%d,  l2 Abs Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
 xlabel('sqrt(N)', 'FontSize', 22);
 ylabel('l2', 'FontSize', 22);
@@ -218,8 +218,8 @@ set(gca, 'FontSize', 22);
 figure(4)
 semilogy(nvals, l2_dz_vals, '-o');
 legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
-title(sprintf('l2 Abs Error d/dz(Sph(10,5))'), 'FontSize', 22);
-%title(sprintf('n=%d,  l2 Abs Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
+title(sprintf('l2 Rel Error d/dz(Sph(10,5))'), 'FontSize', 22);
+%title(sprintf('n=%d,  l2 Rel Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
 xlabel('sqrt(N)', 'FontSize', 22);
 ylabel('l2', 'FontSize', 22);
 set(gca, 'FontSize', 22);
@@ -227,7 +227,7 @@ set(gca, 'FontSize', 22);
 figure(5)
 semilogy(nvals, l2_res_u_vals, '-o');
 legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
-title(sprintf('l2 Abs Error Residual U (exact U=Y_3^2)'), 'FontSize', 22);
+title(sprintf('l2 Rel Error Residual U (exact U=Y_3^2)'), 'FontSize', 22);
 %title(sprintf('n=%d,  l2 Abs Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
 xlabel('sqrt(N)', 'FontSize', 22);
 ylabel('l2', 'FontSize', 22);
@@ -236,8 +236,8 @@ set(gca, 'FontSize', 22);
 figure(6)
 semilogy(nvals, l2_res_v_vals, '-o');
 legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
-title(sprintf('l2 Abs Error Residual V (exact V=Y_{10}^5)'), 'FontSize', 22);
-%title(sprintf('n=%d,  l2 Abs Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
+title(sprintf('l2 Rel Error Residual V (exact V=Y_{10}^5)'), 'FontSize', 22);
+%title(sprintf('n=%d,  l2 Rel Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
 xlabel('sqrt(N)', 'FontSize', 22);
 ylabel('l2', 'FontSize', 22);
 set(gca, 'FontSize', 22);
@@ -245,8 +245,8 @@ set(gca, 'FontSize', 22);
 figure(7)
 semilogy(nvals, l2_res_w_vals, '-o');
 legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
-title(sprintf('l2 Abs Error Residual W (exact W=Y_3^2)'), 'FontSize', 22);
-%title(sprintf('n=%d,  l2 Abs Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
+title(sprintf('l2 Rel Error Residual W (exact W=Y_3^2)'), 'FontSize', 22);
+%title(sprintf('n=%d,  l2 Rel Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
 xlabel('sqrt(N)', 'FontSize', 22);
 ylabel('l2', 'FontSize', 22);
 set(gca, 'FontSize', 22);
@@ -254,7 +254,7 @@ set(gca, 'FontSize', 22);
 figure(8)
 semilogy(nvals, l2_res_p_vals, '-o');
 legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
-title(sprintf('l2 Abs Error Residual P (exact P=Y_3^2)'), 'FontSize', 22);
+title(sprintf('l2 Rel Error Residual P (exact P=Y_3^2)'), 'FontSize', 22);
 %title(sprintf('n=%d,  l2 Abs Error Lapl(Sph(3,2))\nc1=%4.4f, c2=%4.4f', nn, c1, c2), 'FontSize', 22);
 xlabel('sqrt(N)', 'FontSize', 22);
 ylabel('l2', 'FontSize', 22);

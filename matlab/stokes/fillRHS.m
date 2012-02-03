@@ -221,20 +221,22 @@ if 1
 % l2_dy_v = norm(abs(pdy_sph32_mathematica - (RBFFD_WEIGHTS.ysfc * sph32_mathematica)), 2)
 % l2_dz_v = norm(abs(pdz_sph32_mathematica - (RBFFD_WEIGHTS.zsfc * sph32_mathematica)), 2)
 
-l2_lapl_v = norm(abs(Lapl_sph105 - (RBFFD_WEIGHTS.lsfc * cart_sph105)), 2)
-l2_dx_v = norm(abs(pdx_sph105 - (RBFFD_WEIGHTS.xsfc * cart_sph105)), 2)
-l2_dy_v = norm(abs(pdy_sph105 - (RBFFD_WEIGHTS.ysfc * cart_sph105)), 2)
-l2_dz_v = norm(abs(pdz_sph105 - (RBFFD_WEIGHTS.zsfc * cart_sph105)), 2)
+%l2_lapl_v = norm(abs(Lapl_cart_sph32_mathematica - (RBFFD_WEIGHTS.lsfc * cart_sph32_mathematica)), 2) / norm(abs(Lapl_cart_sph32_mathematica),2)
+
+l2_lapl_v = norm(abs(Lapl_sph105 - (RBFFD_WEIGHTS.lsfc * cart_sph105)), 2) / norm(abs(Lapl_sph105),2)
+l2_dx_v = norm(abs(pdx_sph105 - (RBFFD_WEIGHTS.xsfc * cart_sph105)), 2) / norm(abs(pdx_sph105),2)
+l2_dy_v = norm(abs(pdy_sph105 - (RBFFD_WEIGHTS.ysfc * cart_sph105)), 2) / norm(abs(pdy_sph105),2)
+l2_dz_v = norm(abs(pdz_sph105 - (RBFFD_WEIGHTS.zsfc * cart_sph105)), 2) / norm(abs(pdz_sph105),2)
 
 
 
 
 RHS_DIS = LHS(1:4*N, 1:4*N) * U_continuous(1:4*N); 
 
-l2_residual_u = norm(abs(RHS_continuous(1:N)-RHS_DIS(1:N)), 2); 
-l2_residual_v = norm(abs(RHS_continuous(N+1:2*N)-RHS_DIS(N+1:2*N)), 2); 
-l2_residual_w = norm(abs(RHS_continuous(2*N+1:3*N)-RHS_DIS(2*N+1:3*N)), 2); 
-l2_residual_p = norm(abs(RHS_continuous(3*N+1:4*N)-RHS_DIS(3*N+1:4*N)), 2); 
+l2_residual_u = norm(abs(RHS_continuous(1:N)-RHS_DIS(1:N)), 2) / norm(abs(RHS_continuous(1:N)), 2); 
+l2_residual_v = norm(abs(RHS_continuous(N+1:2*N)-RHS_DIS(N+1:2*N)), 2)  / norm(abs(RHS_continuous(N+1:2*N)), 2); 
+l2_residual_w = norm(abs(RHS_continuous(2*N+1:3*N)-RHS_DIS(2*N+1:3*N)), 2)  / norm(abs(RHS_continuous(2*N+1:3*N)), 2); 
+l2_residual_p = norm(abs(RHS_continuous(3*N+1:4*N)-RHS_DIS(3*N+1:4*N)), 2)  / norm(abs(RHS_continuous(3*N+1:4*N)), 2); 
 
 
 end
