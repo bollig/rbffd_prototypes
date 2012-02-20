@@ -5,15 +5,14 @@ function [LHS, DIV_operator, eta] = stokes(nodes, N, n, useHV, constantViscosity
 % Get the globally computed and stored weights
 global RBFFD_WEIGHTS; 
 
+%% Decide whether we should use a continuous or discrete viscosity.
 etaContinuous = 0;
 
 
 N = length(nodes);
 
-% Wthout row of 1's
+% NNZ (Number of Non Zeros) of the LHS matrix without our extra constraints
 %L = spalloc(4*N, 4*N, 9*n*N); 
-
-
 
 eta = ones(N,1);
 
@@ -248,13 +247,9 @@ end
 
 %%%%%%%%%%%% SYSTEM IS SINGULAR, ADD CONST TO CONSTRAIN IT %%%%%%%
 
+%% Use svds to prove nullspace is 4 vectors
 % [Usvd, Ssvd, Vsvd, flagSVD] = svds(LHS,20,0);
 % sing_value_indices_before = find(max(Ssvd) < 1e-5)
-
-%% Bottom row
-% diag_row_ind = (1:1) + 4*N;
-% diag_col_ind = (1:4*N) + 0*N;
-% LHS(diag_row_ind, diag_col_ind) = 1; 
 
 fprintf('Fill EXTRA CONSTRAINTS\n'); 
 
@@ -310,7 +305,7 @@ if 1
     cur_ind = cur_ind + N;
 
 else 
-    % This case is too ill-conditioned.
+    %% This case is too ill-conditioned, but assigns the constant a 0 value directly.
     ind = (1:N)+0*N;
     % Right
     LHS(ind, 4*N+1) = 1; 
@@ -331,7 +326,7 @@ else
 end
 
 
-% Shrink inline. This will avoid allocating extra mem. If we put these inline
+% Shrink inline. This should avoid allocating extra mem. If we put these inline
 % on the call to sparse it doubles the allocation for the sparse matrix. 
 II = II(1:cur_ind-1); 
 JJ = JJ(1:cur_ind-1); 
@@ -352,13 +347,14 @@ end_mem = meminfo;
 fprintf('Over-Allocation for LHS (%d expected - %d actual elements): %3.2f KB\n', NNZ, cur_ind-1, ( anticipated_mem - (end_mem - start_mem)) / 1024); 
 
 % 
-% Enable this to see nullspace of our LHS
+% Enable this to see nullspace of our LHS with constraints is closed
 if 0
     [Usvd, Ssvd, Vsvd, flagSVD] = svds(LHS,10,0);
     sing_value_indices = find(max(Ssvd) < 1e-6)
 end
 
 fprintf('Sample DIV Operator\n'); 
+%% Get the discrete div operator
 DIV_operator = LHS(3*N+1:4*N,1:4*N+4);
 
 end
@@ -374,7 +370,6 @@ thisused = str2double(thisused)*1024;
 %fprintf('Used Memory: %3.2f MB\n', thisused); 
 
 end
-
 
 function theStr = awkCol(colname)
 theStr  = ['awk ''{ if(NR==1) for(i=1;i<=NF;i++) { if($i~/' colname '/) { colnum=i;break} } else print $colnum }'' '];
