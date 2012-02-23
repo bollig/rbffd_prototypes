@@ -75,8 +75,8 @@ cur_ind = 1;
 li = length(i_ind);
 if li
     c_i_ind = cur_ind:(cur_ind+li-1);
-    II(c_i_ind) = i_ind + 0*N; 
-    JJ(c_i_ind) = j_ind + 0*N; 
+    II(c_i_ind) = ((i_ind-1)*4+1) + 0; 
+    JJ(c_i_ind) = ((j_ind-1)*4+1) + 0; 
     VV(c_i_ind) = v_val;
     cur_ind = cur_ind + li; 
 end
@@ -85,8 +85,8 @@ end
 li = length(i_ind);
 if li
     c_i_ind = cur_ind:(cur_ind+li-1);
-    II(c_i_ind) = i_ind + 1*N; 
-    JJ(c_i_ind) = j_ind + 0*N; 
+    II(c_i_ind) = ((i_ind-1)*4+1) + 1; 
+    JJ(c_i_ind) = ((j_ind-1)*4+1) + 0; 
     VV(c_i_ind) = v_val;
     cur_ind = cur_ind + li; 
 end
@@ -95,8 +95,8 @@ end
 li = length(i_ind);
 if li
     c_i_ind = cur_ind:(cur_ind+li-1);
-    II(c_i_ind) = i_ind + 2*N; 
-    JJ(c_i_ind) = j_ind + 0*N; 
+    II(c_i_ind) = ((i_ind-1)*4+1) + 2; 
+    JJ(c_i_ind) = ((j_ind-1)*4+1) + 0; 
     VV(c_i_ind) = v_val;
     cur_ind = cur_ind + li; 
 end
@@ -105,8 +105,8 @@ end
 li = length(i_ind);
 if li
     c_i_ind = cur_ind:(cur_ind+li-1);
-    II(c_i_ind) = i_ind + 3*N; 
-    JJ(c_i_ind) = j_ind + 0*N; 
+    II(c_i_ind) = ((i_ind-1)*4+1) + 3; 
+    JJ(c_i_ind) = ((j_ind-1)*4+1) + 0; 
     VV(c_i_ind) = v_val;
     cur_ind = cur_ind + li; 
 end
@@ -120,8 +120,8 @@ fprintf('Fill COL 2\n');
 li = length(i_ind);
 if li
     c_i_ind = cur_ind:(cur_ind+li-1);
-    II(c_i_ind) = i_ind + 0*N;
-    JJ(c_i_ind) = j_ind + 1*N;
+    II(c_i_ind) = ((i_ind-1)*4+1) + 0; 
+    JJ(c_i_ind) = ((j_ind-1)*4+1) + 1; 
     VV(c_i_ind) = v_val;
     cur_ind = cur_ind + li;
 end
@@ -130,8 +130,8 @@ end
 li = length(i_ind);
 if li
     c_i_ind = cur_ind:(cur_ind+li-1);
-    II(c_i_ind) = i_ind + 1*N;
-    JJ(c_i_ind) = j_ind + 1*N;
+    II(c_i_ind) = ((i_ind-1)*4+1) + 1; 
+    JJ(c_i_ind) = ((j_ind-1)*4+1) + 1; 
     VV(c_i_ind) = v_val;
     cur_ind = cur_ind + li;
 end
@@ -140,8 +140,8 @@ end
 li = length(i_ind);
 if li
     c_i_ind = cur_ind:(cur_ind+li-1);
-    II(c_i_ind) = i_ind + 2*N;
-    JJ(c_i_ind) = j_ind + 1*N;
+    II(c_i_ind) = ((i_ind-1)*4+1) + 2; 
+    JJ(c_i_ind) = ((j_ind-1)*4+1) + 1; 
     VV(c_i_ind) = v_val;
     cur_ind = cur_ind + li;
 end
@@ -150,8 +150,8 @@ end
 li = length(i_ind);
 if li
     c_i_ind = cur_ind:(cur_ind+li-1);
-    II(c_i_ind) = i_ind + 3*N;
-    JJ(c_i_ind) = j_ind + 1*N;
+    II(c_i_ind) = ((i_ind-1)*4+1) + 3; 
+    JJ(c_i_ind) = ((j_ind-1)*4+1) + 1; 
     VV(c_i_ind) = v_val;
     cur_ind = cur_ind + li;
 end
@@ -167,8 +167,8 @@ fprintf('Fill COL 3\n');
 li = length(i_ind);
 if li
     c_i_ind = cur_ind:(cur_ind+li-1);
-    II(c_i_ind) = i_ind + 0*N;
-    JJ(c_i_ind) = j_ind + 2*N;
+    II(c_i_ind) = ((i_ind-1)*4+1) + 0; 
+    JJ(c_i_ind) = ((j_ind-1)*4+1) + 2; 
     VV(c_i_ind) = v_val;
     cur_ind = cur_ind + li;
 end
@@ -178,8 +178,8 @@ end
 li = length(i_ind);
 if li
     c_i_ind = cur_ind:(cur_ind+li-1);
-    II(c_i_ind) = i_ind + 1*N;
-    JJ(c_i_ind) = j_ind + 2*N;
+    II(c_i_ind) = ((i_ind-1)*4+1) + 1; 
+    JJ(c_i_ind) = ((j_ind-1)*4+1) + 2; 
     VV(c_i_ind) = v_val;
     cur_ind = cur_ind + li;
 end
@@ -190,8 +190,8 @@ end
 li = length(i_ind);
 if li
     c_i_ind = cur_ind:(cur_ind+li-1);
-    II(c_i_ind) = i_ind + 2*N;
-    JJ(c_i_ind) = j_ind + 2*N;
+    II(c_i_ind) = ((i_ind-1)*4+1) + 2; 
+    JJ(c_i_ind) = ((j_ind-1)*4+1) + 2; 
     VV(c_i_ind) = v_val;
     cur_ind = cur_ind + li;
 end
@@ -200,8 +200,8 @@ end
 li = length(i_ind);
 if li
     c_i_ind = cur_ind:(cur_ind+li-1);
-    II(c_i_ind) = i_ind + 3*N;
-    JJ(c_i_ind) = j_ind + 2*N;
+    II(c_i_ind) = ((i_ind-1)*4+1) + 3;
+    JJ(c_i_ind) = ((j_ind-1)*4+1) + 2; 
     VV(c_i_ind) = v_val;
     cur_ind = cur_ind + li;
 end
@@ -215,8 +215,8 @@ fprintf('Fill COL 4\n');
 li = length(i_ind);
 if li
     c_i_ind = cur_ind:(cur_ind+li-1);
-    II(c_i_ind) = i_ind + 0*N;
-    JJ(c_i_ind) = j_ind + 3*N;
+    II(c_i_ind) = ((i_ind-1)*4+1) + 0; 
+    JJ(c_i_ind) = ((j_ind-1)*4+1) + 3; 
     VV(c_i_ind) = v_val;
     cur_ind = cur_ind + li;
 end
@@ -226,8 +226,8 @@ end
 li = length(i_ind);
 if li
     c_i_ind = cur_ind:(cur_ind+li-1);
-    II(c_i_ind) = i_ind + 1*N;
-    JJ(c_i_ind) = j_ind + 3*N;
+    II(c_i_ind) = ((i_ind-1)*4+1) + 1; 
+    JJ(c_i_ind) = ((j_ind-1)*4+1) + 3; 
     VV(c_i_ind) = v_val;
     cur_ind = cur_ind + li;
 end
@@ -236,8 +236,8 @@ end
 li = length(i_ind);
 if li
     c_i_ind = cur_ind:(cur_ind+li-1);
-    II(c_i_ind) = i_ind + 2*N;
-    JJ(c_i_ind) = j_ind + 3*N;
+    II(c_i_ind) = ((i_ind-1)*4+1) + 2; 
+    JJ(c_i_ind) = ((j_ind-1)*4+1) + 3; 
     VV(c_i_ind) = v_val;
     cur_ind = cur_ind + li;
 end
@@ -256,50 +256,50 @@ fprintf('Fill EXTRA CONSTRAINTS\n');
 %% Far right columns, and bottom rows (integral over each vector component
 %% is 0)
 if 1
-    c_i_ind = cur_ind:(cur_ind+N-1);
+    c_i_ind = cur_ind:(cur_ind+N-1); 
     II(c_i_ind) = 4*N+1;
-    JJ(c_i_ind) = (1:N)+0*N;
+    JJ(c_i_ind) = (((1:N)-1)*4+1) + 0;
     VV(c_i_ind) = 1;
     cur_ind = cur_ind + N;
 
     c_i_ind = cur_ind:(cur_ind+N-1);
-    II(c_i_ind) = (1:N)+0*N;
+    II(c_i_ind) = (((1:N)-1)*4+1) + 0;
     JJ(c_i_ind) = 4*N+1;
     VV(c_i_ind) = 1;
     cur_ind = cur_ind + N;
 
     c_i_ind = cur_ind:(cur_ind+N-1);
     II(c_i_ind) = 4*N+2;
-    JJ(c_i_ind) = (1:N)+1*N;
+    JJ(c_i_ind) = (((1:N)-1)*4+1) + 1;
     VV(c_i_ind) = 1;
     cur_ind = cur_ind + N;
 
     c_i_ind = cur_ind:(cur_ind+N-1);
-    II(c_i_ind) = (1:N)+1*N;
+    II(c_i_ind) = (((1:N)-1)*4+1) + 1;
     JJ(c_i_ind) = 4*N+2;
     VV(c_i_ind) = 1;
     cur_ind = cur_ind + N;
 
     c_i_ind = cur_ind:(cur_ind+N-1);
     II(c_i_ind) = 4*N+3;
-    JJ(c_i_ind) = (1:N)+2*N;
+    JJ(c_i_ind) = (((1:N)-1)*4+1) + 2;
     VV(c_i_ind) = 1;
     cur_ind = cur_ind + N;
 
     c_i_ind = cur_ind:(cur_ind+N-1);
-    II(c_i_ind) = (1:N)+2*N;
+    II(c_i_ind) = (((1:N)-1)*4+1) + 2;
     JJ(c_i_ind) = 4*N+3;
     VV(c_i_ind) = 1;
     cur_ind = cur_ind + N;
 
     c_i_ind = cur_ind:(cur_ind+N-1);
     II(c_i_ind) = 4*N+4;
-    JJ(c_i_ind) = (1:N)+3*N;
+    JJ(c_i_ind) = (((1:N)-1)*4+1) + 3;
     VV(c_i_ind) = 1;
     cur_ind = cur_ind + N;
 
     c_i_ind = cur_ind:(cur_ind+N-1);
-    II(c_i_ind) = (1:N)+3*N;
+    II(c_i_ind) = (((1:N)-1)*4+1) + 3;
     JJ(c_i_ind) = 4*N+4;
     VV(c_i_ind) = 1;
     cur_ind = cur_ind + N;

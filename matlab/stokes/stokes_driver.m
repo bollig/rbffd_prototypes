@@ -10,7 +10,7 @@ constantViscosity = 1;
 
 %fdsize = 17; c1 = 0.026; c2 = 0.08;  hv_k = 2; hv_gamma = 8;
 %fdsize = 31; c1 = 0.035; c2 = 0.1 ; hv_k = 4; hv_gamma = 800;
-fdsize = 105; c1 = 0.044; c2 = 0.14; hv_k = 4; hv_gamma = 145;
+fdsize = 50; c1 = 0.044; c2 = 0.14; hv_k = 4; hv_gamma = 145;
 %fdsize = 110;c1 = 0.058; c2 = 0.16;  hv_k = 4; hv_gamma = 40;
 
 % Switch Hyperviscosity ON (1) and OFF (0)
@@ -27,10 +27,10 @@ dim = 2;
 %nodes = load('~/GRIDS/md/md009.00100');
 %nodes = load('~/GRIDS/md/md019.00400');
 %nodes = load('~/GRIDS/md/md031.01024');
-nodes = load('~/GRIDS/md/md031.01024');
+%nodes = load('~/GRIDS/md/md031.01024');
 %nodes = load('~/GRIDS/md/md050.02601'); 
 %nodes = load('~/GRIDS/md/md059.03600'); 
-%nodes = load('~/GRIDS/md/md063.04096');
+nodes = load('~/GRIDS/md/md063.04096');
 %nodes = load('~/GRIDS/md/md079.06400');
 %nodes = load('~/GRIDS/md/md089.08100'); 
 %nodes = load('~/GRIDS/md/md099.10000');
@@ -53,7 +53,7 @@ end
 nodes=nodes(:,1:3);
 N = length(nodes);
 
-output_dir = sprintf('./vics/lsq/sph32_sph105_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
+output_dir = sprintf('./reordered/sph32_sph105_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
 fprintf('Making directory: %s\n', output_dir);
 mkdir(output_dir); 
 
@@ -95,7 +95,7 @@ tic
 [LHS, DIV_operator, eta] = stokes(nodes, N, fdsize, useHV, constantViscosity);
 toc
 
-hhh=figure('visible', 'off');
+hhh=figure;%('visible', 'off');
 % resize the window to most of my laptop screen
 set(hhh,'Units', 'normalized'); 
 set(hhh,'Position',[0 0 0.5 1]);
@@ -128,7 +128,7 @@ hgsave(hhh,[figFileName,'.fig']);
 %% Test 2: Using a Spherical Harmonic on the RHS, lets get the steady state
 %% velocity
 fprintf('Filling RHS Vector\n'); 
-[RHS_continuous, RHS_discrete, U_exact] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
+[RHS_continuous, RHS_discrete, U_exact, IND, REVIND] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
 
 %return ; 
 
@@ -172,8 +172,8 @@ end
 
 %% SOLVE SYSTEM (Solver types: 'lsq', 'gmres', 'direct', 'gmres+ilu', 'gmres+ilu_k'
 fprintf('Solving Lu=F\n'); 
-U = solve_system(LHS, RHS_continuous, N, 'direct'); 
-
+U = solve_system(LHS, RHS_continuous(IND), N, 'direct'); 
+U = U(REVIND); 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

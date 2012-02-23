@@ -1,6 +1,5 @@
-function [RHS_continuous, RHS_discrete, U_continuous] = fillRHS(nodes, LHS, constantViscosity, eta, t)
+function [RHS_continuous, RHS_discrete, U_continuous, IND, REVIND] = fillRHS(nodes, LHS, constantViscosity, eta, t)
 global RBFFD_WEIGHTS;
-
 
 % Should P be a spherical harmonic?: 1  or zero?: 0 
 p_sph32 = 1;
@@ -16,6 +15,16 @@ w_indices = (1:N) + 2*N;
 p_indices = (1:N) + 3*N;
 const_indices = (1:4) + 4*N;
 
+%% Get the reordering indices
+
+REVIND = []; 
+S = 4; 
+for j = 0:3
+    REVIND = [REVIND, (((j*N+1:(j+1)*N) - N*j) - 1) * S + (j+1)];
+end
+REVIND = [REVIND, (j+1)*N+1:(j+1)*N+4];
+[SIND IND] = sort(REVIND);
+IND = IND';
 
 %% Choose our spherical harmonics for the manufactured solution (U_desired)
 m1=2;
@@ -139,7 +148,8 @@ U_continuous(const_indices,1) = 0;
 
 
 %% manufacture a solution with the given exact solution
-RHS_discrete = LHS * U_continuous; 
+RHS_discrete = LHS * U_continuous(IND); 
+RHS_discrete = RHS_discrete(REVIND); 
 
 %approx_pdx = RBFFD_WEIGHTS.xsfc * sph(l1,m1,th,lam);
 if p_sph32
@@ -194,7 +204,7 @@ figure(4)
 plotScalarfield(RBFFD_WEIGHTS.lsfc * sph32_mathematica,nodes,'RBFFD WEIGHTS.lsfc * sph32_mathematica');
 end
 
-if 1
+if 0
 l2_norm = norm(abs(Lapl_sph32_mathematica - (RBFFD_WEIGHTS.lsfc * sph32_mathematica)), 2)
 
 figure
@@ -214,6 +224,7 @@ figure(10)
 plotVectorComponents(abs(RHS_continuous-RHS_discrete)./abs(RHS_continuous), nodes, '|RHS_{continuous} - RHS_{discrete}| / |RHS_{continuous}'); 
 
 end
+
 
 end
 
