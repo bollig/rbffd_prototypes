@@ -32,10 +32,10 @@ nodes = load('~/GRIDS/md/md004.00025');
 %nodes = load('~/GRIDS/md/md059.03600'); 
 %nodes = load('~/GRIDS/md/md063.04096');
 %nodes = load('~/GRIDS/md/md079.06400');
-nodes = load('~/GRIDS/md/md089.08100'); 
+%nodes = load('~/GRIDS/md/md089.08100'); 
 %nodes = load('~/GRIDS/md/md099.10000');
 %nodes = load('~/GRIDS/md/md122.15129');
-%nodes = load('~/GRIDS/md/md159.25600');
+nodes = load('~/GRIDS/md/md159.25600');
 
 %nodes = load('~/GRIDS/icos/icos42.mat');
 %nodes = load('~/GRIDS/icos/icos162.mat');
