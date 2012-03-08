@@ -8,7 +8,7 @@ close all;
 
 constantViscosity = 1;
 
-output_dir = sprintf('./verify_params/');
+output_dir = sprintf('./results/pcg/');
 fprintf('Making directory: %s\n', output_dir);
 mkdir(output_dir);
 
@@ -79,7 +79,7 @@ l2_res_w_vals = 0;
 l2_res_p_vals = 0;
 cond_nums = 0;
 log10_cond_nums = 0;
-for nn = 20:20:100
+for nn = 20:20:80
     
     c1_vals = getfield(c1_kappa,sprintf('n%d',nn));
     c2_vals = getfield(c2_kappa,sprintf('n%d',nn));
@@ -88,7 +88,7 @@ for nn = 20:20:100
     c2 = c2_vals(end-1);
     
     ii = 1;
-    for NN = 20:10:100
+    for NN = 20:10:80
         
         node_file = sprintf('~/GRIDS/md/md%03d.%05d', NN-1, NN^2)
         nodes = load(node_file);
@@ -147,7 +147,8 @@ for nn = 20:20:100
         % for cache optimality.
         fprintf('Calculating weights (N=%d, n=%d, ep=%f, hv_k=%d, hv_gamma=%e)\n', N, fdsize, ep, hv_k, hv_gamma);
         tic
-        [weights_available, nodes] = Calc_RBFFD_Weights({'lsfc', 'xsfc', 'ysfc', 'zsfc'}, N, nodes, fdsize, ep, hv_k);
+       % [weights_available, nodes] = Calc_RBFFD_Weights({'lsfc', 'xsfc', 'ysfc', 'zsfc'}, N, nodes, fdsize, ep, hv_k);
+        [weights_available, nodes] = ParallelWeights({'lsfc', 'xsfc', 'ysfc', 'zsfc'}, N, nodes, fdsize, ep, hv_k);
         toc
         [avg_cond_num avg_log10_cond_num] = Calc_RBFFD_CondNums(N, nodes, fdsize, ep);
         
@@ -186,7 +187,7 @@ for nn = 20:20:100
     jj=jj+1;
 end
 
-figure(1)
+hhh=figure(1)
 semilogy(nvals, l2_lapl_vals, '-o');
 legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
 title(sprintf('l2 Rel Error Lapl(Sph(10,5))'), 'FontSize', 22);
@@ -194,9 +195,12 @@ title(sprintf('l2 Rel Error Lapl(Sph(10,5))'), 'FontSize', 22);
 xlabel('sqrt(N)', 'FontSize', 22);
 ylabel('l2', 'FontSize', 22);
 set(gca, 'FontSize', 22);
+figFileName=[output_dir,'l2_rel_err_lapl'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']);
 
-
-figure(2)
+hhh=figure(2)
 semilogy(nvals, l2_dx_vals, '-o');
 legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
 title(sprintf('l2 Rel Error d/dx(Sph(10,5))'), 'FontSize', 22);
@@ -204,8 +208,12 @@ title(sprintf('l2 Rel Error d/dx(Sph(10,5))'), 'FontSize', 22);
 xlabel('sqrt(N)', 'FontSize', 22);
 ylabel('l2', 'FontSize', 22);
 set(gca, 'FontSize', 22);
+figFileName=[output_dir,'l2_rel_err_ddx'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']);
 
-figure(3)
+hhh=figure(3)
 semilogy(nvals, l2_dy_vals, '-o');
 legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
 title(sprintf('l2 Rel Error d/dy(Sph(10,5))'), 'FontSize', 22);
@@ -213,9 +221,12 @@ title(sprintf('l2 Rel Error d/dy(Sph(10,5))'), 'FontSize', 22);
 xlabel('sqrt(N)', 'FontSize', 22);
 ylabel('l2', 'FontSize', 22);
 set(gca, 'FontSize', 22);
+figFileName=[output_dir,'l2_rel_err_ddy'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']);
 
-
-figure(4)
+hhh=figure(4)
 semilogy(nvals, l2_dz_vals, '-o');
 legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
 title(sprintf('l2 Rel Error d/dz(Sph(10,5))'), 'FontSize', 22);
@@ -223,8 +234,12 @@ title(sprintf('l2 Rel Error d/dz(Sph(10,5))'), 'FontSize', 22);
 xlabel('sqrt(N)', 'FontSize', 22);
 ylabel('l2', 'FontSize', 22);
 set(gca, 'FontSize', 22);
+figFileName=[output_dir,'l2_rel_err_ddz'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']);
 
-figure(5)
+hhh=figure(5)
 semilogy(nvals, l2_res_u_vals, '-o');
 legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
 title(sprintf('l2 Rel Error Residual U (exact U=Y_3^2)'), 'FontSize', 22);
@@ -232,8 +247,12 @@ title(sprintf('l2 Rel Error Residual U (exact U=Y_3^2)'), 'FontSize', 22);
 xlabel('sqrt(N)', 'FontSize', 22);
 ylabel('l2', 'FontSize', 22);
 set(gca, 'FontSize', 22);
+figFileName=[output_dir,'l2_rel_res_U'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']);
 
-figure(6)
+hhh=figure(6)
 semilogy(nvals, l2_res_v_vals, '-o');
 legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
 title(sprintf('l2 Rel Error Residual V (exact V=Y_{10}^5)'), 'FontSize', 22);
@@ -241,8 +260,12 @@ title(sprintf('l2 Rel Error Residual V (exact V=Y_{10}^5)'), 'FontSize', 22);
 xlabel('sqrt(N)', 'FontSize', 22);
 ylabel('l2', 'FontSize', 22);
 set(gca, 'FontSize', 22);
+figFileName=[output_dir,'l2_rel_res_V'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']);
 
-figure(7)
+hhh=figure(7)
 semilogy(nvals, l2_res_w_vals, '-o');
 legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
 title(sprintf('l2 Rel Error Residual W (exact W=Y_3^2)'), 'FontSize', 22);
@@ -250,8 +273,12 @@ title(sprintf('l2 Rel Error Residual W (exact W=Y_3^2)'), 'FontSize', 22);
 xlabel('sqrt(N)', 'FontSize', 22);
 ylabel('l2', 'FontSize', 22);
 set(gca, 'FontSize', 22);
+figFileName=[output_dir,'l2_rel_res_W'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']);
 
-figure(8)
+hhh=figure(8)
 semilogy(nvals, l2_res_p_vals, '-o');
 legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
 title(sprintf('l2 Rel Error Residual P (exact P=Y_3^2)'), 'FontSize', 22);
@@ -259,8 +286,12 @@ title(sprintf('l2 Rel Error Residual P (exact P=Y_3^2)'), 'FontSize', 22);
 xlabel('sqrt(N)', 'FontSize', 22);
 ylabel('l2', 'FontSize', 22);
 set(gca, 'FontSize', 22);
+figFileName=[output_dir,'l2_rel_res_P'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']);
 
-figure(9)
+hhh=figure(9)
 plot(nvals, log10_cond_nums, '-o');
 legend('n=20', 'n=40', 'n=60', 'n=80', 'n=100');
 title('$\log_{10} \bar{\mathcal{K}}_A$', 'Interpreter', 'Latex', 'FontSize', 22);
@@ -268,6 +299,10 @@ title('$\log_{10} \bar{\mathcal{K}}_A$', 'Interpreter', 'Latex', 'FontSize', 22)
 xlabel('sqrt(N)', 'FontSize', 22);
 ylabel('l2', 'FontSize', 22);
 set(gca, 'FontSize', 22);
+figFileName=[output_dir,'log10_condnums'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']);
 
 diary off;
 
