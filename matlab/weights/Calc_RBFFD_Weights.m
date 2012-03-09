@@ -154,7 +154,7 @@ for j=1:N
     rdv = rd(:,1);
     
     A(1:n,1:n) = rbf.phi(ep,rd);
-    [LA,UA,P] = lu(A);
+    %[LA,UA,P] = lu(A);
     
     % Fill multiple RHS (indexed by windx)
     windx=0;
@@ -234,7 +234,10 @@ for j=1:N
         end
     end
     % Solve all RHS in one shot
-    weights = UA\(LA\(P*B));
+    %weights = UA\(LA\(P*B));
+    %% SAME THING INTERNALLY AS CALLING LU(A) and APPLYING AS WE DO ABOVE, BUT
+    %THIS PERFORMS SLIGHTLY BETTER BECAUSE THE LU STAYS AT THE NATIVE LEVEL
+    weights = A\B; 
    
     % Put each weight type into its own DM page (NOTE: could be useful to
     % access these instead of the Matlab sparse representation (or, say,

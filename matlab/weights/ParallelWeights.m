@@ -4,9 +4,9 @@ function[weights_available nodes] = ParallelWeights(which, N, nodes, n, ep, hv_k
 %
 %% Example usage:
 %
-%% NOTE: stores weights in a global variable 'RBFFD_WEIGHTS'.
+%% NOTE: stores weights in a global variable 'RBFFD_WEIGHTS2'.
 %%      'weights_available' tells which weights have been computed
-%% ALSO: RBFFD_WEIGHTS is not cleared whenever this is called, so we can
+%% ALSO: RBFFD_WEIGHTS2 is not cleared whenever this is called, so we can
 %%      call it multiple times and UPDATE the struct with new computed weights
 %%      without losing all the stuff we did before. 
 %% BE CAREFUL with this!
@@ -15,7 +15,7 @@ function[weights_available nodes] = ParallelWeights(which, N, nodes, n, ep, hv_k
 % weights_available = Calc_Weights_fd({'theta', 'lambda', 'hv'}, 27556, node_list, 101, 2.356, 10);
 %
 %% Now get the weights for local use:
-% T_weights = RBFFD_WEIGHTS.theta;
+% T_weights = RBFFD_WEIGHTS2.theta;
 %
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -46,7 +46,7 @@ function[weights_available nodes] = ParallelWeights(which, N, nodes, n, ep, hv_k
 %
 % hv_k = Order of hyperviscosity to compute.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-global RBFFD_WEIGHTS;
+global RBFFD_WEIGHTS2;
 
 % Initialize all as unavailable (we'll flip these later)
 weights_available = struct('lambda', 0, 'theta', 0, 'lsfc', 0, 'hv', 0, 'x', 0, 'y', 0, 'z', 0, 'xsfc', 0, 'ysfc', 0, 'zsfc', 0, 'xsfc_alt', 0, 'ysfc_alt', 0, 'zsfc_alt', 0);
@@ -119,45 +119,45 @@ block_size = size(ii_ind,1);
 
 A_block = ones(n+1,n+1); A(end,end) = 0;
 for j=1:N
-    
+
     % Use KDTREE (BUGFIX: returns the nearest neighbors in reverse order)
     idx = idx_all(j,:); 
-    
+
     % Euclidean distance matrix
     %dist = distmat(nodes(idx,:)); %sqrt(max(0,2*(1-nodes(idx,1)*nodes(idx,1).'-nodes(idx,2)*nodes(idx,2).'-nodes(idx,3)*nodes(idx,3).')));
-    
+
     imat = idx(1:n);
     ind_i((j-1)*n+1:j*n) = j;
     ind_j((j-1)*n+1:j*n) = imat;
     % This is the distance matrix: sqrt(2*(1 - x'x))
     rd = distmat(nodes(imat,:)); %sqrt(max(0,2*(1-nodes(imat,1)*nodes(imat,1).'-nodes(imat,2)*nodes(imat,2).'-nodes(imat,3)*nodes(imat,3).')));
-    
+
     %% The euclidean distances for each node from the stencil center
     rdv = rd(:,1);
-    
+
     %% INDICES for large matrix A and RHS
     row_ind = (1:n) + (j-1)*(n+1); 
-    
+
     A_block(1:n,1:n) = rbf.phi(ep,rd);
-    
+
     cur_start = cur_end+1;
     cur_end = cur_end + block_size; 
-    
+
     II(cur_start:cur_end) = ((j-1)*(n+1) + ii_ind); 
     JJ(cur_start:cur_end) = ((j-1)*(n+1) + jj_ind);
     VV(cur_start:cur_end) = A_block(:); 
-    
+
     % Fill multiple RHS (indexed by windx)
     windx=0;
     %wlength=length(which); 
     for w=which(1:end)
-    %while windx < wlength
+        %while windx < wlength
         windx=windx+1;
-     %   w = which(windx);
+        %   w = which(windx);
         dertype = char(w);
         %fprintf('WHICH: %s\n', dertype);
         switch dertype
-            case 'x'
+        case 'x'
                 % X separation
                 xdv = nodes(imat,1) - nodes(imat(1),1);
                 B(row_ind,windx) = rbf.DphiDx(ep, rdv, xdv);
@@ -205,7 +205,7 @@ for j=1:N
             case {'theta', 'lambda'}
                 [lam_j,th_j,temp] = cart2sph(nodes(idx,1),nodes(idx,2),nodes(idx,3));
                 [lam_i,th_i,temp] = cart2sph(nodes(j,1),nodes(j,2),nodes(j,3));
-                
+
                 if strcmp(dertype,'theta')
                     dr_dtheta = cos(th_j) .* sin(th_i) .* cos(lam_i - lam_j) - sin(th_j) .* cos(th_i);
                     B(row_ind,windx) = dr_dtheta .* rbf.Dphi_Dr_times_r_inv(ep, rdv);
@@ -224,8 +224,8 @@ for j=1:N
                 error(['unsupported derivative type: ', dertype]);
         end
     end
-    
-    
+
+
 end
 % size(II)
 % size(JJ)
@@ -238,22 +238,42 @@ A = sparse(II, JJ, VV, N*(n+1), N*(n+1), (n+1)*(n+1)*N);
 %condest(A)
 
 %tic
-%% THIS One large approach works for multiple RHS. If we want an iterative
-%solver we have to repeat the process for each vector. 
-x = A \ B;
+if 1
+    %% TURNS OUT THIS METHOD IS ABOUT THE SAME COST AS THE MANY SMALL SYSTEMS
+    x = A \ B;
 
-%toc
-windx=0;
-for w=which(1:end)
-    windx=windx+1;
-    dertype=char(w);
-    xx = reshape(x(:,windx),n+1,N); 
-    yy = xx(1:n,:);     
-    RBFFD_WEIGHTS.(dertype) = sparse(ind_i,ind_j,yy(:),N,N);
+    windx=0;
+    for w=which(1:end)
+        windx=windx+1;
+        dertype=char(w);
+        xx = reshape(x(:,windx),n+1,N); 
+        yy = xx(1:n,:);     
+        RBFFD_WEIGHTS2.(dertype) = sparse(ind_i,ind_j,yy(:),N,N);
+    end
+else 
+    %% WITHOUT PRECONDITIONING AN ITERATIVE SOLVER IS NO GOOD. 
+    x = zeros(size(B));
+    %toc
+    windx=0;
+    for w=which(1:end)
+        windx=windx+1;
+        dertype=char(w);
+%        [x(:,windx)] = gmres(A,B(:,windx), [], 1e-8, 100); 
+        [x(:,windx)] = bicgstab(A,B(:,windx), 1e-8, 10); 
+    end
+
+    %toc
+    windx=0;
+    for w=which(1:end)
+        windx=windx+1;
+        dertype=char(w);
+        xx = reshape(x(:,windx),n+1,N); 
+        yy = xx(1:n,:);     
+        RBFFD_WEIGHTS2.(dertype) = sparse(ind_i,ind_j,yy(:),N,N);
+    end
 end
-
 % Tell the caller which weights are available for use:
-names = fieldnames(RBFFD_WEIGHTS);
+names = fieldnames(RBFFD_WEIGHTS2);
 for i = 1:length(names)
     weights_available.(names{i}) = 1;
 end
@@ -264,7 +284,7 @@ function [val] = hv_p_k(eps, r, k, dim)
 %% Evaluate the genearlized Laguerre polynomial for hyperviscosity
 eps2r2 = (eps*r).^2;
 switch (k)
-    case 0
+case 0
         val = 1.;
     case 1
         val = 4*(eps2r2) - 2*dim;
