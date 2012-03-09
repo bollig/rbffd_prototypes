@@ -128,10 +128,6 @@ if computeSFCOperators
 else 
     weights_temp = zeros(n,N,length(which));
 end
-
-cond_sum = 0;
-cond_log10_sum = 0;
-
 % 
 %     % Sort the nodes according to the KDTree spatial ordering (Improves caching
 %     % a bit, but it is ordering according to two nodes separated by maximal
