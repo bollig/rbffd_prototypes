@@ -8,7 +8,7 @@ close all;
 
 constantViscosity = 1; 
 
-fdsize = 5; c1 = 0.026; c2 = 0.08;  hv_k = 2; hv_gamma = 8;
+fdsize = 17; c1 = 0.026; c2 = 0.08;  hv_k = 2; hv_gamma = 8;
 %fdsize = 31; c1 = 0.035; c2 = 0.1 ; hv_k = 4; hv_gamma = 800;
 %fdsize = 50; c1 = 0.044; c2 = 0.14; hv_k = 4; hv_gamma = 145;
 %fdsize = 110;c1 = 0.058; c2 = 0.16;  hv_k = 4; hv_gamma = 40;
@@ -22,7 +22,7 @@ dt = 0.05;
 dim = 2; 
 
 
-nodes = load('~/GRIDS/md/md004.00025');
+%nodes = load('~/GRIDS/md/md004.00025');
 %nodes = load('~/GRIDS/md/md006.00049');
 %nodes = load('~/GRIDS/md/md009.00100');
 %nodes = load('~/GRIDS/md/md019.00400');
@@ -74,6 +74,15 @@ beta = (1/-(2 * floor( ( sqrt(8*fdsize - 7) - 1) / 2)));
 ep_alt = kappa^beta;
 
 
+global RBFFD_WEIGHTS2;
+
+fprintf('Calculating weights (N=%d, n=%d, ep=%f, hv_k=%d, hv_gamma=%e)\n', N, fdsize, ep, hv_k, hv_gamma); 
+tic
+[weights_available, nodes] = ParallelWeights({'lsfc', 'xsfc', 'ysfc', 'zsfc'}, N, nodes, fdsize, ep, hv_k);
+toc
+
+
+
 % We declare this to be global so we can use the weights produced in the
 % following subroutine. 
 global RBFFD_WEIGHTS;
@@ -85,13 +94,6 @@ global RBFFD_WEIGHTS;
 fprintf('Calculating weights (N=%d, n=%d, ep=%f, hv_k=%d, hv_gamma=%e)\n', N, fdsize, ep, hv_k, hv_gamma); 
 tic
 [weights_available, nodes] = Calc_RBFFD_Weights({'lsfc', 'xsfc', 'ysfc', 'zsfc'}, N, nodes, fdsize, ep, hv_k);
-toc
-
-global RBFFD_WEIGHTS2;
-
-fprintf('Calculating weights (N=%d, n=%d, ep=%f, hv_k=%d, hv_gamma=%e)\n', N, fdsize, ep, hv_k, hv_gamma); 
-tic
-[weights_available, nodes] = ParallelWeights({'lsfc', 'xsfc', 'ysfc', 'zsfc'}, N, nodes, fdsize, ep, hv_k);
 toc
 
 
