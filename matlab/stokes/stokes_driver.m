@@ -27,13 +27,14 @@ dim = 2;
 %nodes = load('~/GRIDS/md/md009.00100');
 %nodes = load('~/GRIDS/md/md019.00400');
 %nodes = load('~/GRIDS/md/md031.01024');
-nodes = load('~/GRIDS/md/md031.01024');
+%nodes = load('~/GRIDS/md/md031.01024');
 %nodes = load('~/GRIDS/md/md050.02601'); 
 %nodes = load('~/GRIDS/md/md059.03600'); 
 %nodes = load('~/GRIDS/md/md063.04096');
 %nodes = load('~/GRIDS/md/md079.06400');
 %nodes = load('~/GRIDS/md/md089.08100'); 
 %nodes = load('~/GRIDS/md/md099.10000');
+nodes = load('~/GRIDS/md/md100.10201');
 %nodes = load('~/GRIDS/md/md122.15129');
 %nodes = load('~/GRIDS/md/md159.25600');
 
@@ -128,9 +129,10 @@ hgsave(hhh,[figFileName,'.fig']);
 %% Test 2: Using a Spherical Harmonic on the RHS, lets get the steady state
 %% velocity
 fprintf('Filling RHS Vector\n'); 
+tic;
 [RHS_continuous, RHS_discrete, U_exact] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
-
-%return ; 
+fprintf('Elapsed Time: %f\n', toc);
+return ; 
 
 hhh=figure('visible', 'off') ;
 plotVectorComponents(RHS_continuous, nodes, 'RHS_{continuous} (F)'); 
