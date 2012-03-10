@@ -175,6 +175,8 @@ for j=1:N
                 % Wright 2009 (A Radial Basis Function Method for the
                 % Shallow Water Equations on a Sphere)
                 % This line is (X'X_k)' = (X_k'X)
+                % X is the center
+                % X_k is the stencil
                 X_k = nodes(imat,:); 
                 X = nodes(imat(1),:);
                 xTx_k = X_k * X'; 

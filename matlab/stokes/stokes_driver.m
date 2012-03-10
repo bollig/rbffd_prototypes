@@ -10,8 +10,9 @@ constantViscosity = 1;
 
 %fdsize = 17; c1 = 0.026; c2 = 0.08;  hv_k = 2; hv_gamma = 8;
 %fdsize = 31; c1 = 0.035; c2 = 0.1 ; hv_k = 4; hv_gamma = 800;
-fdsize = 105; c1 = 0.044; c2 = 0.14; hv_k = 4; hv_gamma = 145;
-%fdsize = 110;c1 = 0.058; c2 = 0.16;  hv_k = 4; hv_gamma = 40;
+%fdsize = 105; c1 = 0.044; c2 = 0.14; hv_k = 4; hv_gamma = 145;
+%fdsize = 110; c1 = 0.058; c2 = 0.16;  hv_k = 4; hv_gamma = 40;
+fdsize = 40;  c1 = 0.027; c2 = 0.274; hv_k = 4; hv_gamma = 800; 
 
 % Switch Hyperviscosity ON (1) and OFF (0)
 useHV = 0;
@@ -32,9 +33,9 @@ dim = 2;
 %nodes = load('~/GRIDS/md/md059.03600'); 
 %nodes = load('~/GRIDS/md/md063.04096');
 %nodes = load('~/GRIDS/md/md079.06400');
-%nodes = load('~/GRIDS/md/md089.08100'); 
+nodes = load('~/GRIDS/md/md089.08100'); 
 %nodes = load('~/GRIDS/md/md099.10000');
-nodes = load('~/GRIDS/md/md100.10201');
+%nodes = load('~/GRIDS/md/md100.10201');
 %nodes = load('~/GRIDS/md/md122.15129');
 %nodes = load('~/GRIDS/md/md159.25600');
 
