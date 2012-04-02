@@ -194,7 +194,7 @@ figure(4)
 plotScalarfield(RBFFD_WEIGHTS.lsfc * sph32_mathematica,nodes,'RBFFD WEIGHTS.lsfc * sph32_mathematica');
 end
 
-if 1
+if 0
 l2_norm = norm(abs(Lapl_sph32_mathematica - (RBFFD_WEIGHTS.lsfc * sph32_mathematica)), 2)
 
 figure
