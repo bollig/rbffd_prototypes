@@ -22,7 +22,9 @@ end_time = 3;
 dt = 0.05; 
 dim = 2; 
 
-nodes = halton_disk(
+nodes = halton_disk(1024); 
+plot(nodes(:,1), nodes(:,2)); 
+return
 
 
 %% Handle the case when icos grids are read in from mat files and they are structures
