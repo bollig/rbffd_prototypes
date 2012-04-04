@@ -22,9 +22,9 @@ end_time = 3;
 dt = 0.05; 
 dim = 2; 
 
-nodes = halton_disk(1024); 
-plot(nodes(:,1), nodes(:,2)); 
-return
+nodes = halton_disk(1024, 2); 
+%plot(nodes(:,1), nodes(:,2), '.'); 
+%return
 
 
 %% Handle the case when icos grids are read in from mat files and they are structures
@@ -32,10 +32,11 @@ if isstruct(nodes)
     nodes = nodes.nodes;
 end
 
-nodes=nodes(:,1:3);
+nodes=nodes(:,1:2);
+
 N = length(nodes);
 
-output_dir = sprintf('./ilu0_test/sph32_sph105_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
+output_dir = sprintf('./disk_test/sph32_sph105_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
 fprintf('Making directory: %s\n', output_dir);
 mkdir(output_dir); 
 
@@ -61,7 +62,7 @@ global RBFFD_WEIGHTS;
 % for cache optimality. 
 fprintf('Calculating weights (N=%d, n=%d, ep=%f, hv_k=%d, hv_gamma=%e)\n', N, fdsize, ep, hv_k, hv_gamma); 
 tic
-[weights_available, nodes] = Calc_RBFFD_Weights({'lsfc', 'xsfc', 'ysfc', 'zsfc'}, N, nodes, fdsize, ep, hv_k);
+[weights_available, nodes] = Calc_RBFFD_Weights({'lapl', 'x', 'y'}, N, nodes, fdsize, ep, hv_k);
 toc
 
 % NO need for hyperviscosity at this point
@@ -69,7 +70,7 @@ toc
 
 fprintf('Filling LHS Collocation Matrix\n'); 
 tic
-[LHS, DIV_operator, eta] = stokes(nodes, N, fdsize, useHV, constantViscosity);
+[LHS, DIV_operator, eta] = fillLHS(nodes, N, fdsize, useHV, constantViscosity);
 toc
 
 hhh=figure('visible', 'off');

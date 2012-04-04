@@ -8,10 +8,10 @@ function[weights_available nodes] = Calc_RBFFD_Weights(which, N, nodes, n, ep, h
 %%      'weights_available' tells which weights have been computed
 %% ALSO: RBFFD_WEIGHTS is not cleared whenever this is called, so we can
 %%      call it multiple times and UPDATE the struct with new computed weights
-%%      without losing all the stuff we did before. 
+%%      without losing all the stuff we did before.
 %% BE CAREFUL with this!
 %%      it is possible to compute weights for different stencil sizes since
-%%      this code does NOT check that n, N, ep, etc. all match up across calls. 
+%%      this code does NOT check that n, N, ep, etc. all match up across calls.
 % weights_available = Calc_Weights_fd({'theta', 'lambda', 'hv'}, 27556, node_list, 101, 2.356, 10);
 %
 %% Now get the weights for local use:
@@ -52,7 +52,7 @@ global RBFFD_WEIGHTS;
 weights_available = struct('lambda', 0, 'theta', 0, 'lsfc', 0, 'hv', 0, 'x', 0, 'y', 0, 'z', 0, 'xsfc', 0, 'ysfc', 0, 'zsfc', 0, 'xsfc_alt', 0, 'ysfc_alt', 0, 'zsfc_alt', 0);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Gaussian RBF and its derivatives: 
+% Gaussian RBF and its derivatives:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 rbf.phi = @(ep,rd) exp(-(ep*rd).^2);
 
@@ -89,7 +89,7 @@ A = ones(n+1,n+1); A(end,end) = 0;
 % RHS
 B = zeros(n+1,1);
 
-%% USE THE BUILTIN KDTREE FROM THE STATS TOOLBOX. 
+%% USE THE BUILTIN KDTREE FROM THE STATS TOOLBOX.
 root = KDTreeSearcher(nodes,'distance','euclidean');
 
 % Use KDTREE (BUGFIX: returns the nearest neighbors in reverse order)
@@ -116,7 +116,7 @@ if computeSFCOperators
         which = [which 'z'];
         fprintf('Added derivative type "z" to satisfy dependencies in weight calculation\n');
     end
-    % Delete the SFC operators so they dont compute in the case statement below. 
+    % Delete the SFC operators so they dont compute in the case statement below.
     which(foundSFCOperators) = [];
 end
 
@@ -125,10 +125,10 @@ end
 if computeSFCOperators
     % When we compute one, we compute them all
     weights_temp = zeros(n,N,length(which)+3);
-else 
+else
     weights_temp = zeros(n,N,length(which));
 end
-% 
+%
 %     % Sort the nodes according to the KDTree spatial ordering (Improves caching
 %     % a bit, but it is ordering according to two nodes separated by maximal
 %     % distance (in level sets). This should be similar to symrcm.
@@ -139,7 +139,7 @@ end
 for j=1:N
     
     % Use KDTREE (BUGFIX: returns the nearest neighbors in reverse order)
-    idx = idx_all(j,:); 
+    idx = idx_all(j,:);
     
     % Euclidean distance matrix
     %dist = distmat(nodes(idx,:)); %sqrt(max(0,2*(1-nodes(idx,1)*nodes(idx,1).'-nodes(idx,2)*nodes(idx,2).'-nodes(idx,3)*nodes(idx,3).')));
@@ -148,8 +148,11 @@ for j=1:N
     ind_i((j-1)*n+1:j*n) = j;
     ind_j((j-1)*n+1:j*n) = imat;
     % This is the distance matrix: sqrt(2*(1 - x'x))
-    rd = distmat(nodes(imat,:)); %sqrt(max(0,2*(1-nodes(imat,1)*nodes(imat,1).'-nodes(imat,2)*nodes(imat,2).'-nodes(imat,3)*nodes(imat,3).')));
-    
+    % rd_old = distmat(nodes(imat,:));
+    % NOTE: 1e-14 difference from this
+    % to the following (FASTER) dmat code:
+    rd = DistanceMatrixA(nodes(imat,:), nodes(imat,:));
+  
     %% The euclidean distances for each node from the stencil center
     rdv = rd(:,1);
     
@@ -158,11 +161,11 @@ for j=1:N
     
     % Fill multiple RHS (indexed by windx)
     windx=0;
-    %wlength=length(which); 
+    %wlength=length(which);
     for w=which(1:end)
-    %while windx < wlength
+        %while windx < wlength
         windx=windx+1;
-     %   w = which(windx);
+        %   w = which(windx);
         dertype = char(w);
         %fprintf('WHICH: %s\n', dertype);
         switch dertype
@@ -177,11 +180,11 @@ for j=1:N
                 % This line is (X'X_k)' = (X_k'X)
                 % X is the center
                 % X_k is the stencil
-                X_k = nodes(imat,:); 
+                X_k = nodes(imat,:);
                 X = nodes(imat(1),:);
-                xTx_k = X_k * X'; 
+                xTx_k = X_k * X';
                 % We seek: (x_k - x * (X'X_k)) {See handout}
-                xdv = X(:,1).*xTx_k - X_k(:,1); 
+                xdv = X(:,1).*xTx_k - X_k(:,1);
                 B(1:n,windx) = xdv .* rbf.Dphi_Dr_times_r_inv(ep, rdv);
             case 'ysfc'
                 % Same as X but we project the operator following Flyer,
@@ -251,10 +254,10 @@ for j=1:N
         foundZ = cellfun(@(x) ~isempty(strfind(x,'z')),which);
         
         % We assume unit sphere, so we dont normalize. These are actually
-        % supposed to be directions though. 
-        xx = nodes(j,1); 
-        yy = nodes(j,2); 
-        zz = nodes(j,3); 
+        % supposed to be directions though.
+        xx = nodes(j,1);
+        yy = nodes(j,2);
+        zz = nodes(j,3);
         
         % d/dx projected to sphere
         weights_temp(1:n,j,length(which)+1) = (1-xx.^2)*weights(1:n,foundX) + (-xx.*yy) * weights(1:n,foundY) + (-xx.*zz) * weights(1:n,foundZ);
@@ -267,7 +270,7 @@ end
 
 % Add the operators again so we store them globally
 if computeSFCOperators
-which = [which 'xsfc_alt', 'ysfc_alt', 'zsfc_alt'];     
+    which = [which 'xsfc_alt', 'ysfc_alt', 'zsfc_alt'];
 end
 
 windx=0;
