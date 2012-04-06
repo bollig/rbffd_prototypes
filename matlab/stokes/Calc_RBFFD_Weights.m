@@ -2,7 +2,6 @@ function[weights_available nodes] = Calc_RBFFD_Weights(which, N, nodes, n, ep, h
 %% Calculate RBF-FD weights and store them globally
 % NOTE: assumes the use of Gaussian RBFs.
 %
-%% Example usage:
 %
 %% NOTE: stores weights in a global variable 'RBFFD_WEIGHTS'.
 %%      'weights_available' tells which weights have been computed
@@ -12,6 +11,8 @@ function[weights_available nodes] = Calc_RBFFD_Weights(which, N, nodes, n, ep, h
 %% BE CAREFUL with this!
 %%      it is possible to compute weights for different stencil sizes since
 %%      this code does NOT check that n, N, ep, etc. all match up across calls.
+%
+%% Example usage:
 % weights_available = Calc_Weights_fd({'theta', 'lambda', 'hv'}, 27556, node_list, 101, 2.356, 10);
 %
 %% Now get the weights for local use:
