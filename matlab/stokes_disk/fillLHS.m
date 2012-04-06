@@ -1,4 +1,4 @@
-function [LHS, DIV_operator, eta] = fillLHS(nodes, N, n, useHV, constantViscosity)
+function [LHS, eta] = fillLHS(nodes, N, n, useHV, constantViscosity)
 %% Fills a large sparse matrix with 4x4 blocks. NOTE: it does this by
 %% COLUMN to make memory access more efficient in MATLAB. 
 
@@ -8,11 +8,13 @@ global RBFFD_WEIGHTS;
 %% Decide whether we should use a continuous or discrete viscosity.
 etaContinuous = 0;
 
+nb_bnd = 1; 
+% We assume we have more than one boundary node which is NOT included in
+% the matrix
+N = length(nodes) - nb_bnd;
 
-N = length(nodes);
 
 % NNZ (Number of Non Zeros) of the LHS matrix without our extra constraints
-%L = spalloc(4*N, 4*N, 9*n*N); 
 
 eta = ones(N,1);
 
@@ -22,7 +24,7 @@ if 1 %constantViscosity
 
     % The third term is for constant eta (3*N added for extra constraints on RIGHT and 3*N for BOTTOM)
     %LHS = spalloc(4*N+4, 4*N+4, (2*N*n) + (2*N*n) + (2*N*n) + (3*N*n) + 3*N + 3*N); 
-    NNZ =  (3*N*n) + (3*N*n) + (2*N*n) + 4*N + 4*N; 
+    NNZ =  (3*N*n) + (3*N*n) + (2*N*n); 
 
     dEta_dx = zeros(N,1); 
     dEta_dy = zeros(N,1);
@@ -72,13 +74,15 @@ VV = zeros(NNZ,1);
 % Use sparse mats to compute block, and fill our three vectors, then adjust indices to proper block in LHS
 cur_ind = 1; 
 
+% I let the assembly work on all rows assuming no boundary. Then I filter
+% off in the conditional below
 [i_ind, j_ind, v_val] = find( -2 * spdiags(dEta_dx,0,N,N) * RBFFD_WEIGHTS.x - spdiags(dEta_dy,0,N,N) * RBFFD_WEIGHTS.y - spdiags(eta,0,N,N) * RBFFD_WEIGHTS.lapl ); 
-li = length(i_ind);
+li = length(i_ind > nb_bnd);
 if li
     c_i_ind = cur_ind:(cur_ind+li-1);
-    II(c_i_ind) = i_ind + 0*N; 
-    JJ(c_i_ind) = j_ind + 0*N; 
-    VV(c_i_ind) = v_val;
+    II(c_i_ind) = i_ind(i_ind > nb_bnd) + 0*N; 
+    JJ(c_i_ind) = j_ind(i_ind > nb_bnd) + 0*N; 
+    VV(c_i_ind) = v_val(i_ind > nb_bnd);
     cur_ind = cur_ind + li; 
 end
 
@@ -162,90 +166,6 @@ if li
     cur_ind = cur_ind + li;
 end
 
-
-% L = L(1:3*N, 1:3*N);
-
-%%%%%%%%%%%% SYSTEM IS SINGULAR, ADD CONST TO CONSTRAIN IT %%%%%%%
-
-%% Use svds to prove nullspace is 4 vectors
-% [Usvd, Ssvd, Vsvd, flagSVD] = svds(LHS,20,0);
-% sing_value_indices_before = find(max(Ssvd) < 1e-5)
-
-fprintf('Fill EXTRA CONSTRAINTS\n'); 
-
-%% Far right columns, and bottom rows (integral over each vector component
-%% is 0)
-if 1
-    c_i_ind = cur_ind:(cur_ind+N-1);
-    II(c_i_ind) = 4*N+1;
-    JJ(c_i_ind) = (1:N)+0*N;
-    VV(c_i_ind) = 1;
-    cur_ind = cur_ind + N;
-
-    c_i_ind = cur_ind:(cur_ind+N-1);
-    II(c_i_ind) = (1:N)+0*N;
-    JJ(c_i_ind) = 4*N+1;
-    VV(c_i_ind) = 1;
-    cur_ind = cur_ind + N;
-
-    c_i_ind = cur_ind:(cur_ind+N-1);
-    II(c_i_ind) = 4*N+2;
-    JJ(c_i_ind) = (1:N)+1*N;
-    VV(c_i_ind) = 1;
-    cur_ind = cur_ind + N;
-
-    c_i_ind = cur_ind:(cur_ind+N-1);
-    II(c_i_ind) = (1:N)+1*N;
-    JJ(c_i_ind) = 4*N+2;
-    VV(c_i_ind) = 1;
-    cur_ind = cur_ind + N;
-
-    c_i_ind = cur_ind:(cur_ind+N-1);
-    II(c_i_ind) = 4*N+3;
-    JJ(c_i_ind) = (1:N)+2*N;
-    VV(c_i_ind) = 1;
-    cur_ind = cur_ind + N;
-
-    c_i_ind = cur_ind:(cur_ind+N-1);
-    II(c_i_ind) = (1:N)+2*N;
-    JJ(c_i_ind) = 4*N+3;
-    VV(c_i_ind) = 1;
-    cur_ind = cur_ind + N;
-
-    c_i_ind = cur_ind:(cur_ind+N-1);
-    II(c_i_ind) = 4*N+4;
-    JJ(c_i_ind) = (1:N)+3*N;
-    VV(c_i_ind) = 1;
-    cur_ind = cur_ind + N;
-
-    c_i_ind = cur_ind:(cur_ind+N-1);
-    II(c_i_ind) = (1:N)+3*N;
-    JJ(c_i_ind) = 4*N+4;
-    VV(c_i_ind) = 1;
-    cur_ind = cur_ind + N;
-
-else 
-    %% This case is too ill-conditioned, but assigns the constant a 0 value directly.
-    ind = (1:N)+0*N;
-    % Right
-    LHS(ind, 4*N+1) = 1; 
-    % Bottom
-    LHS(4*N+1, 4*N+1) = 1; 
-
-    ind = (1:N)+1*N; 
-    LHS(ind, 4*N+2) = 1; 
-    LHS(4*N+2, 4*N+2) = 1; 
-
-    ind = (1:N)+2*N; 
-    LHS(ind, 4*N+3) = 1; 
-    LHS(4*N+3, 4*N+3) = 1; 
-
-    ind = (1:N)+3*N; 
-    LHS(ind, 4*N+4) = 1; 
-    LHS(4*N+4, 4*N+4) = 1; 
-end
-
-
 % Shrink inline. This should avoid allocating extra mem. If we put these inline
 % on the call to sparse it doubles the allocation for the sparse matrix. 
 II = II(1:cur_ind-1); 
@@ -260,7 +180,7 @@ anticipated_mem = 3 * NNZ * 8;
 
 start_mem = meminfo;
 
-LHS = sparse(II, JJ, VV, 4*N+4, 4*N+4, cur_ind-1);
+LHS = sparse(II, JJ, VV, 3*N, 3*N, cur_ind-1);
 
 end_mem = meminfo;
 
@@ -272,10 +192,6 @@ if 0
     [Usvd, Ssvd, Vsvd, flagSVD] = svds(LHS,10,0);
     sing_value_indices = find(max(Ssvd) < 1e-6)
 end
-
-fprintf('Sample DIV Operator\n'); 
-%% Get the discrete div operator
-DIV_operator = LHS(3*N+1:4*N,1:4*N+4);
 
 end
 

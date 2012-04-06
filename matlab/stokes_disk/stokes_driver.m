@@ -22,8 +22,8 @@ end_time = 3;
 dt = 0.05; 
 dim = 2; 
 
-nodes = halton_disk(1024, 2); 
-%plot(nodes(:,1), nodes(:,2), '.'); 
+nodes = halton_disk(60, 2); 
+plot(nodes(:,1), nodes(:,2), '.'); 
 %return
 
 
@@ -70,7 +70,9 @@ toc
 
 fprintf('Filling LHS Collocation Matrix\n'); 
 tic
-[LHS, DIV_operator, eta] = fillLHS(nodes, N, fdsize, useHV, constantViscosity);
+[LHS, eta] = fillLHS(nodes, N, fdsize, useHV, constantViscosity);
+spy(LHS)
+pause
 toc
 
 hhh=figure('visible', 'off');
