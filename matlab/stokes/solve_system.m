@@ -41,7 +41,7 @@ switch type
         if flag
             fprintf('GMRES+ILU failed to converge in Outer: %d, Inner: %d iterations to requested tolerance of %3.2e (Made it to: %3.2e)\n\n', iter(1), iter(2), tol, relres);
         else
-            fprintf('GMRES+ILU converged in Outer: %d, Inner: %d. \n\n ILU Time: %f seconds, GMRES Time: %f seconds, Total Elapsed: %f seconds\n\n', iter(1), iter(2), t1, t2, t1+t2);
+            fprintf('GMRES+ILU0 converged in Total Iterations: %d (Restarts: %d). \n\n ILU Time: %f seconds, GMRES Time: %f seconds, Total Elapsed: %f seconds\n\n', (iter(1)-1)*restart + iter(2), iter(2)-1, t1, t2, t1+t2);
         end
     
     case 'gmres+ilu'
@@ -63,8 +63,10 @@ switch type
         
         if flag
             fprintf('GMRES+ILU failed to converge in Outer: %d, Inner: %d iterations to requested tolerance of %3.2e (Made it to: %3.2e)\n\n', iter(1), iter(2), tol, relres);
+
         else
-            fprintf('GMRES+ILU converged in Outer: %d, Inner: %d. \n\n ILU Time: %f seconds, GMRES Time: %f seconds, Total Elapsed: %f seconds\n\n', iter(1), iter(2), t1, t2, t1+t2);
+            %           fprintf('GMRES+ILU converged in Outer: %d, Inner: %d. \n\n ILU Time: %f seconds, GMRES Time: %f seconds, Total Elapsed: %f seconds\n\n', iter(1), iter(2), t1, t2, t1+t2);
+            fprintf('GMRES+ILU0 converged in Total Iterations: %d (Restarts: %d). \n\n ILU Time: %f seconds, GMRES Time: %f seconds, Total Elapsed: %f seconds\n\n', (iter(1)-1)*restart + iter(2), iter(2)-1, t1, t2, t1+t2);
         end
     case 'gmres+ilu_k'
         restart = 250;

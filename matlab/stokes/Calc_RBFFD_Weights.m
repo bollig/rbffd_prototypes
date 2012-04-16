@@ -1,17 +1,18 @@
-function[weights_available nodes] = Calc_RBFFD_Weights(which, N, nodes, n, ep, hv_k)
+function[weights_available nodes] = Calc_RBFFD_Weights(which, N, nodes, n, ep, hv_k, dim)
 %% Calculate RBF-FD weights and store them globally
 % NOTE: assumes the use of Gaussian RBFs.
 %
-%% Example usage:
 %
 %% NOTE: stores weights in a global variable 'RBFFD_WEIGHTS'.
 %%      'weights_available' tells which weights have been computed
 %% ALSO: RBFFD_WEIGHTS is not cleared whenever this is called, so we can
 %%      call it multiple times and UPDATE the struct with new computed weights
-%%      without losing all the stuff we did before. 
+%%      without losing all the stuff we did before.
 %% BE CAREFUL with this!
 %%      it is possible to compute weights for different stencil sizes since
-%%      this code does NOT check that n, N, ep, etc. all match up across calls. 
+%%      this code does NOT check that n, N, ep, etc. all match up across calls.
+%
+%% Example usage:
 % weights_available = Calc_Weights_fd({'theta', 'lambda', 'hv'}, 27556, node_list, 101, 2.356, 10);
 %
 %% Now get the weights for local use:
@@ -30,6 +31,7 @@ function[weights_available nodes] = Calc_RBFFD_Weights(which, N, nodes, n, ep, h
 %       'x'         => d/dx (Cartesian Coordinates)
 %       'y'         => d/dy
 %       'z'         => d/dz
+%       'lapl'      => laplacian (requires input argument dim; otherwise defaults to size(nodes,2))
 %       'theta'     => d/dtheta (Latitude) on surface of sphere
 %       'lambda'    => d/dlambda (Longitude) on surface of sphere
 %       'hv'        => Hypervisocity (\nabla^hv_k) unscaled (you must scale by hv_gamma * N^{-k}).
@@ -48,11 +50,16 @@ function[weights_available nodes] = Calc_RBFFD_Weights(which, N, nodes, n, ep, h
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 global RBFFD_WEIGHTS;
 
+if nargin < 7
+    dim = size(nodes,2);
+    fprintf('Dimension not specified, assuming maximum allowed by nodes: %d\n', dim);
+end
+
 % Initialize all as unavailable (we'll flip these later)
 weights_available = struct('lambda', 0, 'theta', 0, 'lsfc', 0, 'hv', 0, 'x', 0, 'y', 0, 'z', 0, 'xsfc', 0, 'ysfc', 0, 'zsfc', 0, 'xsfc_alt', 0, 'ysfc_alt', 0, 'zsfc_alt', 0);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Gaussian RBF and its derivatives: 
+% Gaussian RBF and its derivatives:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 rbf.phi = @(ep,rd) exp(-(ep*rd).^2);
 
@@ -89,7 +96,7 @@ A = ones(n+1,n+1); A(end,end) = 0;
 % RHS
 B = zeros(n+1,1);
 
-%% USE THE BUILTIN KDTREE FROM THE STATS TOOLBOX. 
+%% USE THE BUILTIN KDTREE FROM THE STATS TOOLBOX.
 root = KDTreeSearcher(nodes,'distance','euclidean');
 
 % Use KDTREE (BUGFIX: returns the nearest neighbors in reverse order)
@@ -116,7 +123,7 @@ if computeSFCOperators
         which = [which 'z'];
         fprintf('Added derivative type "z" to satisfy dependencies in weight calculation\n');
     end
-    % Delete the SFC operators so they dont compute in the case statement below. 
+    % Delete the SFC operators so they dont compute in the case statement below.
     which(foundSFCOperators) = [];
 end
 
@@ -125,10 +132,10 @@ end
 if computeSFCOperators
     % When we compute one, we compute them all
     weights_temp = zeros(n,N,length(which)+3);
-else 
+else
     weights_temp = zeros(n,N,length(which));
 end
-% 
+%
 %     % Sort the nodes according to the KDTree spatial ordering (Improves caching
 %     % a bit, but it is ordering according to two nodes separated by maximal
 %     % distance (in level sets). This should be similar to symrcm.
@@ -139,7 +146,7 @@ end
 for j=1:N
     
     % Use KDTREE (BUGFIX: returns the nearest neighbors in reverse order)
-    idx = idx_all(j,:); 
+    idx = idx_all(j,:);
     
     % Euclidean distance matrix
     %dist = distmat(nodes(idx,:)); %sqrt(max(0,2*(1-nodes(idx,1)*nodes(idx,1).'-nodes(idx,2)*nodes(idx,2).'-nodes(idx,3)*nodes(idx,3).')));
@@ -148,7 +155,10 @@ for j=1:N
     ind_i((j-1)*n+1:j*n) = j;
     ind_j((j-1)*n+1:j*n) = imat;
     % This is the distance matrix: sqrt(2*(1 - x'x))
-    rd = distmat(nodes(imat,:)); %sqrt(max(0,2*(1-nodes(imat,1)*nodes(imat,1).'-nodes(imat,2)*nodes(imat,2).'-nodes(imat,3)*nodes(imat,3).')));
+    % rd_old = distmat(nodes(imat,:));
+    % NOTE: 1e-14 difference from this
+    % to the following (FASTER) dmat code:
+    rd = DistanceMatrixA(nodes(imat,:), nodes(imat,:));
     
     %% The euclidean distances for each node from the stencil center
     rdv = rd(:,1);
@@ -158,17 +168,19 @@ for j=1:N
     
     % Fill multiple RHS (indexed by windx)
     windx=0;
-    %wlength=length(which); 
+    %wlength=length(which);
     for w=which(1:end)
-    %while windx < wlength
+        %while windx < wlength
         windx=windx+1;
-     %   w = which(windx);
+        %   w = which(windx);
         dertype = char(w);
         %fprintf('WHICH: %s\n', dertype);
         switch dertype
             case 'x'
-                % X separation
+                % xdv == X separation
                 xdv = nodes(imat,1) - nodes(imat(1),1);
+                % This DphiDx is full expression for X derivative:
+                % -2*xdv*ep^2*rbf.eval()
                 B(1:n,windx) = rbf.DphiDx(ep, rdv, xdv);
             case 'xsfc'
                 % Same as X but we project the operator following Flyer,
@@ -177,12 +189,16 @@ for j=1:N
                 % This line is (X'X_k)' = (X_k'X)
                 % X is the center
                 % X_k is the stencil
-                X_k = nodes(imat,:); 
+                X_k = nodes(imat,:);
                 X = nodes(imat(1),:);
-                xTx_k = X_k * X'; 
+                xTx_k = X_k * X';
                 % We seek: (x_k - x * (X'X_k)) {See handout}
-                xdv = X(:,1).*xTx_k - X_k(:,1); 
+                xdv = X(:,1).*xTx_k - X_k(:,1);
                 B(1:n,windx) = xdv .* rbf.Dphi_Dr_times_r_inv(ep, rdv);
+            case 'y'
+                % Y separation
+                ydv = nodes(imat,2) - nodes(imat(1),2);
+                B(1:n,windx) = rbf.DphiDy(ep, rdv, ydv);
             case 'ysfc'
                 % Same as X but we project the operator following Flyer,
                 % Wright 2009 (A Radial Basis Function Method for the
@@ -194,6 +210,10 @@ for j=1:N
                 % We seek: (y_k - y * (X'X_k)) {See handout}
                 ydv = X(:,2).*xTx_k - X_k(:,2);
                 B(1:n,windx) = ydv .* rbf.Dphi_Dr_times_r_inv(ep, rdv);
+            case 'z'
+                % Z separation
+                zdv = nodes(imat,3) - nodes(imat(1),3);
+                B(1:n,windx) = rbf.DphiDz(ep, rdv, zdv);
             case 'zsfc'
                 % Same as X but we project the operator following Flyer,
                 % Wright 2009 (A Radial Basis Function Method for the
@@ -205,14 +225,35 @@ for j=1:N
                 % We seek: (z_k - z * (X'X_k)) {See handout}
                 xdv = X(:,3).*xTx_k - X_k(:,3);
                 B(1:n,windx) = xdv .* rbf.Dphi_Dr_times_r_inv(ep, rdv);
-            case 'y'
-                % Y separation
-                xdv = nodes(imat,2) - nodes(imat(1),1);
-                B(1:n,windx) = rbf.DphiDx(ep, rdv, xdv);
-            case 'z'
-                % Z separation
-                xdv = nodes(imat,3) - nodes(imat(1),1);
-                B(1:n,windx) = rbf.DphiDx(ep, rdv, xdv);
+            case 'lapl'
+                % Standard Cartesian laplacian. Depends on dimensions
+                eps2 = ep.^2;
+                xdv = nodes(imat,1) - nodes(imat(1),1);
+                x2eps2 = xdv.^2 * eps2;
+                switch dim
+                    case 1
+                        B(1:n, windx) = 2 .* eps2 .* (-1 + 2.*x2eps2) .* rbf.phi(ep, rdv);
+                    case 2
+                        % Imat is stencil indices
+                        % imat(1) gets stencil center
+                        % ydv = x_i.y - x_j.y
+                        % nodes(imat(1),:) = x_j
+                        ydv = nodes(imat,2) - nodes(imat(1),2);
+                        y2eps2 = ydv.^2 * eps2;
+                        B(1:n, windx) = 4 .* eps2 .* (-1 + x2eps2 + y2eps2) .* rbf.phi(ep, rdv);
+                    case 3
+                        ydv = nodes(imat,2) - nodes(imat(1),2);
+                        zdv = nodes(imat,3) - nodes(imat(1),3);
+                        r2eps4 = (xdv.^2 + ydv.^2 + zdv.^2) * eps2 * eps2;
+                        B(1:n, windx) = (-6 .* eps2 + 4 .* r2eps4) .* rbf.phi(ep, rdv);
+                    otherwise
+                        error('Error, Laplacian weights for %d dimensions is not yet supported.\n', dim);
+                        return
+                end
+            case 'lsfc'
+                % Surface Laplacian or "Laplace-Beltrami" operator
+                % Equation 20 in Wright Flyer and Yuen "A Hybrid Radial [...]" paper
+                B(1:n,windx) = (1/4) * ( (4-rdv.^2).*rbf.D2phi_Dr2(ep,rdv) + (4 - 3*rdv.^2).*rbf.Dphi_Dr_times_r_inv(ep,rdv) );
             case {'theta', 'lambda'}
                 [lam_j,th_j,temp] = cart2sph(nodes(idx,1),nodes(idx,2),nodes(idx,3));
                 [lam_i,th_i,temp] = cart2sph(nodes(j,1),nodes(j,2),nodes(j,3));
@@ -225,10 +266,6 @@ for j=1:N
                     dr_dlambda = cos(th_i) .* cos(th_j) .* sin(lam_i - lam_j);
                     B(1:n,windx) = dr_dlambda .* rbf.Dphi_Dr_times_r_inv(ep, rdv);
                 end
-            case 'lsfc'
-                % Surface Laplacian or "Laplace-Beltrami" operator
-                % Equation 20 in Wright Flyer and Yuen "A Hybrid Radial [...]" paper
-                B(1:n,windx) = (1/4) * ( (4-rdv.^2).*rbf.D2phi_Dr2(ep,rdv) + (4 - 3*rdv.^2).*rbf.Dphi_Dr_times_r_inv(ep,rdv) );
             case 'hv'
                 B(1:n,windx) = rbf.HV(ep, rdv, hv_k);
             otherwise
@@ -251,10 +288,10 @@ for j=1:N
         foundZ = cellfun(@(x) ~isempty(strfind(x,'z')),which);
         
         % We assume unit sphere, so we dont normalize. These are actually
-        % supposed to be directions though. 
-        xx = nodes(j,1); 
-        yy = nodes(j,2); 
-        zz = nodes(j,3); 
+        % supposed to be directions though.
+        xx = nodes(j,1);
+        yy = nodes(j,2);
+        zz = nodes(j,3);
         
         % d/dx projected to sphere
         weights_temp(1:n,j,length(which)+1) = (1-xx.^2)*weights(1:n,foundX) + (-xx.*yy) * weights(1:n,foundY) + (-xx.*zz) * weights(1:n,foundZ);
@@ -267,7 +304,7 @@ end
 
 % Add the operators again so we store them globally
 if computeSFCOperators
-which = [which 'xsfc_alt', 'ysfc_alt', 'zsfc_alt'];     
+    which = [which 'xsfc_alt', 'ysfc_alt', 'zsfc_alt'];
 end
 
 windx=0;

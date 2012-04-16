@@ -1,8 +1,8 @@
 
 %% Build a differentiation matrix, test hyperviscosity and run the vortex
 %% roll PDE.
-%clc;
-%clear all;
+clc;
+clear all;
 close all;
 
 
@@ -22,40 +22,21 @@ end_time = 3;
 dt = 0.05; 
 dim = 2; 
 
+nodes = halton_disk(60, 2); 
+plot(nodes(:,1), nodes(:,2), '.'); 
+%return
 
-%nodes = load('~/GRIDS/md/md004.00025');
-%nodes = load('~/GRIDS/md/md006.00049');
-%nodes = load('~/GRIDS/md/md009.00100');
-%nodes = load('~/GRIDS/md/md019.00400');
-%nodes = load('~/GRIDS/md/md031.01024');
-nodes = load('~/GRIDS/md/md031.01024');
-%nodes = load('~/GRIDS/md/md050.02601'); 
-%nodes = load('~/GRIDS/md/md059.03600'); 
-%nodes = load('~/GRIDS/md/md063.04096');
-%nodes = load('~/GRIDS/md/md079.06400');
-%nodes = load('~/GRIDS/md/md089.08100'); 
-%nodes = load('~/GRIDS/md/md099.10000');
-%nodes = load('~/GRIDS/md/md100.10201');
-%nodes = load('~/GRIDS/md/md122.15129');
-%nodes = load('~/GRIDS/md/md159.25600');
-
-%nodes = load('~/GRIDS/icos/icos42.mat');
-%nodes = load('~/GRIDS/icos/icos162.mat');
-%nodes = load('~/GRIDS/icos/icos642.mat');
-%nodes = load('~/GRIDS/icos/icos2562.mat');
-%nodes = load('~/GRIDS/icos/icos10242.mat');
-%nodes = load('~/GRIDS/icos/icos40962.mat');
-%nodes = load('~/GRIDS/icos/icos163842.mat');
 
 %% Handle the case when icos grids are read in from mat files and they are structures
 if isstruct(nodes) 
     nodes = nodes.nodes;
 end
 
-nodes=nodes(:,1:3);
+nodes=nodes(:,1:2);
+
 N = length(nodes);
 
-output_dir = sprintf('./ilu0_test/sph32_sph105_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
+output_dir = sprintf('./disk_test/sph32_sph105_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
 fprintf('Making directory: %s\n', output_dir);
 mkdir(output_dir); 
 
@@ -81,7 +62,7 @@ global RBFFD_WEIGHTS;
 % for cache optimality. 
 fprintf('Calculating weights (N=%d, n=%d, ep=%f, hv_k=%d, hv_gamma=%e)\n', N, fdsize, ep, hv_k, hv_gamma); 
 tic
-[weights_available, nodes] = Calc_RBFFD_Weights({'lsfc', 'xsfc', 'ysfc', 'zsfc'}, N, nodes, fdsize, ep, hv_k);
+[weights_available, nodes] = Calc_RBFFD_Weights({'lapl', 'x', 'y'}, N, nodes, fdsize, ep, hv_k);
 toc
 
 % NO need for hyperviscosity at this point
@@ -89,7 +70,9 @@ toc
 
 fprintf('Filling LHS Collocation Matrix\n'); 
 tic
-[LHS, DIV_operator, eta] = stokes(nodes, N, fdsize, useHV, constantViscosity);
+[LHS, eta] = fillLHS(nodes, N, fdsize, useHV, constantViscosity);
+spy(LHS)
+pause
 toc
 
 hhh=figure('visible', 'off');
