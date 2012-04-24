@@ -1,0 +1,41 @@
+This matlab code generated a spherical cvt (SCVT) for 
+two concentric spheres. 
+
+The driver is scvt_test.m
+
+Use of kdtree (provided by the matlab fileexechange: 
+http://www.mathworks.com/matlabcentral/fileexchange/21512)
+is limited to searching for nearest generators when performing
+a probabilistic lloyd's algorithm. 
+
+
+
+TO USE: 
+==========
+
+start matlab in the directory where scvt_test.m is located. 
+
+From a regular terminal (outside of matlab) run: 
+
+%> cd kdtree
+%> make
+
+
+Then inside matlab run: 
+
+%> addpath('kdtree')
+%> scvt_test()
+
+Two plots will be generated. the first will show the boundary node distribution.
+The second will show the boundary and interior node distribution. 
+
+NOTE: the driver saves the generated point distributions to .mat files. If the 
+.mat file exists for a particular number of nodes (e.g., 100 outer boundary and 
+100 inner boundary  points), then CVT generation is skipped and the points are 
+read from file instead. 
+
+TO MODIFY: 
+============
+
+edit scvt_test.m to change parameters for the number of nodes on interior and exterior boundaries, 
+change the number of random samples used to calculate mass centroid updates, etc. 

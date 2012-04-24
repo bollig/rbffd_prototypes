@@ -28,14 +28,14 @@ dim = 2;
 %nodes = load('~/GRIDS/md/md009.00100');
 %nodes = load('~/GRIDS/md/md019.00400');
 %nodes = load('~/GRIDS/md/md031.01024');
-nodes = load('~/GRIDS/md/md031.01024');
+%nodes = load('~/GRIDS/md/md031.01024');
 %nodes = load('~/GRIDS/md/md050.02601'); 
 %nodes = load('~/GRIDS/md/md059.03600'); 
 %nodes = load('~/GRIDS/md/md063.04096');
 %nodes = load('~/GRIDS/md/md079.06400');
 %nodes = load('~/GRIDS/md/md089.08100'); 
 %nodes = load('~/GRIDS/md/md099.10000');
-%nodes = load('~/GRIDS/md/md100.10201');
+nodes = load('~/GRIDS/md/md100.10201');
 %nodes = load('~/GRIDS/md/md122.15129');
 %nodes = load('~/GRIDS/md/md159.25600');
 
@@ -108,6 +108,12 @@ figFileName=[output_dir,'LHS'];
 fprintf('Printing figure: %s\n',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
 hgsave(hhh,[figFileName,'.fig']); 
+fprintf('Printing figure: %s\n',figFileName);
+
+if 1
+print(hhh,'-zbuffer','-depsc2',[figFileName,'.eps']);
+return
+end 
 
 % Spend some time reordering initially. 
 %r = symrcm(LHS); 
