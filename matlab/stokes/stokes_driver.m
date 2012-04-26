@@ -102,7 +102,7 @@ figpos = get(hhh,'Position');
 % Change the paper size to match the window size
 set(hhh,'PaperUnits','inches','PaperPosition',figpos);
 spy(LHS); 
-title('LHS (L)', 'FontSize', 26);
+%title('LHS (L)', 'FontSize', 26);
 set(gca, 'FontSize', 22); 
 figFileName=[output_dir,'LHS'];
 fprintf('Printing figure: %s\n',figFileName);
@@ -120,7 +120,7 @@ set(hhh,'Units','inches');
 figpos = get(hhh,'Position');
 set(hhh,'PaperUnits','inches','PaperPosition',figpos);
 spy(LHS(10:50,10:50)); 
-title('LHS (L)', 'FontSize', 26);
+%title('LHS (L)', 'FontSize', 26);
 set(gca, 'FontSize', 22); 
 figFileName=[output_dir,'LHS_10to50'];
 fprintf('Printing figure: %s\n',figFileName);
