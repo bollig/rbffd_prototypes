@@ -127,7 +127,7 @@ fprintf('Printing figure: %s\n',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
 hgsave(hhh,[figFileName,'.fig']); 
 fprintf('Printing figure: %s\n',figFileName);
-
+print(hhh,'-zbuffer','-r300','-depsc2',[figFileName,'.eps']);
 return
 end 
 
