@@ -55,7 +55,7 @@ end
 nodes=nodes(:,1:3);
 N = length(nodes);
 
-output_dir = sprintf('./ilu0_test/sph32_sph105_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
+output_dir = sprintf('./original_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
 fprintf('Making directory: %s\n', output_dir);
 mkdir(output_dir); 
 
@@ -111,7 +111,7 @@ hgsave(hhh,[figFileName,'.fig']);
 fprintf('Printing figure: %s\n',figFileName);
 
 if 1
-print(hhh,'-zbuffer','-depsc2',[figFileName,'.eps']);
+print(hhh,'-zbuffer','-r300','-depsc2',[figFileName,'.eps']);
 return
 end 
 
