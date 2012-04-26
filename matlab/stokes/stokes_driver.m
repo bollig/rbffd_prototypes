@@ -112,6 +112,22 @@ fprintf('Printing figure: %s\n',figFileName);
 
 if 1
 print(hhh,'-zbuffer','-r300','-depsc2',[figFileName,'.eps']);
+
+hhh=figure('visible', 'off');
+set(hhh,'Units', 'normalized'); 
+set(hhh,'Position',[0 0 0.5 1]);
+set(hhh,'Units','inches');
+figpos = get(hhh,'Position');
+set(hhh,'PaperUnits','inches','PaperPosition',figpos);
+spy(LHS(10:50,10:50)); 
+title('LHS (L)', 'FontSize', 26);
+set(gca, 'FontSize', 22); 
+figFileName=[output_dir,'LHS_10to50'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']); 
+fprintf('Printing figure: %s\n',figFileName);
+
 return
 end 
 
