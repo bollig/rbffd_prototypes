@@ -119,7 +119,8 @@ set(hhh,'Position',[0 0 0.5 1]);
 set(hhh,'Units','inches');
 figpos = get(hhh,'Position');
 set(hhh,'PaperUnits','inches','PaperPosition',figpos);
-spy(LHS(10:50,10:50)); 
+spy(LHS, 10);       % Plot with dot size of 10
+axis([10 50 10 50])
 %title('LHS (L)', 'FontSize', 26);
 set(gca, 'FontSize', 22); 
 figFileName=[output_dir,'LHS_10to50'];
