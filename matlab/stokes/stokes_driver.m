@@ -1,17 +1,18 @@
 
 %% Build a differentiation matrix, test hyperviscosity and run the vortex
 %% roll PDE.
-clc;
-clear all;
+%clc;
+%clear all;
 close all;
 
 
 constantViscosity = 1; 
 
 %fdsize = 17; c1 = 0.026; c2 = 0.08;  hv_k = 2; hv_gamma = 8;
-%fdsize = 31; c1 = 0.035; c2 = 0.1 ; hv_k = 4; hv_gamma = 800;
-fdsize = 50; c1 = 0.044; c2 = 0.14; hv_k = 4; hv_gamma = 145;
-%fdsize = 110;c1 = 0.058; c2 = 0.16;  hv_k = 4; hv_gamma = 40;
+fdsize = 31; c1 = 0.035; c2 = 0.1 ; hv_k = 4; hv_gamma = 800;
+%fdsize = 105; c1 = 0.044; c2 = 0.14; hv_k = 4; hv_gamma = 145;
+%fdsize = 110; c1 = 0.058; c2 = 0.16;  hv_k = 4; hv_gamma = 40;
+%%fdsize = 40;  c1 = 0.027; c2 = 0.274; hv_k = 4; hv_gamma = 800; 
 
 % Switch Hyperviscosity ON (1) and OFF (0)
 useHV = 0;
@@ -30,10 +31,11 @@ dim = 2;
 %nodes = load('~/GRIDS/md/md031.01024');
 %nodes = load('~/GRIDS/md/md050.02601'); 
 %nodes = load('~/GRIDS/md/md059.03600'); 
-nodes = load('~/GRIDS/md/md063.04096');
+%nodes = load('~/GRIDS/md/md063.04096');
 %nodes = load('~/GRIDS/md/md079.06400');
 %nodes = load('~/GRIDS/md/md089.08100'); 
 %nodes = load('~/GRIDS/md/md099.10000');
+nodes = load('~/GRIDS/md/md100.10201');
 %nodes = load('~/GRIDS/md/md122.15129');
 %nodes = load('~/GRIDS/md/md159.25600');
 
@@ -53,7 +55,7 @@ end
 nodes=nodes(:,1:3);
 N = length(nodes);
 
-output_dir = sprintf('./reordered/sph32_sph105_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
+output_dir = sprintf('./reordered_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
 fprintf('Making directory: %s\n', output_dir);
 mkdir(output_dir); 
 
@@ -67,11 +69,6 @@ diary on;
 ep = c1 * sqrt(N) - c2;
 
 fprintf('Using RBF Support Parameter ep=%f\n', ep); 
-
-% An attempt at determining epsilon based on condition number
-kappa = 1e13; 
-beta = (1/-(2 * floor( ( sqrt(8*fdsize - 7) - 1) / 2)));
-ep_alt = kappa^beta;
 
 
 % We declare this to be global so we can use the weights produced in the
@@ -95,7 +92,7 @@ tic
 [LHS, DIV_operator, eta] = stokes(nodes, N, fdsize, useHV, constantViscosity);
 toc
 
-hhh=figure;%('visible', 'off');
+hhh=figure('visible', 'off');
 % resize the window to most of my laptop screen
 set(hhh,'Units', 'normalized'); 
 set(hhh,'Position',[0 0 0.5 1]);
@@ -111,6 +108,12 @@ figFileName=[output_dir,'LHS'];
 fprintf('Printing figure: %s\n',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
 hgsave(hhh,[figFileName,'.fig']); 
+fprintf('Printing figure: %s\n',figFileName);
+
+if 1
+print(hhh,'-zbuffer','-r300','-depsc2',[figFileName,'.eps']);
+return
+end 
 
 % Spend some time reordering initially. 
 %r = symrcm(LHS); 
@@ -128,9 +131,9 @@ hgsave(hhh,[figFileName,'.fig']);
 %% Test 2: Using a Spherical Harmonic on the RHS, lets get the steady state
 %% velocity
 fprintf('Filling RHS Vector\n'); 
-[RHS_continuous, RHS_discrete, U_exact, IND, REVIND] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
-
-%return ; 
+tic;
+[RHS_continuous, RHS_discrete, U_exact] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
+fprintf('Elapsed Time: %f\n', toc); 
 
 hhh=figure('visible', 'off') ;
 plotVectorComponents(RHS_continuous, nodes, 'RHS_{continuous} (F)'); 
@@ -172,8 +175,8 @@ end
 
 %% SOLVE SYSTEM (Solver types: 'lsq', 'gmres', 'direct', 'gmres+ilu', 'gmres+ilu_k'
 fprintf('Solving Lu=F\n'); 
-U = solve_system(LHS, RHS_continuous(IND), N, 'direct'); 
-U = U(REVIND); 
+U = solve_system(LHS, RHS_continuous, N, 'gmres+ilu0'); 
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -198,21 +201,39 @@ close(hhh);
 
 U_abs_err = abs(U-U_exact);
 
-fprintf('\n\n--> Checking Absolute Error of Computed Solution: \n');
-U_abs_err_l1 = norm(U_abs_err(1:N), 1)
-V_abs_err_l1 = norm(U_abs_err(N+1:2*N), 1)
-W_abs_err_l1 = norm(U_abs_err(2*N+1:3*N), 1)
-P_abs_err_l1 = norm(U_abs_err(3*N+1:4*N), 1)
+% fprintf('\n\n--> Checking Absolute Error of Computed Solution: \n');
+% U_abs_err_l1 = norm(U_abs_err(1:N), 1)
+% V_abs_err_l1 = norm(U_abs_err(N+1:2*N), 1)
+% W_abs_err_l1 = norm(U_abs_err(2*N+1:3*N), 1)
+% P_abs_err_l1 = norm(U_abs_err(3*N+1:4*N), 1)
+% 
+% U_abs_err_l2 = norm(U_abs_err(1:N), 2)
+% V_abs_err_l2 = norm(U_abs_err(N+1:2*N), 2)
+% W_abs_err_l2 = norm(U_abs_err(2*N+1:3*N), 2)
+% P_abs_err_l2 = norm(U_abs_err(3*N+1:4*N), 2)
+% 
+% U_abs_err_linf = norm(U_abs_err(1:N), inf)
+% V_abs_err_linf = norm(U_abs_err(N+1:2*N), inf)
+% W_abs_err_linf = norm(U_abs_err(2*N+1:3*N), inf)
+% P_abs_err_linf = norm(U_abs_err(3*N+1:4*N), inf)
 
-U_abs_err_l2 = norm(U_abs_err(1:N), 2)
-V_abs_err_l2 = norm(U_abs_err(N+1:2*N), 2)
-W_abs_err_l2 = norm(U_abs_err(2*N+1:3*N), 2)
-P_abs_err_l2 = norm(U_abs_err(3*N+1:4*N), 2)
+fprintf('\n\n--> Checking Relative Error of Computed Solution: \n');
+U_rel_err_l1 = norm(U_abs_err(1:N), 1) / norm(U_exact(1:N), 1)
+U_rel_err_l2 = norm(U_abs_err(1:N), 2) / norm(U_exact(1:N), 2)
+U_rel_err_linf = norm(U_abs_err(1:N), inf) / norm(U_exact(1:N), inf)
 
-U_abs_err_linf = norm(U_abs_err(1:N), inf)
-V_abs_err_linf = norm(U_abs_err(N+1:2*N), inf)
-W_abs_err_linf = norm(U_abs_err(2*N+1:3*N), inf)
-P_abs_err_linf = norm(U_abs_err(3*N+1:4*N), inf)
+V_rel_err_l1 = norm(U_abs_err(N+1:2*N), 1) / norm(U_exact(N+1:2*N), 1)
+V_rel_err_l2 = norm(U_abs_err(N+1:2*N), 2) / norm(U_exact(N+1:2*N), 2)
+V_rel_err_linf = norm(U_abs_err(N+1:2*N), inf) / norm(U_exact(N+1:2*N), inf)
+
+W_rel_err_l1 = norm(U_abs_err(2*N+1:3*N), 1) / norm(U_exact(2*N+1:3*N), 1)
+W_rel_err_l2 = norm(U_abs_err(2*N+1:3*N), 2) / norm(U_exact(2*N+1:3*N), 2)
+W_rel_err_linf = norm(U_abs_err(2*N+1:3*N), inf) / norm(U_exact(2*N+1:3*N), inf)
+
+P_rel_err_l1 = norm(U_abs_err(3*N+1:4*N), 1) / norm(U_exact(3*N+1:4*N), 1)
+P_rel_err_l2 = norm(U_abs_err(3*N+1:4*N), 2) / norm(U_exact(3*N+1:4*N), 2)
+P_rel_err_linf = norm(U_abs_err(3*N+1:4*N), inf) / norm(U_exact(3*N+1:4*N), inf)
+
 
 
 % fprintf('\n\n--> Checking Relative Error of Computed Solution: \n');
