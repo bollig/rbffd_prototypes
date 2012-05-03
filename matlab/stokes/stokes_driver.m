@@ -28,14 +28,14 @@ dim = 2;
 %nodes = load('~/GRIDS/md/md009.00100');
 %nodes = load('~/GRIDS/md/md019.00400');
 %nodes = load('~/GRIDS/md/md031.01024');
-%nodes = load('~/GRIDS/md/md031.01024');
+nodes = load('~/GRIDS/md/md031.01024');
 %nodes = load('~/GRIDS/md/md050.02601'); 
 %nodes = load('~/GRIDS/md/md059.03600'); 
 %nodes = load('~/GRIDS/md/md063.04096');
 %nodes = load('~/GRIDS/md/md079.06400');
 %nodes = load('~/GRIDS/md/md089.08100'); 
 %nodes = load('~/GRIDS/md/md099.10000');
-nodes = load('~/GRIDS/md/md100.10201');
+%nodes = load('~/GRIDS/md/md100.10201');
 %nodes = load('~/GRIDS/md/md122.15129');
 %nodes = load('~/GRIDS/md/md159.25600');
 
@@ -55,7 +55,7 @@ end
 nodes=nodes(:,1:3);
 N = length(nodes);
 
-output_dir = sprintf('./original_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
+output_dir = sprintf('./newsol_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
 fprintf('Making directory: %s\n', output_dir);
 mkdir(output_dir); 
 
@@ -110,7 +110,7 @@ print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
 hgsave(hhh,[figFileName,'.fig']); 
 fprintf('Printing figure: %s\n',figFileName);
 
-if 1
+if 0
 print(hhh,'-zbuffer','-r300','-depsc2',[figFileName,'.eps']);
 
 hhh=figure('visible', 'off');

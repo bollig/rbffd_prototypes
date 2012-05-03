@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[     77815,       2009]
-NotebookOptionsPosition[     75172,       1917]
-NotebookOutlinePosition[     75567,       1934]
-CellTagsIndexPosition[     75524,       1931]
+NotebookDataLength[     84665,       2200]
+NotebookOptionsPosition[     81159,       2081]
+NotebookOutlinePosition[     81554,       2098]
+CellTagsIndexPosition[     81511,       2095]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -56,7 +56,7 @@ Cell[BoxData[
    3.543533416418915*^9, {3.5435335416740103`*^9, 3.543533565007846*^9}, 
    3.543546712653508*^9, 3.5435467629050417`*^9, 3.543548634526816*^9, 
    3.5435487413783407`*^9, 3.543549032779969*^9, 3.543549123355036*^9, 
-   3.543549326975712*^9},
+   3.543549326975712*^9, 3.545006279337371*^9},
  FontSize->14],
 
 Cell[BoxData[
@@ -79,7 +79,7 @@ Cell[BoxData[
    3.543533416418915*^9, {3.5435335416740103`*^9, 3.543533565007846*^9}, 
    3.543546712653508*^9, 3.5435467629050417`*^9, 3.543548634526816*^9, 
    3.5435487413783407`*^9, 3.543549032779969*^9, 3.543549123355036*^9, 
-   3.5435493270275106`*^9},
+   3.543549326975712*^9, 3.545006279340927*^9},
  FontSize->14],
 
 Cell[BoxData[
@@ -102,7 +102,7 @@ Cell[BoxData[
    3.543533416418915*^9, {3.5435335416740103`*^9, 3.543533565007846*^9}, 
    3.543546712653508*^9, 3.5435467629050417`*^9, 3.543548634526816*^9, 
    3.5435487413783407`*^9, 3.543549032779969*^9, 3.543549123355036*^9, 
-   3.5435493270294523`*^9},
+   3.543549326975712*^9, 3.545006279343432*^9},
  FontSize->14]
 }, Open  ]],
 
@@ -155,7 +155,8 @@ Cell[BoxData[
    3.543533227503255*^9, 3.543533299331071*^9, 3.543533416608789*^9, {
    3.543533541909349*^9, 3.543533565174625*^9}, 3.54354671283875*^9, 
    3.543546763167756*^9, 3.5435486346663723`*^9, 3.543548741501768*^9, 
-   3.543549033025288*^9, 3.543549123514624*^9, 3.5435493271721983`*^9},
+   3.543549033025288*^9, 3.543549123514624*^9, 3.5435493271721983`*^9, 
+   3.545006279485676*^9},
  FontSize->14]
 }, Open  ]],
 
@@ -186,14 +187,15 @@ Cell[BoxData[
    RowBox[{
     RowBox[{"sphFull", "[", 
      RowBox[{"l_", ",", "m_"}], "]"}], " ", ":=", " ", 
-    RowBox[{
-     RowBox[{"ComplexExpand", "[", 
-      RowBox[{"Re", "[", 
-       RowBox[{
-        RowBox[{"Sqrt", "[", "2", "]"}], "*", 
-        RowBox[{"SphericalHarmonicY", "[", 
-         RowBox[{"l", ",", "m", ",", "Ttheta", ",", "Pphi"}], "]"}]}], "]"}], 
-      "]"}], " ", "//", "Simplify"}]}], "\[IndentingNewLine]", 
+    RowBox[{"ComplexExpand", "[", 
+     RowBox[{"Re", "[", 
+      RowBox[{
+       RowBox[{"Sqrt", "[", "2", "]"}], "*", 
+       RowBox[{"SphericalHarmonicY", "[", 
+        RowBox[{"l", ",", "m", ",", "Ttheta", ",", "Pphi"}], "]"}]}], "]"}], 
+     "]"}]}], " ", 
+   RowBox[{"(*", 
+    RowBox[{"//", "Simplify"}], "*)"}], "\[IndentingNewLine]", 
    RowBox[{"(*", 
     RowBox[{
     "Give", " ", "the", " ", "Spherical", " ", "Harmonic", " ", "in", " ", 
@@ -207,19 +209,19 @@ Cell[BoxData[
    RowBox[{
     RowBox[{"sphFullCart", "[", 
      RowBox[{"l_", ",", "m_"}], "]"}], " ", ":=", " ", 
-    RowBox[{
-     RowBox[{"ComplexExpand", "[", 
-      RowBox[{
-       RowBox[{"Re", "[", 
-        RowBox[{
-         RowBox[{"Sqrt", "[", "2", "]"}], "*", 
-         RowBox[{"SphericalHarmonicY", "[", 
-          RowBox[{"l", ",", "m", ",", "th", ",", "ph"}], "]"}]}], "]"}], ",", 
-       " ", 
-       RowBox[{"TargetFunctions", "\[Rule]", 
-        RowBox[{"{", 
-         RowBox[{"Re", ",", "Im"}], "}"}]}]}], "]"}], " ", "//", 
-     "FullSimplify"}]}], "\[IndentingNewLine]", 
+    RowBox[{"ComplexExpand", "[", 
+     RowBox[{
+      RowBox[{"Re", "[", 
+       RowBox[{
+        RowBox[{"Sqrt", "[", "2", "]"}], "*", 
+        RowBox[{"SphericalHarmonicY", "[", 
+         RowBox[{"l", ",", "m", ",", "th", ",", "ph"}], "]"}]}], "]"}], ",", 
+      " ", 
+      RowBox[{"TargetFunctions", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{"Re", ",", "Im"}], "}"}]}]}], "]"}]}], " ", 
+   RowBox[{"(*", 
+    RowBox[{"//", "FullSimplify"}], "*)"}], "\[IndentingNewLine]", 
    RowBox[{
     RowBox[{"sphFullCart", "[", 
      RowBox[{"l1_", ",", "m1_", ",", "l2_", ",", " ", "m2_"}], "]"}], " ", ":=",
@@ -233,84 +235,87 @@ Cell[BoxData[
     RowBox[{"sphFull", "[", 
      RowBox[{"l1_", ",", "m1_", ",", "l2_", ",", "m2_"}], "]"}], " ", ":=", 
     " ", 
-    RowBox[{
-     RowBox[{"ComplexExpand", "[", 
-      RowBox[{"Re", "[", 
+    RowBox[{"ComplexExpand", "[", 
+     RowBox[{"Re", "[", 
+      RowBox[{
        RowBox[{
-        RowBox[{
-         RowBox[{"Sqrt", "[", "2", "]"}], "*", 
-         RowBox[{"SphericalHarmonicY", "[", 
-          RowBox[{"l1", ",", "m1", ",", "Ttheta", ",", "Pphi"}], "]"}]}], " ",
-         "+", " ", 
-        RowBox[{
-         RowBox[{"Sqrt", "[", "2", "]"}], "*", 
-         RowBox[{"SphericalHarmonicY", "[", 
-          RowBox[{"l2", ",", "m2", ",", "Ttheta", ",", "Pphi"}], "]"}]}]}], 
-       "]"}], "]"}], " ", "//", "Simplify"}]}], "\[IndentingNewLine]", 
+        RowBox[{"Sqrt", "[", "2", "]"}], "*", 
+        RowBox[{"SphericalHarmonicY", "[", 
+         RowBox[{"l1", ",", "m1", ",", "Ttheta", ",", "Pphi"}], "]"}]}], " ", 
+       "+", " ", 
+       RowBox[{
+        RowBox[{"Sqrt", "[", "2", "]"}], "*", 
+        RowBox[{"SphericalHarmonicY", "[", 
+         RowBox[{"l2", ",", "m2", ",", "Ttheta", ",", "Pphi"}], "]"}]}]}], 
+      "]"}], "]"}]}], " ", 
+   RowBox[{"(*", 
+    RowBox[{"//", "Simplify"}], "*)"}], "\[IndentingNewLine]", 
    "\[IndentingNewLine]", 
    RowBox[{
     RowBox[{"sphLapl", "[", 
      RowBox[{"l_", ",", "m_"}], "]"}], " ", ":=", " ", 
     RowBox[{
-     RowBox[{
-      RowBox[{"Laplacian", "[", 
-       RowBox[{
-        RowBox[{"sphFull", "[", 
-         RowBox[{"l", ",", "m"}], "]"}], ",", "Spherical"}], "]"}], "/.", 
-      RowBox[{"Rr", "\[Rule]", "1"}]}], "//", "Simplify"}]}], " ", 
-   "\[IndentingNewLine]", 
+     RowBox[{"Laplacian", "[", 
+      RowBox[{
+       RowBox[{"sphFull", "[", 
+        RowBox[{"l", ",", "m"}], "]"}], ",", "Spherical"}], "]"}], "/.", 
+     RowBox[{"Rr", "\[Rule]", "1"}]}]}], 
+   RowBox[{"(*", 
+    RowBox[{"//", "Simplify"}], " ", "*)"}], "\[IndentingNewLine]", 
    RowBox[{
     RowBox[{"sphLapl", "[", 
      RowBox[{"l1_", ",", "m1_", ",", "l2_", ",", "m2_"}], "]"}], " ", ":=", 
     " ", 
     RowBox[{
+     RowBox[{"Laplacian", "[", 
+      RowBox[{
+       RowBox[{"sphFull", "[", 
+        RowBox[{"l1", ",", "m1", ",", "l2", ",", "m2"}], "]"}], ",", " ", 
+       "Spherical"}], "]"}], " ", "/.", 
+     RowBox[{"Rr", "\[Rule]", "1"}]}]}], " ", 
+   RowBox[{"(*", 
+    RowBox[{"//", "Simplify"}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"sphLaplCart", "[", 
+     RowBox[{"l_", ",", "m_"}], "]"}], " ", ":=", " ", 
+    RowBox[{"Laplacian", "[", 
      RowBox[{
-      RowBox[{"Laplacian", "[", 
-       RowBox[{
-        RowBox[{"sphFull", "[", 
-         RowBox[{"l1", ",", "m1", ",", "l2", ",", "m2"}], "]"}], ",", " ", 
-        "Spherical"}], "]"}], " ", "/.", 
-      RowBox[{"Rr", "\[Rule]", "1"}]}], " ", "//", "Simplify"}]}], 
-   "\[IndentingNewLine]", 
-   RowBox[{
-    RowBox[{"sphLaplCart", "[", 
-     RowBox[{"l_", ",", "m_"}], "]"}], " ", ":=", " ", 
-    RowBox[{
-     RowBox[{"Laplacian", "[", 
-      RowBox[{
-       RowBox[{"sphFullCart", "[", 
-        RowBox[{"l", ",", "m"}], "]"}], ",", "Cartesian"}], "]"}], "//", 
-     "FullSimplify"}]}], "\[IndentingNewLine]", 
+      RowBox[{"sphFullCart", "[", 
+       RowBox[{"l", ",", "m"}], "]"}], ",", "Cartesian"}], "]"}]}], 
+   RowBox[{"(*", 
+    RowBox[{"//", "FullSimplify"}], "*)"}], "\[IndentingNewLine]", 
    RowBox[{
     RowBox[{"sphLaplCart", "[", 
      RowBox[{"l1_", ",", "m1_", ",", "l2_", ",", "m2_"}], "]"}], " ", ":=", 
     " ", 
-    RowBox[{
-     RowBox[{"Laplacian", "[", 
-      RowBox[{
-       RowBox[{"sphFullCart", "[", 
-        RowBox[{"l1", ",", "m1", ",", "l2", ",", "m2"}], "]"}], ",", 
-       "Cartesian"}], "]"}], "//", "FullSimplify"}]}], "\[IndentingNewLine]", 
+    RowBox[{"Laplacian", "[", 
+     RowBox[{
+      RowBox[{"sphFullCart", "[", 
+       RowBox[{"l1", ",", "m1", ",", "l2", ",", "m2"}], "]"}], ",", 
+      "Cartesian"}], "]"}]}], 
+   RowBox[{"(*", 
+    RowBox[{"//", "FullSimplify"}], "*)"}], "\[IndentingNewLine]", 
    "\[IndentingNewLine]", 
    RowBox[{
     RowBox[{"sphGradCart", "[", 
      RowBox[{"l_", ",", "m_"}], "]"}], " ", ":=", " ", 
-    RowBox[{
-     RowBox[{"Grad", "[", 
-      RowBox[{
-       RowBox[{"sphFullCart", "[", 
-        RowBox[{"l", ",", "m"}], "]"}], ",", "Cartesian"}], "]"}], "//", 
-     "FullSimplify"}]}], "\[IndentingNewLine]", 
+    RowBox[{"Grad", "[", 
+     RowBox[{
+      RowBox[{"sphFullCart", "[", 
+       RowBox[{"l", ",", "m"}], "]"}], ",", "Cartesian"}], "]"}]}], 
+   RowBox[{"(*", 
+    RowBox[{"//", "FullSimplify"}], "*)"}], "\[IndentingNewLine]", 
    RowBox[{
     RowBox[{"sphGradCart", "[", 
      RowBox[{"l1_", ",", "m1_", ",", "l2_", ",", "m2_"}], "]"}], " ", ":=", 
     " ", 
-    RowBox[{
-     RowBox[{"Grad", "[", 
-      RowBox[{
-       RowBox[{"sphFullCart", "[", 
-        RowBox[{"l1", ",", "m1", ",", "l2", ",", "m2"}], "]"}], ",", 
-       "Cartesian"}], "]"}], "//", "FullSimplify"}]}]}]}]], "Input",
+    RowBox[{"Grad", "[", 
+     RowBox[{
+      RowBox[{"sphFullCart", "[", 
+       RowBox[{"l1", ",", "m1", ",", "l2", ",", "m2"}], "]"}], ",", 
+      "Cartesian"}], "]"}], 
+    RowBox[{"(*", 
+     RowBox[{"//", "FullSimplify"}], "*)"}]}]}]}]], "Input",
  CellChangeTimes->{{3.5346241989137487`*^9, 3.534624441023738*^9}, {
    3.534624498218348*^9, 3.534624535125416*^9}, {3.534624572454146*^9, 
    3.5346246399130573`*^9}, 3.534624700603318*^9, {3.534624959098792*^9, 
@@ -321,7 +326,7 @@ Cell[BoxData[
    3.535388321907998*^9}, {3.535389378894167*^9, 3.535389379836742*^9}, 
    3.535389569734174*^9, {3.535393228328788*^9, 3.53539324337923*^9}, {
    3.5387576310375*^9, 3.538757685534313*^9}, {3.538841412583025*^9, 
-   3.538841446285684*^9}},
+   3.538841446285684*^9}, {3.5450060898109617`*^9, 3.5450061594879503`*^9}},
  FontSize->14],
 
 Cell[BoxData[
@@ -904,12 +909,14 @@ Cell[BoxData[
    "Prove", " ", "that", " ", "our", " ", "divergence", " ", "of", " ", 
     "this", " ", "field", " ", "is", " ", 
     RowBox[{"zero", ":"}]}], " ", "*)"}], "\[IndentingNewLine]", 
-  RowBox[{
-   RowBox[{"Div", "[", "U", "]"}], " ", "//", " ", 
-   "FullSimplify"}]}]], "Input",
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"Div", "[", "U", "]"}], " ", "//", " ", "FullSimplify"}], 
+   "*)"}]}]], "Input",
  CellChangeTimes->{{3.54352877341756*^9, 3.543528811687977*^9}, {
    3.543533211531921*^9, 3.5435332152878532`*^9}, 3.543533363183035*^9, {
-   3.543533610800598*^9, 3.543533613648019*^9}}],
+   3.543533610800598*^9, 3.543533613648019*^9}, {3.5450065992856092`*^9, 
+   3.545006603732074*^9}}],
 
 Cell[BoxData["0"], "Output",
  CellChangeTimes->{{3.543533542512796*^9, 3.5435335654581757`*^9}, {
@@ -1913,7 +1920,164 @@ Power(Zz,2)))*Sqrt(Power(Xx,2) + Power(Yy,2) + Power(Zz,2))*
 Power(Yy,2))*Power(Power(Xx,2) + Power(Yy,2) + Power(Zz,2),10.5))\
 \>", "Output",
  CellChangeTimes->{3.543554221639888*^9}]
-}, Open  ]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.545006236868626*^9, 3.5450062370003843`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{"LatexForm", "[", 
+   RowBox[{"U", "[", 
+    RowBox[{"[", "1", "]"}], "]"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.545006240091921*^9, 3.5450062494402533`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Part", "::", "\<\"partd\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"Part specification \
+\\\\\\\"\\\", \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(U \
+\[LeftDoubleBracket] 1 \[RightDoubleBracket]\\), \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" is longer than depth \
+of object.\\\\\\\"\\\", \\\"MT\\\"]\\) \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/partd\\\", \
+ButtonNote -> \\\"Part::partd\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.545006250381279*^9}],
+
+Cell[BoxData[
+ RowBox[{"LatexForm", "[", 
+  RowBox[{"U", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}], 
+  "]"}]], "Output",
+ CellChangeTimes->{3.5450062503829947`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"LatexForm", "[", 
+  RowBox[{"U", "[", 
+   RowBox[{"[", "2", "]"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.545006251250175*^9, 3.545006256280293*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Part", "::", "\<\"partd\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"Part specification \
+\\\\\\\"\\\", \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(U \
+\[LeftDoubleBracket] 2 \[RightDoubleBracket]\\), \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" is longer than depth \
+of object.\\\\\\\"\\\", \\\"MT\\\"]\\) \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/partd\\\", \
+ButtonNote -> \\\"Part::partd\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.54500625672826*^9}],
+
+Cell[BoxData[
+ RowBox[{"LatexForm", "[", 
+  RowBox[{"U", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], 
+  "]"}]], "Output",
+ CellChangeTimes->{3.545006256729657*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"LatexForm", "[", 
+  RowBox[{"U", "[", 
+   RowBox[{"[", "3", "]"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.5450062575639973`*^9, 3.545006264562718*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Part", "::", "\<\"partd\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"Part specification \
+\\\\\\\"\\\", \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(U \
+\[LeftDoubleBracket] 3 \[RightDoubleBracket]\\), \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" is longer than depth \
+of object.\\\\\\\"\\\", \\\"MT\\\"]\\) \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/partd\\\", \
+ButtonNote -> \\\"Part::partd\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.545006265216125*^9}],
+
+Cell[BoxData[
+ RowBox[{"LatexForm", "[", 
+  RowBox[{"U", "\[LeftDoubleBracket]", "3", "\[RightDoubleBracket]"}], 
+  "]"}]], "Output",
+ CellChangeTimes->{3.545006265217532*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{"LatexForm", "[", 
+   RowBox[{"RHS", "[", 
+    RowBox[{"[", "1", "]"}], "]"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.545006186657651*^9, 3.545006207101227*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Part", "::", "\<\"partd\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"Part specification \
+\\\\\\\"\\\", \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(RHS \
+\[LeftDoubleBracket] 1 \[RightDoubleBracket]\\), \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" is longer than depth \
+of object.\\\\\\\"\\\", \\\"MT\\\"]\\) \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/partd\\\", \
+ButtonNote -> \\\"Part::partd\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.545006207994421*^9}],
+
+Cell[BoxData[
+ RowBox[{"LatexForm", "[", 
+  RowBox[{"RHS", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}], 
+  "]"}]], "Output",
+ CellChangeTimes->{3.545006207995789*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"LatexForm", "[", 
+  RowBox[{"RHS", "[", 
+   RowBox[{"[", "2", "]"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.545006209871973*^9, 3.5450062155505457`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Part", "::", "\<\"partd\"\>"}], 
+  RowBox[{
+  ":", " "}], "\<\"\\!\\(\\*StyleBox[\\\"\\\\\\\"Part specification \
+\\\\\\\"\\\", \\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\!\\(RHS \
+\[LeftDoubleBracket] 2 \[RightDoubleBracket]\\), \
+\\\"MT\\\"]\\)\[NoBreak]\\!\\(\\*StyleBox[\\\"\\\\\\\" is longer than depth \
+of object.\\\\\\\"\\\", \\\"MT\\\"]\\) \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/partd\\\", \
+ButtonNote -> \\\"Part::partd\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.54500621659118*^9}],
+
+Cell[BoxData[
+ RowBox[{"LatexForm", "[", 
+  RowBox[{"RHS", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], 
+  "]"}]], "Output",
+ CellChangeTimes->{3.545006216591913*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"LatexForm", "[", 
+  RowBox[{"RHS", "[", 
+   RowBox[{"[", "3", "]"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.5450062174939528`*^9, 3.545006222413846*^9}}]
 },
 WindowSize->{1363, 996},
 WindowMargins->{{12, Automatic}, {Automatic, 24}},
@@ -1935,82 +2099,109 @@ CellTagsIndex->{}
 Notebook[{
 Cell[CellGroupData[{
 Cell[567, 22, 678, 16, 84, "Input"],
-Cell[1248, 40, 1170, 19, 29, "Output"],
-Cell[2421, 61, 1193, 21, 32, "Output"],
-Cell[3617, 84, 1198, 21, 32, "Output"]
+Cell[1248, 40, 1192, 19, 29, "Output"],
+Cell[2443, 61, 1213, 21, 32, "Output"],
+Cell[3659, 84, 1218, 21, 32, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[4852, 110, 501, 13, 29, "Input"],
-Cell[5356, 125, 1588, 33, 61, "Output"]
+Cell[4914, 110, 501, 13, 29, "Input"],
+Cell[5418, 125, 1614, 34, 61, "Output"]
 }, Open  ]],
-Cell[6959, 161, 6282, 163, 328, "Input"],
-Cell[13244, 326, 408, 8, 27, "Input"],
-Cell[13655, 336, 821, 23, 27, "Input"],
-Cell[14479, 361, 755, 18, 27, "Input"],
-Cell[15237, 381, 1076, 33, 43, "Input"],
-Cell[16316, 416, 1499, 32, 65, "Input"],
-Cell[17818, 450, 579, 13, 43, "Input"],
+Cell[7047, 162, 6480, 167, 328, "Input"],
+Cell[13530, 331, 408, 8, 27, "Input"],
+Cell[13941, 341, 821, 23, 27, "Input"],
+Cell[14765, 366, 755, 18, 27, "Input"],
+Cell[15523, 386, 1076, 33, 43, "Input"],
+Cell[16602, 421, 1499, 32, 65, "Input"],
+Cell[18104, 455, 579, 13, 43, "Input"],
 Cell[CellGroupData[{
-Cell[18422, 467, 899, 19, 49, "Input"],
-Cell[19324, 488, 15222, 406, 556, "Output"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[34583, 899, 524, 12, 43, "Input"],
-Cell[35110, 913, 338, 5, 27, "Output"]
-}, Open  ]],
-Cell[35463, 921, 2814, 74, 109, "Input"],
-Cell[CellGroupData[{
-Cell[38302, 999, 595, 11, 27, "Input"],
-Cell[38900, 1012, 20057, 525, 728, "Output"]
+Cell[18708, 472, 899, 19, 49, "Input"],
+Cell[19610, 493, 15222, 406, 557, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[58994, 1542, 435, 11, 64, "Input"],
-Cell[59432, 1555, 987, 18, 104, "Output"]
+Cell[34869, 904, 603, 14, 43, "Input"],
+Cell[35475, 920, 338, 5, 27, "Output"]
+}, Open  ]],
+Cell[35828, 928, 2814, 74, 109, "Input"],
+Cell[CellGroupData[{
+Cell[38667, 1006, 595, 11, 27, "Input"],
+Cell[39265, 1019, 20057, 525, 728, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[60456, 1578, 220, 5, 43, "Input"],
-Cell[60679, 1585, 963, 17, 104, "Output"]
+Cell[59359, 1549, 435, 11, 64, "Input"],
+Cell[59797, 1562, 987, 18, 92, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[61679, 1607, 220, 5, 43, "Input"],
-Cell[61902, 1614, 576, 9, 65, "Output"]
+Cell[60821, 1585, 220, 5, 43, "Input"],
+Cell[61044, 1592, 963, 17, 92, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[62515, 1628, 178, 4, 27, "Input"],
-Cell[62696, 1634, 1216, 21, 143, "Output"]
+Cell[62044, 1614, 220, 5, 43, "Input"],
+Cell[62267, 1621, 576, 9, 53, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[63949, 1660, 180, 4, 27, "Input"],
-Cell[64132, 1666, 1218, 21, 143, "Output"]
+Cell[62880, 1635, 178, 4, 27, "Input"],
+Cell[63061, 1641, 1216, 21, 131, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[65387, 1692, 152, 4, 27, "Input"],
-Cell[65542, 1698, 651, 12, 104, "Output"]
+Cell[64314, 1667, 180, 4, 27, "Input"],
+Cell[64497, 1673, 1218, 21, 131, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[66230, 1715, 433, 10, 64, "Input"],
-Cell[66666, 1727, 1188, 20, 130, "Output"]
+Cell[65752, 1699, 152, 4, 27, "Input"],
+Cell[65907, 1705, 651, 12, 92, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[67891, 1752, 224, 5, 43, "Input"],
-Cell[68118, 1759, 1156, 20, 117, "Output"]
+Cell[66595, 1722, 433, 10, 64, "Input"],
+Cell[67031, 1734, 1188, 20, 118, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[69311, 1784, 220, 5, 43, "Input"],
-Cell[69534, 1791, 913, 17, 91, "Output"]
+Cell[68256, 1759, 224, 5, 43, "Input"],
+Cell[68483, 1766, 1156, 20, 105, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[70484, 1813, 216, 5, 43, "Input"],
-Cell[70703, 1820, 1461, 26, 156, "Output"]
+Cell[69676, 1791, 220, 5, 43, "Input"],
+Cell[69899, 1798, 913, 17, 79, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[72201, 1851, 154, 4, 27, "Input"],
-Cell[72358, 1857, 1476, 27, 169, "Output"]
+Cell[70849, 1820, 216, 5, 43, "Input"],
+Cell[71068, 1827, 1461, 26, 144, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[73871, 1889, 154, 4, 27, "Input"],
-Cell[74028, 1895, 1128, 19, 130, "Output"]
-}, Open  ]]
+Cell[72566, 1858, 154, 4, 27, "Input"],
+Cell[72723, 1864, 1476, 27, 157, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[74236, 1896, 154, 4, 27, "Input"],
+Cell[74393, 1902, 1128, 19, 118, "Output"]
+}, Open  ]],
+Cell[75536, 1924, 148, 2, 58, "Input"],
+Cell[CellGroupData[{
+Cell[75709, 1930, 220, 5, 43, "Input"],
+Cell[75932, 1937, 640, 12, 23, "Message"],
+Cell[76575, 1951, 177, 4, 27, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[76789, 1960, 180, 4, 27, "Input"],
+Cell[76972, 1966, 639, 12, 23, "Message"],
+Cell[77614, 1980, 175, 4, 27, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[77826, 1989, 182, 4, 27, "Input"],
+Cell[78011, 1995, 640, 12, 23, "Message"],
+Cell[78654, 2009, 175, 4, 27, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[78866, 2018, 220, 5, 43, "Input"],
+Cell[79089, 2025, 642, 12, 23, "Message"],
+Cell[79734, 2039, 177, 4, 27, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[79948, 2048, 184, 4, 27, "Input"],
+Cell[80135, 2054, 641, 12, 23, "Message"],
+Cell[80779, 2068, 177, 4, 27, "Output"]
+}, Open  ]],
+Cell[80971, 2075, 184, 4, 27, "Input"]
 }
 ]
 *)
