@@ -1,0 +1,20 @@
+(* Make expression one line without wrapping *)
+
+:%s/\n^ *- *//g
+
+(* Make all operations element-wise *)
+:%s/\*/\.*/g
+:%s/\//\.\//g
+
+(* Make all ** (now .*.*) powers .^ *)
+:%s/\.\*\.\*/\.\^/g
+
+(* Make all Cos Sin Sqrt and Pi lowercase *)
+%s/Sqrt/sqrt/g
+%s/Pi/pi/g
+%s/Cos/cos/g
+%s/Sin/sin/g
+
+(* Switch all ArcTan to proper syntax *)
+:%s/ArcTan(\(\w\+\),\(\w\+\))/atan2(\2,\1)/g
+
