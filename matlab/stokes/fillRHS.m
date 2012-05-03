@@ -33,11 +33,13 @@ Yy = nodes(:,2);
 Zz = nodes(:,3);
 
 %% FROM StokesDivergenceFreeFieldOnSphere.nb
-u = (sqrt(7./pi).*((-524288.*sqrt(15).*Xx.*(Xx.^2 - Yy.^2 - 2.*Zz.^2))./(Xx.^2 + Yy.^2 + Zz.^2).^1.5 + 15.*sqrt(286).*((-3072.*Xx.*(Xx.^2 + Yy.^2).^1.5.*sqrt(1./(Xx.^2 + Yy.^2 + Zz.^2)).*(3.*(Xx.^2 + Yy.^2).^3 - 111.*(Xx.^2 + Yy.^2).^2.*Zz.^2 + 364.*(Xx.^2 + Yy.^2).*Zz.^4 - 168.*Zz.^6).*cos(5.*atan2(Yy,Xx)))./(Xx.^2 + Yy.^2 + Zz.^2).^4.5 + (sqrt(156835045).*Xx.*(Xx.^2 + Yy.^2).^9.*Zz.*cos(20.*atan2(Yy,Xx)))./(Xx.^2 + Yy.^2 + Zz.^2).^10 + Yy.*Zz.*((3072.*(Xx.^2 + Yy.^2).^1.5.*Zz.*sqrt(1./(Xx.^2 + Yy.^2 + Zz.^2)).*(15.*(Xx.^2 + Yy.^2).^2 - 140.*(Xx.^2 + Yy.^2).*Zz.^2 + 168.*Zz.^4).*sin(5.*atan2(Yy,Xx)))./(Xx.^2 + Yy.^2 + Zz.^2).^4.5 + (sqrt(156835045).*(Xx.^2 + Yy.^2).^9.*sin(20.*atan2(Yy,Xx)))./(Xx.^2 + Yy.^2 + Zz.^2).^10))))./262144. ;
+u =         (sqrt(7./pi).*((524288.*sqrt(15).*Yy.*(Xx.^2 - Yy.^2 + 2.*Zz.^2))./(Xx.^2 + Yy.^2 + Zz.^2).^1.5 + 15.*sqrt(286).*((3072.*Yy.*(Xx.^2 + Yy.^2).^1.5.*sqrt(1./(Xx.^2 + Yy.^2 + Zz.^2)).*(3.*(Xx.^2 + Yy.^2).^3 - 111.*(Xx.^2 + Yy.^2).^2.*Zz.^2 + 364.*(Xx.^2 + Yy.^2).*Zz.^4 - 168.*Zz.^6).*cos(5.*atan2(Yy,Xx)))./(Xx.^2 + Yy.^2 + Zz.^2).^4.5 - (sqrt(156835045).*Yy.*(Xx.^2 + Yy.^2).^9.*Zz.*cos(20.*atan2(Yy,Xx)))./(Xx.^2 + Yy.^2 + Zz.^2).^10 + Xx.*Zz.*((3072.*(Xx.^2 + Yy.^2).^1.5.*Zz.*sqrt(1./(Xx.^2 + Yy.^2 + Zz.^2)).*(15.*(Xx.^2 + Yy.^2).^2 - 140.*(Xx.^2 + Yy.^2).*Zz.^2 + 168.*Zz.^4).*sin(5.*atan2(Yy,Xx)))./(Xx.^2 + Yy.^2 + Zz.^2).^4.5 + (sqrt(156835045).*(Xx.^2 + Yy.^2).^9.*sin(20.*atan2(Yy,Xx)))./(Xx.^2 + Yy.^2 + Zz.^2).^10))))./262144. ; 
 
-v = (sqrt(7./pi).*((-524288.*sqrt(15).*Xx.*(Xx.^2 - Yy.^2 - 2.*Zz.^2))./(Xx.^2 + Yy.^2 + Zz.^2).^1.5 + 15.*sqrt(286).*((-3072.*Xx.*(Xx.^2 + Yy.^2).^1.5.*sqrt(1./(Xx.^2 + Yy.^2 + Zz.^2)).*(3.*(Xx.^2 + Yy.^2).^3 - 111.*(Xx.^2 + Yy.^2).^2.*Zz.^2 + 364.*(Xx.^2 + Yy.^2).*Zz.^4 - 168.*Zz.^6).*cos(5.*atan2(Yy,Xx)))./(Xx.^2 + Yy.^2 + Zz.^2).^4.5 + (sqrt(156835045).*Xx.*(Xx.^2 + Yy.^2).^9.*Zz.*cos(20.*atan2(Yy,Xx)))./(Xx.^2 + Yy.^2 + Zz.^2).^10 + Yy.*Zz.*((3072.*(Xx.^2 + Yy.^2).^1.5.*Zz.*sqrt(1./(Xx.^2 + Yy.^2 + Zz.^2)).*(15.*(Xx.^2 + Yy.^2).^2 - 140.*(Xx.^2 + Yy.^2).*Zz.^2 + 168.*Zz.^4).*sin(5.*atan2(Yy,Xx)))./(Xx.^2 + Yy.^2 + Zz.^2).^4.5 + (sqrt(156835045).*(Xx.^2 + Yy.^2).^9.*sin(20.*atan2(Yy,Xx)))./(Xx.^2 + Yy.^2 + Zz.^2).^10))))./262144. ;
+v =         (sqrt(7./pi).*((-524288.*sqrt(15).*Xx.*(Xx.^2 - Yy.^2 - 2.*Zz.^2))./(Xx.^2 + Yy.^2 + Zz.^2).^1.5 + 15.*sqrt(286).*((-3072.*Xx.*(Xx.^2 + Yy.^2).^1.5.*sqrt(1./(Xx.^2 + Yy.^2 + Zz.^2)).*(3.*(Xx.^2 + Yy.^2).^3 - 111.*(Xx.^2 + Yy.^2).^2.*Zz.^2 + 364.*(Xx.^2 + Yy.^2).*Zz.^4 - 168.*Zz.^6).*cos(5.*atan2(Yy,Xx)))./(Xx.^2 + Yy.^2 + Zz.^2).^4.5 + (sqrt(156835045).*Xx.*(Xx.^2 + Yy.^2).^9.*Zz.*cos(20.*atan2(Yy,Xx)))./(Xx.^2 + Yy.^2 + Zz.^2).^10 + Yy.*Zz.*((3072.*(Xx.^2 + Yy.^2).^1.5.*Zz.*sqrt(1./(Xx.^2 + Yy.^2 + Zz.^2)).*(15.*(Xx.^2 + Yy.^2).^2 - 140.*(Xx.^2 + Yy.^2).*Zz.^2 + 168.*Zz.^4).*sin(5.*atan2(Yy,Xx)))./(Xx.^2 + Yy.^2 + Zz.^2).^4.5 + (sqrt(156835045).*(Xx.^2 + Yy.^2).^9.*sin(20.*atan2(Yy,Xx)))./(Xx.^2 + Yy.^2 + Zz.^2).^10))))./262144.; 
 
-w = -(sqrt(7./pi).*((46080.*sqrt(286).*(Xx.^2 + Yy.^2).^2.5.*Zz.*(15.*(Xx.^2 + Yy.^2).^2 - 140.*(Xx.^2 + Yy.^2).*Zz.^2 + 168.*Zz.^4).*sin(5.*atan2(Yy,Xx)))./(1./(Xx.^2 + Yy.^2 + Zz.^2)).^5.5 + sqrt(5).*(2097152.*sqrt(3).*Xx.*Yy.*Zz.*(Xx.^2 + Yy.^2 + Zz.^2).^9 + 15.*sqrt(8970964574).*(Xx.^2 + Yy.^2).^10.*sqrt(Xx.^2 + Yy.^2 + Zz.^2).*sin(20.*atan2(Yy,Xx)))))./(262144..*(Xx.^2 + Yy.^2 + Zz.^2).^10.5) ;
+w =         -(sqrt(7./pi).*((46080.*sqrt(286).*(Xx.^2 + Yy.^2).^2.5.*Zz.*(15.*(Xx.^2 + Yy.^2).^2 - 140.*(Xx.^2 + Yy.^2).*Zz.^2 + 168.*Zz.^4).*sin(5.*atan2(Yy,Xx)))./(1./(Xx.^2 + Yy.^2 + Zz.^2)).^5.5 + sqrt(5).*(2097152.*sqrt(3).*Xx.*Yy.*Zz.*(Xx.^2 + Yy.^2 + Zz.^2).^9 + 15.*sqrt(8970964574).*(Xx.^2 + Yy.^2).^10.*sqrt(Xx.^2 + Yy.^2 + Zz.^2).*sin(20.*atan2(Yy,Xx)))))./(262144..*(Xx.^2 + Yy.^2 + Zz.^2).^10.5) ; 
+
+p = (-3.*sqrt(1001./(2..*pi)).*(Xx.^2 + Yy.^2).^2.5.*Zz.*sqrt(1./(Xx.^2 + Yy.^2 + Zz.^2)).*(15.*(Xx.^2 + Yy.^2).^2 - 140.*(Xx.^2 + Yy.^2).*Zz.^2 + 168.*Zz.^4).*cos(5.*atan2(Yy,Xx)))./(128..*(Xx.^2 + Yy.^2 + Zz.^2).^4.5); 
 
 
 Lapl_u = zeros(N,1); 
@@ -62,7 +64,7 @@ pdz_w = zeros(N,1);
 U_continuous(u_indices,1) = u;
 U_continuous(v_indices,1) = v;
 U_continuous(w_indices,1) = w;
-U_continuous(p_indices,1) = zeros(N,1);
+U_continuous(p_indices,1) = p;
 
 % Tie down a variable const in the singular system
 U_continuous(const_indices,1) = 0;
