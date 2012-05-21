@@ -74,6 +74,9 @@ subplot(2, 2, 3);
 % Plot it as a surface
 %tri = delaunay(X,Y);
 h = trisurf(tri, X, Y, W,'EdgeColor','none','LineStyle','none');
+hold on; 
+plot(X(1),Y(1), 'k.'); 
+hold off; 
 axis([-pi pi -pi/2 pi/2])
 pbaspect([2, 1, 1]);
 shading interp;
@@ -105,6 +108,7 @@ title('Pressure', 'FontSize',22);
 set(gca,'FontSize',22);
 a4 = gca;
 
+if 0
 [ax,hh] = suplabel(figTitle,'t');
 set(hh,'FontSize',28);
 
@@ -116,4 +120,5 @@ set(a3,'Units', 'normalized');
 set(a3,'Position',[0.035 0.01 0.37 0.42])
 set(a4,'Units', 'normalized'); 
 set(a4,'Position',[0.535 0.01 0.37 0.42])
+end 
 end

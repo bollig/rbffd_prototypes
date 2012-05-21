@@ -9,9 +9,9 @@ close all;
 constantViscosity = 1; 
 
 %fdsize = 17; c1 = 0.026; c2 = 0.08;  hv_k = 2; hv_gamma = 8;
-fdsize = 31; c1 = 0.035; c2 = 0.1 ; hv_k = 4; hv_gamma = 800;
+%fdsize = 31; c1 = 0.035; c2 = 0.1 ; hv_k = 4; hv_gamma = 800;
 %fdsize = 105; c1 = 0.044; c2 = 0.14; hv_k = 4; hv_gamma = 145;
-%fdsize = 110; c1 = 0.058; c2 = 0.16;  hv_k = 4; hv_gamma = 40;
+fdsize = 110; c1 = 0.058; c2 = 0.16;  hv_k = 4; hv_gamma = 40;
 %%fdsize = 40;  c1 = 0.027; c2 = 0.274; hv_k = 4; hv_gamma = 800; 
 
 % Switch Hyperviscosity ON (1) and OFF (0)
@@ -55,7 +55,7 @@ end
 nodes=nodes(:,1:3);
 N = length(nodes);
 
-output_dir = sprintf('./original_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
+output_dir = sprintf('./newsol_N%d_n%d_eta%d/', N, fdsize, constantViscosity);
 fprintf('Making directory: %s\n', output_dir);
 mkdir(output_dir); 
 
@@ -102,7 +102,7 @@ figpos = get(hhh,'Position');
 % Change the paper size to match the window size
 set(hhh,'PaperUnits','inches','PaperPosition',figpos);
 spy(LHS); 
-title('LHS (L)', 'FontSize', 26);
+%title('LHS (L)', 'FontSize', 26);
 set(gca, 'FontSize', 22); 
 figFileName=[output_dir,'LHS'];
 fprintf('Printing figure: %s\n',figFileName);
@@ -110,7 +110,24 @@ print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
 hgsave(hhh,[figFileName,'.fig']); 
 fprintf('Printing figure: %s\n',figFileName);
 
-if 1
+if 0
+print(hhh,'-zbuffer','-r300','-depsc2',[figFileName,'.eps']);
+
+hhh=figure('visible', 'off');
+set(hhh,'Units', 'normalized'); 
+set(hhh,'Position',[0 0 0.5 1]);
+set(hhh,'Units','inches');
+figpos = get(hhh,'Position');
+set(hhh,'PaperUnits','inches','PaperPosition',figpos);
+spy(LHS, 10);       % Plot with dot size of 10
+axis([10 50 10 50])
+%title('LHS (L)', 'FontSize', 26);
+set(gca, 'FontSize', 22); 
+figFileName=[output_dir,'LHS_10to50'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']); 
+fprintf('Printing figure: %s\n',figFileName);
 print(hhh,'-zbuffer','-r300','-depsc2',[figFileName,'.eps']);
 return
 end 
@@ -120,13 +137,6 @@ end
 %LHS = LHS(r,r); 
 
 % Manufacture a RHS given our LHS
-
-% %% Test 1: If we have uniform density and uniform temperature, we should
-% %% get 0 velocity everywhere. 
-% RHS = [ones(N,1); 
-%         ones(N,1); 
-%         ones(N,1); 
-%         zeros(N,1)]; 
     
 %% Test 2: Using a Spherical Harmonic on the RHS, lets get the steady state
 %% velocity
@@ -160,6 +170,14 @@ print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
 hgsave(hhh,[figFileName,'.fig']); 
 close(hhh);
 
+hhh=figure('visible', 'off') ;
+plotVectorComponents(U_exact, nodes, 'Manufactured Solution'); 
+figFileName=[output_dir,'U_exact'];
+fprintf('Printing figure: %s\n',figFileName);
+print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
+hgsave(hhh,[figFileName,'.fig']); 
+close(hhh);
+
 if 0
 dlmwrite(sprintf('%sRHS_continuous_%d.mtx',output_dir,N),RHS_continuous); 
 dlmwrite(sprintf('%sU_exact_%d.mtx',output_dir, N),U_exact); 
@@ -168,6 +186,7 @@ mmwrite(sprintf('%sLHS_%d.mtx',output_dir, N),LHS);
 return; 
 end
 
+return;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -191,13 +210,7 @@ print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
 hgsave(hhh,[figFileName,'.fig']); 
 close(hhh);
 
-hhh=figure('visible', 'off') ;
-plotVectorComponents(U_exact, nodes, 'Manufactured Solution'); 
-figFileName=[output_dir,'U_exact'];
-fprintf('Printing figure: %s\n',figFileName);
-print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
-hgsave(hhh,[figFileName,'.fig']); 
-close(hhh);
+
 
 U_abs_err = abs(U-U_exact);
 
@@ -234,14 +247,6 @@ P_rel_err_l1 = norm(U_abs_err(3*N+1:4*N), 1) / norm(U_exact(3*N+1:4*N), 1)
 P_rel_err_l2 = norm(U_abs_err(3*N+1:4*N), 2) / norm(U_exact(3*N+1:4*N), 2)
 P_rel_err_linf = norm(U_abs_err(3*N+1:4*N), inf) / norm(U_exact(3*N+1:4*N), inf)
 
-
-
-% fprintf('\n\n--> Checking Relative Error of Computed Solution: \n');
-% U_rel_err_l1 = U_abs_err_l1 / norm(U_exact,1)
-% U_rel_err_l2 = U_abs_err_l2 / norm(U_exact,2)
-% U_rel_err_linf = U_abs_err_linf / norm(U_exact,inf)
-
-
 fprintf('\n\n');
 
 hhh=figure('visible', 'off');
@@ -267,7 +272,7 @@ clear U_abs_err;
 
 
 %%% Test Pressure
-
+if 0
 %% The lapl(P) should equal projected_div(T)
 lapl_p = RBFFD_WEIGHTS.lsfc * U(3*N+1:4*N); 
 lapl_g = RBFFD_WEIGHTS.lsfc * RHS_continuous(3*N+1:4*N); 
@@ -318,96 +323,12 @@ fprintf('Printing figure: %s\n',figFileName);
 print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
 hgsave(hhh,[figFileName,'.fig']); 
 close(hhh);
-
+end
 
 if 0
 dlmwrite(sprintf('%sU_%d.mtx',output_dir, N),U); 
 end
 
-% 
-% r2d2 = LHS * U; 
-% 
-% rel_l1_err = norm(RHS-r2d2, 1)./norm(RHS,1)
-% rel_l2_err = norm(RHS-r2d2, 2)./norm(RHS,2)
-% rel_li_err = norm(RHS-r2d2, inf)./norm(RHS,inf)
-% 
-% hhh=figure('visible', 'off');
-% plotVectorComponents(r2d2,nodes,'Reconstructed RHS (R2 = L*U_{computed})', cmin, cmax)
-% figFileName=[output_dir,'Reconstructed_RHS'];
-% fprintf('Printing figure: %s\n',figFileName);
-% %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
-% print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
-% close(hhh);
-% 
-% hhh=figure('visible', 'off');
-% rec_abs_err = abs(RHS-r2d2);
-% plotVectorComponents(rec_abs_err, nodes, 'Reconstructed Abs Error (|RHS-Reconstructed|)'); 
-% figFileName=[output_dir,'Reconstructed_AbsError'];
-% fprintf('Printing figure: %s\n',figFileName);
-% %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
-% print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
-% close(hhh);
-% 
-% clear rec_rel_err; 
-% clear r2d2;
-% 
-% hhh=figure('visible', 'off');
-% rec_rel_err = rec_abs_err ./ abs(RHS); 
-% rec_rel_err(abs(RHS) < 1e-12) = rec_abs_err(abs(RHS) < 1e-12); 
-% plotVectorComponents(rec_rel_err, nodes, 'Reconstructed Rel Error (|RHS-Reconstructed|/|RHS|)'); 
-% figFileName=[output_dir,'Reconstructed_RelError'];
-% fprintf('Printing figure: %s\n',figFileName);
-% %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
-% print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
-% close(hhh);
-% 
-% clear rec_rel_err; 
-
-
-% %% Test the divergence
-% div_U = DIV_operator * U; 
-% div_U_exact = DIV_operator * U_exact; 
-% 
-% div_l1_norm = norm(div_U, 1)
-% div_l2_norm = norm(div_U, 2)
-% div_linf_norm = norm(div_U, inf)
-% 
-% hhh=figure('visible', 'off');
-% plotScalarfield(div_U, nodes, 'Div_{op} * U_{computed} '); 
-% figFileName=[output_dir,'Div_U_computed'];
-% fprintf('Printing figure: %s\n',figFileName);
-% %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
-% print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
-% close(hhh);
-% 
-% hhh=figure('visible', 'off');
-% plotScalarfield(div_U_exact, nodes, 'Div_{op} * U_{exact} '); 
-% figFileName=[output_dir,'Div_U_exact'];
-% fprintf('Printing figure: %s\n',figFileName);
-% %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
-% print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
-% close(hhh);
-% 
-% 
-% div_m_P_l1_norm = norm(div_U-RHS_continuous(3*N+1:4*N), 1)
-% div_m_P_l2_norm = norm(div_U-RHS_continuous(3*N+1:4*N), 2)
-% div_m_P_linf_norm = norm(div_U-RHS_continuous(3*N+1:4*N), inf)
-% 
-% hhh=figure('visible', 'off');
-% plotScalarfield(div_U-RHS_continuous(3*N+1:4*N), nodes, 'Div_{op} * U_{computed} - RHS_P'); 
-% figFileName=[output_dir,'Div_U_computed_minus_P'];
-% fprintf('Printing figure: %s\n',figFileName);
-% %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
-% print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
-% close(hhh);
-% 
-% hhh=figure('visible', 'off');
-% plotScalarfield(div_U_exact-RHS_continuous(3*N+1:4*N), nodes, 'Div_{op} * U_{exact} - RHS_P'); 
-% figFileName=[output_dir,'Div_U_exact_minus_P'];
-% fprintf('Printing figure: %s\n',figFileName);
-% %print(hhh,'-zbuffer','-r300','-depsc2',figFileName);
-% print(hhh,'-zbuffer','-dpng',[figFileName,'.png']);
-% close(hhh);
 
 %profile off 
 
@@ -419,10 +340,3 @@ clear div_U;
 
 % Force all hidden figures to close: 
 close all hidden;
-
-%% Test 3: Manufacture a solution with uniform velocity in one direction
-%% and try to recover it
-% RHS2 = LHS * [ones(N,1); 
-%               ones(N,1); 
-%               ones(N,1); 
-%               ones(N,1)]; 

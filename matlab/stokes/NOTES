@@ -1,0 +1,13 @@
+To plot reordered: 
+
+git checkout master
+matlab -r stokes_driver
+
+git checkout reordered
+matlab -r stokes_driver
+
+cd reordered*
+open LHS.eps LHS_10to50.eps  (* SAVE TO ***BLACK AND WHITE*** PDF *)
+
+cd reordered*
+open LHS.eps LHS_10to50.eps  (* SAVE TO ***BLACK AND WHITE*** PDF *)
