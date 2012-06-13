@@ -11,8 +11,8 @@ if nargin < 2
 else 
     title(mytitle,'Interpreter', 'Latex', 'FontSize',20);
 end
-ylabel('Im $\lambda$','Interpreter', 'LaTex','FontSize', 28);
-xlabel('Re $\lambda$','Interpreter', 'LaTex','FontSize', 28);
-set(gca,'FontSize',28)
+ylabel('Im $\lambda$','Interpreter', 'LaTex','FontSize', 34);
+xlabel('Re $\lambda$','Interpreter', 'LaTex','FontSize', 34);
+set(gca,'FontSize',34)
 hold off
 end
