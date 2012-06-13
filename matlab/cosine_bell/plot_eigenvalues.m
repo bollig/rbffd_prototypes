@@ -13,6 +13,6 @@ else
 end
 ylabel('Im $\lambda$','Interpreter', 'LaTex','FontSize', 28);
 xlabel('Re $\lambda$','Interpreter', 'LaTex','FontSize', 28);
-set(gca,'FontSize',22)
+set(gca,'FontSize',28)
 hold off
 end
