@@ -20,7 +20,9 @@ useHV = 1;
 
 revolutions = 10;
 start_time = 0; 
-end_time = 1036800 * revolutions; 
+%timescale = 1036800; 
+timescale = 1;
+end_time = timescale * revolutions; 
 dim = 2; 
 
 %% NOTE: we use nsteps = 1000 in all cases because we dont have a good
