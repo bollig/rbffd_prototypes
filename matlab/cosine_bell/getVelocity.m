@@ -2,8 +2,8 @@ function [vel] = getVelocity(nodes, t)
 alpha = pi/2;
 a = 1; %6.37122*10^6; % radius of earth in meters
 R = a/3;
-%timescale = 1036800;
-timescale = 1;
+timescale = 1036800;
+%timescale = 1;
 u0 = 2*pi*a/timescale; % The initial velocity (scalar in denom is 12days in seconds)
 
 [lambda,theta,rtemp] = cart2sph(nodes(:,1),nodes(:,2),nodes(:,3));

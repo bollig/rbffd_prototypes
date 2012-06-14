@@ -28,6 +28,9 @@ if (useHV)
         EVals = eig(M);
         dlmwrite('eigs_noHV.mat', EVals);
         
+        plot_eigenvalues('eigs_HV.mat');
+        pause
+        
         M = M + H;
         
         %[EVec EVals] = eig(M);
@@ -37,7 +40,6 @@ if (useHV)
         %dlmwrite('eigvecs_noHV.mat', EVec);
         
         plot_eigenvalues('eigs_noHV.mat');
-        plot_eigenvalues('eigs_HV.mat');
         %title(mytitle);
         display('DONE COMPUTING EIGS');
         pause
