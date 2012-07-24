@@ -93,16 +93,16 @@ for i = 1:size(test_cases,1)
 myfunc = (sqrt(105./pi).*(Xx - Yy).*(Xx + Yy).*Zz.*sin(20.*Xx))./(4..*(Xx.^2 + Yy.^2 + Zz.^2).^1.5);
 myfunc_pdx =         -(sqrt(105./pi).*Zz.*(20.*(-1 + Xx.^2).*(Xx - Yy).*(Xx + Yy).*(Xx.^2 + Yy.^2 + Zz.^2).*cos(20.*Xx) + Xx.*(Xx.^2 - 5.*Yy.^2 - 2.*Zz.^2).*sin(20.*Xx)))./(4..*(Xx.^2 + Yy.^2 + Zz.^2).^2.5); 
 myfunc_pdy = (sqrt(105./pi).*Yy.*Zz.*(-20.*Xx.*(Xx - Yy).*(Xx + Yy).*(Xx.^2 + Yy.^2 + Zz.^2).*cos(20.*Xx) + (-5.*Xx.^2 + Yy.^2 - 2.*Zz.^2).*sin(20.*Xx)))./(4..*(Xx.^2 + Yy.^2 + Zz.^2).^2.5); 
-myfunc_pdz = (sqrt(105./pi).*(Xx - Yy).*(Xx + Yy).*(-20.*Xx.*Zz.^2.*(Xx.^2 + Yy.^2 + Zz.^2).*cos(20.*Xx) + (Xx.^2 + Yy.^2 - 2.*Zz.^2).*sin(20.*Xx)))./(4..*(Xx.^2 + Yy.^2 + Zz.^2).^2.5)
-myfunc_lapl =         -((sqrt(105./pi).*Zz.*(-10.*Xx.*(3.*Xx.^6 + 5.*Yy.^2 + 2.*Zz.^2 - Yy.^2.*(Yy.^2 + Zz.^2).*(-4 + 3.*Yy.^2 + 3.*Zz.^2) + Xx.^4.*(-4 + 3.*Yy.^2 + 6.*Zz.^2) - Xx.^2.*(1 + 3.*Yy.^4 + 4.*Zz.^2 - 3.*Zz.^4)).*cos(20.*Xx) + (Xx - Yy).*(Xx + Yy).*(3 + 100.*Yy.^2 + 100.*Zz.^2 + 100.*Xx.^2.*(-1 + Xx.^2 + Yy.^2 + Zz.^2).^2).*sin(20.*Xx)))./(Xx.^2 + Yy.^2 + Zz.^2).^2.5);
+myfunc_pdz = (sqrt(105./pi).*(Xx - Yy).*(Xx + Yy).*(-20.*Xx.*Zz.^2.*(Xx.^2 + Yy.^2 + Zz.^2).*cos(20.*Xx) + (Xx.^2 + Yy.^2 - 2.*Zz.^2).*sin(20.*Xx)))./(4..*(Xx.^2 + Yy.^2 + Zz.^2).^2.5);
+myfunc_lsfc =         -((sqrt(105./pi).*Zz.*(-10.*Xx.*(3.*Xx.^6 + 5.*Yy.^2 + 2.*Zz.^2 - Yy.^2.*(Yy.^2 + Zz.^2).*(-4 + 3.*Yy.^2 + 3.*Zz.^2) + Xx.^4.*(-4 + 3.*Yy.^2 + 6.*Zz.^2) - Xx.^2.*(1 + 3.*Yy.^4 + 4.*Zz.^2 - 3.*Zz.^4)).*cos(20.*Xx) + (Xx - Yy).*(Xx + Yy).*(3 + 100.*Yy.^2 + 100.*Zz.^2 + 100.*Xx.^2.*(-1 + Xx.^2 + Yy.^2 + Zz.^2).^2).*sin(20.*Xx)))./(Xx.^2 + Yy.^2 + Zz.^2).^2.5);
 
        
     direct = RBFFD_WEIGHTS.lsfc * myfunc;
     
-    direct_err = direct - myfunc_pdx; 
-    l1_err_direct(i) = norm(direct_err,1)/norm(myfunc_pdx, 1);
-    l2_err_direct(i,indx) = norm(direct_err,2)/norm(myfunc_pdx, 2);
-    linf_err_direct(i) = norm(direct_err,inf)/norm(myfunc_pdx, inf);
+    direct_err = direct - myfunc_lsfc; 
+    l1_err_direct(i) = norm(direct_err,1)/norm(myfunc_lsfc, 1);
+    l2_err_direct(i,indx) = norm(direct_err,2)/norm(myfunc_lsfc, 2)
+    linf_err_direct(i) = norm(direct_err,inf)/norm(myfunc_lsfc, inf);
 
  
     
@@ -116,11 +116,23 @@ myfunc_lapl =         -((sqrt(105./pi).*Zz.*(-10.*Xx.*(3.*Xx.^6 + 5.*Yy.^2 + 2.*
     indirect_pdy = (spdiags(-Xx.*Yy,0,N,N) * RBFFD_WEIGHTS.xsfc + spdiags(1-Yy.^2,0,N,N) * RBFFD_WEIGHTS.ysfc + spdiags(-Yy.*Zz,0,N,N) * RBFFD_WEIGHTS.zsfc) * grady;
     indirect_pdz = (spdiags(-Xx.*Zz,0,N,N) * RBFFD_WEIGHTS.xsfc + spdiags(-Yy.*Zz,0,N,N) * RBFFD_WEIGHTS.ysfc + spdiags(1-Zz.^2,0,N,N) * RBFFD_WEIGHTS.zsfc) * gradz;
     
-    indirect_err = indirect - myfunc_pdx; 
-    l1_err_indirect(i) = norm(indirect_err,1)/norm(myfunc_pdx, 1);
-    l2_err_indirect(i) = norm(indirect_err,2)/norm(myfunc_pdx, 2);
-    linf_err_indirect(i) = norm(indirect_err,inf)/norm(myfunc_pdx, inf);
+    indirect = indirect_pdx + indirect_pdy + indirect_pdz;
+    
+    indirect_err = indirect - myfunc_lsfc; 
+    l1_err_indirect(i) = norm(indirect_err,1)/norm(myfunc_lsfc, 1);
+    l2_err_indirect(i) = norm(indirect_err,2)/norm(myfunc_lsfc, 2)
+    linf_err_indirect(i) = norm(indirect_err,inf)/norm(myfunc_lsfc, inf);
         
+        
+    if 0
+        figure(1)
+        plotScalarfield(direct, nodes, 'Direct')
+        figure(2)
+        plotScalarfield(indirect, nodes, 'Indirect')
+        figure(3)
+        plotScalarfield(myfunc_lsfc, nodes, 'Laplacian[ Sph[3,2] * Sin[20x] ]')
+    pause
+    end
     %conds(i,indx) = condest(RBFFD_WEIGHTS.xsfc);
 end
 
@@ -200,7 +212,17 @@ end
 %     set(gca,'FontSize', 28);
 %     legend('n=17', 'n=31', 'n=50', 'n=101');
 %     %hold off; 
-    
+        
+        figure(4)
+    %hold on;
+    loglog(prob_sizes, abs(abs_l2_diff),'LineWidth',2); 
+    %title({'Difference', 'Rel l2 Errors'}, 'FontSize', 28); 
+    xlabel('N','FontSize', 28); 
+    ylabel('abs(error_{direct} - error_{indirect})','FontSize', 28);
+    %set(gca,'YTick',[1e-14 1e-12 1e-10 1e-8 1e-6]);
+    set(gca,'FontSize', 28);
+    legend('n=17', 'n=31', 'n=50', 'n=101');
+    %hold off; 
           
     figure(2)
     loglog(prob_sizes, l2_err_direct,'LineWidth',2);
