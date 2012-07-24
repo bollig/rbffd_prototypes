@@ -1,4 +1,17 @@
-function [U] = solve_system(L,F,N,type)
+function [U] = solve_system(L,F,N,type, computeEigs)
+
+if nargin > 4
+   if computeEigs
+%      eigsmat = matfile('eigs.mat','Writable',true);
+      [evalues] = eig(full(L)); 
+%      eigsmat.evalues = evalues; 
+%      eigsmat.evectors = evectors;
+      dlmwrite('eigvals.dat', evalues); 
+      
+      plot_eigenvalues('eigvals.dat');
+      pause
+   end
+end
 
 switch type
     case 'lsq'

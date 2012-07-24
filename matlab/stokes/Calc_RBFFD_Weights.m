@@ -106,9 +106,9 @@ idx_all = knnsearch(root,nodes,'k',n);
 foundSFCOperators = cellfun(@(x) ~isempty(strfind(x,'xsfc_alt'))|~isempty(strfind(x,'ysfc_alt'))|~isempty(strfind(x,'zsfc_alt')),which);
 computeSFCOperators = (sum(foundSFCOperators) > 0);
 if computeSFCOperators
-    willXCompute = sum(cellfun(@(x) ~isempty(strfind(x,'x'))&isempty(strfind(x,'xsfc_alt')),which));
-    willYCompute = sum(cellfun(@(x) ~isempty(strfind(x,'y'))&isempty(strfind(x,'ysfc_alt')),which));
-    willZCompute = sum(cellfun(@(x) ~isempty(strfind(x,'z'))&isempty(strfind(x,'zsfc_alt')),which));
+    willXCompute = sum(cellfun(@(x) ~isempty(strfind(x,'x'))&isempty(strfind(x,'xsfc_alt'))&isempty(strfind(x,'xsfc')),which));
+    willYCompute = sum(cellfun(@(x) ~isempty(strfind(x,'y'))&isempty(strfind(x,'ysfc_alt'))&isempty(strfind(x,'ysfc')),which));
+    willZCompute = sum(cellfun(@(x) ~isempty(strfind(x,'z'))&isempty(strfind(x,'zsfc_alt'))&isempty(strfind(x,'zsfc')),which));
     
     % IF it wont compute then we need to call a sub compute
     if ~willXCompute
@@ -283,9 +283,9 @@ for j=1:N
     
     if computeSFCOperators
         % Find the x,y,z operator indices
-        foundX = cellfun(@(x) ~isempty(strfind(x,'x')),which);
-        foundY = cellfun(@(x) ~isempty(strfind(x,'y')),which);
-        foundZ = cellfun(@(x) ~isempty(strfind(x,'z')),which);
+        foundX = cellfun(@(x) ~isempty(strfind(x,'x'))&isempty(strfind(x,'xsfc')),which);
+        foundY = cellfun(@(x) ~isempty(strfind(x,'y'))&isempty(strfind(x,'ysfc')),which);
+        foundZ = cellfun(@(x) ~isempty(strfind(x,'z'))&isempty(strfind(x,'zsfc')),which);
         
         % We assume unit sphere, so we dont normalize. These are actually
         % supposed to be directions though.
@@ -304,7 +304,7 @@ end
 
 % Add the operators again so we store them globally
 if computeSFCOperators
-    which = [which 'xsfc_alt', 'ysfc_alt', 'zsfc_alt'];
+    which = [which, 'xsfc_alt', 'ysfc_alt', 'zsfc_alt'];
 end
 
 windx=0;
@@ -312,6 +312,13 @@ for w=which(1:end)
     windx=windx+1;
     dertype=char(w);
     RBFFD_WEIGHTS.(dertype) = sparse(ind_i,ind_j,weights_temp(:,:,windx),N,N);
+end
+
+if computeSFCOperators
+    Xx = nodes(:,1);
+    Yy = nodes(:,2);
+    Zz = nodes(:,3);
+   RBFFD_WEIGHTS.custom = -(spdiags(1-Xx.^2,0,N,N) * RBFFD_WEIGHTS.x + spdiags(-Xx.*Yy,0,N,N) * RBFFD_WEIGHTS.y + spdiags(-Zz.*Zz,0,N,N) * RBFFD_WEIGHTS.z); 
 end
 
 % Tell the caller which weights are available for use:
