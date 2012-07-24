@@ -85,8 +85,8 @@ for i = 1:size(test_cases,1)
     Yy = nodes(:,2); 
     Zz = nodes(:,3);
 
-%    cart_sph32_mathematica = (sqrt(105/pi).*(Xx - Yy).*(Xx + Yy).*Zz)./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^1.5);
-%    pdx_sph32_mathematica = -(sqrt(105./pi).*Xx.*Zz.*(Xx.^2 - 5.*Yy.^2 - 2.*Zz.^2))./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^2.5);
+%    myfunc = (sqrt(105/pi).*(Xx - Yy).*(Xx + Yy).*Zz)./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^1.5);
+%    myfunc_pdx = -(sqrt(105./pi).*Xx.*Zz.*(Xx.^2 - 5.*Yy.^2 - 2.*Zz.^2))./(4.*(Xx.^2 + Yy.^2 + Zz.^2).^2.5);
         
 %% Generated with Mathematica (File: SphericalHarmonics_TimesSine.nb
  
@@ -97,26 +97,31 @@ myfunc_pdz = (sqrt(105./pi).*(Xx - Yy).*(Xx + Yy).*(-20.*Xx.*Zz.^2.*(Xx.^2 + Yy.
 myfunc_lapl =         -((sqrt(105./pi).*Zz.*(-10.*Xx.*(3.*Xx.^6 + 5.*Yy.^2 + 2.*Zz.^2 - Yy.^2.*(Yy.^2 + Zz.^2).*(-4 + 3.*Yy.^2 + 3.*Zz.^2) + Xx.^4.*(-4 + 3.*Yy.^2 + 6.*Zz.^2) - Xx.^2.*(1 + 3.*Yy.^4 + 4.*Zz.^2 - 3.*Zz.^4)).*cos(20.*Xx) + (Xx - Yy).*(Xx + Yy).*(3 + 100.*Yy.^2 + 100.*Zz.^2 + 100.*Xx.^2.*(-1 + Xx.^2 + Yy.^2 + Zz.^2).^2).*sin(20.*Xx)))./(Xx.^2 + Yy.^2 + Zz.^2).^2.5);
 
        
-    direct = RBFFD_WEIGHTS.xsfc * cart_sph32_mathematica;
+    direct = RBFFD_WEIGHTS.lsfc * myfunc;
     
-    direct_err = direct - pdx_sph32_mathematica; 
-    l1_err_direct(i) = norm(direct_err,1)/norm(pdx_sph32_mathematica, 1);
-    l2_err_direct(i,indx) = norm(direct_err,2)/norm(pdx_sph32_mathematica, 2);
-    linf_err_direct(i) = norm(direct_err,inf)/norm(pdx_sph32_mathematica, inf);
+    direct_err = direct - myfunc_pdx; 
+    l1_err_direct(i) = norm(direct_err,1)/norm(myfunc_pdx, 1);
+    l2_err_direct(i,indx) = norm(direct_err,2)/norm(myfunc_pdx, 2);
+    linf_err_direct(i) = norm(direct_err,inf)/norm(myfunc_pdx, inf);
 
  
     
     % For some strange reason, my signs are off here!
-    indirect = RBFFD_WEIGHTS.xsfc_alt * cart_sph32_mathematica;
-     
-    %indirect_2 = -(spdiags(1-Xx.^2,0,N,N) * RBFFD_WEIGHTS.x + spdiags(-Xx.*Yy,0,N,N) * RBFFD_WEIGHTS.y + spdiags(-Zz.*Zz,0,N,N) * RBFFD_WEIGHTS.z) * cart_sph32_mathematica;
+    %indirect = RBFFD_WEIGHTS.xsfc_alt * myfunc;
+    gradx = RBFFD_WEIGHTS.xsfc * myfunc;
+    grady = RBFFD_WEIGHTS.ysfc * myfunc;
+    gradz = RBFFD_WEIGHTS.zsfc * myfunc;
     
-    indirect_err = indirect - pdx_sph32_mathematica; 
-    l1_err_indirect(i) = norm(indirect_err,1)/norm(pdx_sph32_mathematica, 1);
-    l2_err_indirect(i) = norm(indirect_err,2)/norm(pdx_sph32_mathematica, 2);
-    linf_err_indirect(i) = norm(indirect_err,inf)/norm(pdx_sph32_mathematica, inf);
+    indirect_pdx = (spdiags(1-Xx.^2,0,N,N) * RBFFD_WEIGHTS.xsfc + spdiags(-Xx.*Yy,0,N,N) * RBFFD_WEIGHTS.ysfc + spdiags(-Xx.*Zz,0,N,N) * RBFFD_WEIGHTS.zsfc) * gradx;
+    indirect_pdy = (spdiags(-Xx.*Yy,0,N,N) * RBFFD_WEIGHTS.xsfc + spdiags(1-Yy.^2,0,N,N) * RBFFD_WEIGHTS.ysfc + spdiags(-Yy.*Zz,0,N,N) * RBFFD_WEIGHTS.zsfc) * grady;
+    indirect_pdz = (spdiags(-Xx.*Zz,0,N,N) * RBFFD_WEIGHTS.xsfc + spdiags(-Yy.*Zz,0,N,N) * RBFFD_WEIGHTS.ysfc + spdiags(1-Zz.^2,0,N,N) * RBFFD_WEIGHTS.zsfc) * gradz;
+    
+    indirect_err = indirect - myfunc_pdx; 
+    l1_err_indirect(i) = norm(indirect_err,1)/norm(myfunc_pdx, 1);
+    l2_err_indirect(i) = norm(indirect_err,2)/norm(myfunc_pdx, 2);
+    linf_err_indirect(i) = norm(indirect_err,inf)/norm(myfunc_pdx, inf);
         
-    conds(i,indx) = condest(RBFFD_WEIGHTS.xsfc);
+    %conds(i,indx) = condest(RBFFD_WEIGHTS.xsfc);
 end
 
 % figure(1)
