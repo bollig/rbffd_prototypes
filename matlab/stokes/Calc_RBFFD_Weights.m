@@ -281,31 +281,31 @@ for j=1:N
         weights_temp(1:n,j,windx) = weights(1:n,windx);
     end
     
-    if computeSFCOperators
-        % Find the x,y,z operator indices
-        foundX = cellfun(@(x) ~isempty(strfind(x,'x'))&isempty(strfind(x,'xsfc')),which);
-        foundY = cellfun(@(x) ~isempty(strfind(x,'y'))&isempty(strfind(x,'ysfc')),which);
-        foundZ = cellfun(@(x) ~isempty(strfind(x,'z'))&isempty(strfind(x,'zsfc')),which);
-        
-        % We assume unit sphere, so we dont normalize. These are actually
-        % supposed to be directions though.
-        xx = nodes(j,1);
-        yy = nodes(j,2);
-        zz = nodes(j,3);
-        
-        % d/dx projected to sphere
-        weights_temp(1:n,j,length(which)+1) = (1-xx.^2)*weights(1:n,foundX) + (-xx.*yy) * weights(1:n,foundY) + (-xx.*zz) * weights(1:n,foundZ);
-        % d/dy projected to sphere
-        weights_temp(1:n,j,length(which)+2) = (-xx.*yy)*weights(1:n,foundX) + (1-yy.^2)* weights(1:n,foundY) + (-yy.*zz) * weights(1:n,foundZ);
-        % d/dz projected to sphere
-        weights_temp(1:n,j,length(which)+3) = (-xx.*zz)*weights(1:n,foundX) + (-yy.*zz) * weights(1:n,foundY) + (1-zz.^2) * weights(1:n,foundZ);
-    end
+%     if computeSFCOperators
+%         % Find the x,y,z operator indices
+%         foundX = cellfun(@(x) ~isempty(strfind(x,'x'))&isempty(strfind(x,'xsfc')),which);
+%         foundY = cellfun(@(x) ~isempty(strfind(x,'y'))&isempty(strfind(x,'ysfc')),which);
+%         foundZ = cellfun(@(x) ~isempty(strfind(x,'z'))&isempty(strfind(x,'zsfc')),which);
+%         
+%         % We assume unit sphere, so we dont normalize. These are actually
+%         % supposed to be directions though.
+%         xx = nodes(j,1);
+%         yy = nodes(j,2);
+%         zz = nodes(j,3);
+%         
+%         % d/dx projected to sphere
+%         weights_temp(1:n,j,length(which)+1) = (1-xx.^2)*weights(1:n,foundX) + (-xx.*yy) * weights(1:n,foundY) + (-xx.*zz) * weights(1:n,foundZ);
+%         % d/dy projected to sphere
+%         weights_temp(1:n,j,length(which)+2) = (-xx.*yy)*weights(1:n,foundX) + (1-yy.^2)* weights(1:n,foundY) + (-yy.*zz) * weights(1:n,foundZ);
+%         % d/dz projected to sphere
+%         weights_temp(1:n,j,length(which)+3) = (-xx.*zz)*weights(1:n,foundX) + (-yy.*zz) * weights(1:n,foundY) + (1-zz.^2) * weights(1:n,foundZ);
+%     end
 end
-
-% Add the operators again so we store them globally
-if computeSFCOperators
-    which = [which, 'xsfc_alt', 'ysfc_alt', 'zsfc_alt'];
-end
+% 
+% % Add the operators again so we store them globally
+% if computeSFCOperators
+%     which = [which, 'xsfc_alt', 'ysfc_alt', 'zsfc_alt'];
+% end
 
 windx=0;
 for w=which(1:end)
@@ -318,7 +318,10 @@ if computeSFCOperators
     Xx = nodes(:,1);
     Yy = nodes(:,2);
     Zz = nodes(:,3);
-   RBFFD_WEIGHTS.custom = -(spdiags(1-Xx.^2,0,N,N) * RBFFD_WEIGHTS.x + spdiags(-Xx.*Yy,0,N,N) * RBFFD_WEIGHTS.y + spdiags(-Zz.*Zz,0,N,N) * RBFFD_WEIGHTS.z); 
+    SS = spdiags(1-Xx.^2,0,N,N);
+   RBFFD_WEIGHTS.xsfc_alt = -(spdiags(1-Xx.^2,0,N,N) * RBFFD_WEIGHTS.x + spdiags(-Xx.*Yy,0,N,N) * RBFFD_WEIGHTS.y + spdiags(-Xx.*Zz,0,N,N) * RBFFD_WEIGHTS.z);
+   RBFFD_WEIGHTS.ysfc_alt = -(spdiags(-Xx.*Yy,0,N,N) * RBFFD_WEIGHTS.x + spdiags(1-Yy.^2,0,N,N) * RBFFD_WEIGHTS.y + spdiags(-Yy.*Zz,0,N,N) * RBFFD_WEIGHTS.z);
+   RBFFD_WEIGHTS.zsfc_alt = -(spdiags(-Xx.*Zz,0,N,N) * RBFFD_WEIGHTS.x + spdiags(-Yy.*Zz,0,N,N) * RBFFD_WEIGHTS.y + spdiags(1-Zz.^2,0,N,N) * RBFFD_WEIGHTS.z);
 end
 
 % Tell the caller which weights are available for use:
