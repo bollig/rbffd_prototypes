@@ -1,0 +1,11 @@
+myfunc = (sqrt(105./pi).*(Xx - Yy).*(Xx + Yy).*Zz.*sin(20.*Xx))./(4..*(Xx.^2 + Yy.^2 + Zz.^2).^1.5);
+
+myfunc_pdx =         -(sqrt(105./pi).*Zz.*(20.*(-1 + Xx.^2).*(Xx - Yy).*(Xx + Yy).*(Xx.^2 + Yy.^2 + Zz.^2).*cos(20.*Xx) + Xx.*(Xx.^2 - 5.*Yy.^2 - 2.*Zz.^2).*sin(20.*Xx)))./(4..*(Xx.^2 + Yy.^2 + Zz.^2).^2.5); 
+
+myfunc_pdy = (sqrt(105./pi).*Yy.*Zz.*(-20.*Xx.*(Xx - Yy).*(Xx + Yy).*(Xx.^2 + Yy.^2 + Zz.^2).*cos(20.*Xx) + (-5.*Xx.^2 + Yy.^2 - 2.*Zz.^2).*sin(20.*Xx)))./(4..*(Xx.^2 + Yy.^2 + Zz.^2).^2.5); 
+
+myfunc_pdz = (sqrt(105./pi).*(Xx - Yy).*(Xx + Yy).*(-20.*Xx.*Zz.^2.*(Xx.^2 + Yy.^2 + Zz.^2).*cos(20.*Xx) + (Xx.^2 + Yy.^2 - 2.*Zz.^2).*sin(20.*Xx)))./(4..*(Xx.^2 + Yy.^2 + Zz.^2).^2.5)
+
+myfunc_lapl =         -((sqrt(105./pi).*Zz.*(-10.*Xx.*(3.*Xx.^6 + 5.*Yy.^2 + 2.*Zz.^2 - Yy.^2.*(Yy.^2 + Zz.^2).*(-4 + 3.*Yy.^2 + 3.*Zz.^2) + Xx.^4.*(-4 + 3.*Yy.^2 + 6.*Zz.^2) - Xx.^2.*(1 + 3.*Yy.^4 + 4.*Zz.^2 - 3.*Zz.^4)).*cos(20.*Xx) + (Xx - Yy).*(Xx + Yy).*(3 + 100.*Yy.^2 + 100.*Zz.^2 + 100.*Xx.^2.*(-1 + Xx.^2 + Yy.^2 + Zz.^2).^2).*sin(20.*Xx)))./(Xx.^2 + Yy.^2 + Zz.^2).^2.5);
+
+
