@@ -186,6 +186,8 @@ for j=1:N
                 % Same as X but we project the operator following Flyer,
                 % Wright 2009 (A Radial Basis Function Method for the
                 % Shallow Water Equations on a Sphere)
+                
+                %% WAIT: We want X = stencil, X_k = stencil to guarantee we project operator correctly. 
                 % This line is (X'X_k)' = (X_k'X)
                 % X is the center
                 % X_k is the stencil
@@ -318,10 +320,18 @@ if computeSFCOperators
     Xx = nodes(:,1);
     Yy = nodes(:,2);
     Zz = nodes(:,3);
-    SS = spdiags(1-Xx.^2,0,N,N);
-   RBFFD_WEIGHTS.xsfc_alt = -(spdiags(1-Xx.^2,0,N,N) * RBFFD_WEIGHTS.x + spdiags(-Xx.*Yy,0,N,N) * RBFFD_WEIGHTS.y + spdiags(-Xx.*Zz,0,N,N) * RBFFD_WEIGHTS.z);
-   RBFFD_WEIGHTS.ysfc_alt = -(spdiags(-Xx.*Yy,0,N,N) * RBFFD_WEIGHTS.x + spdiags(1-Yy.^2,0,N,N) * RBFFD_WEIGHTS.y + spdiags(-Yy.*Zz,0,N,N) * RBFFD_WEIGHTS.z);
-   RBFFD_WEIGHTS.zsfc_alt = -(spdiags(-Xx.*Zz,0,N,N) * RBFFD_WEIGHTS.x + spdiags(-Yy.*Zz,0,N,N) * RBFFD_WEIGHTS.y + spdiags(1-Zz.^2,0,N,N) * RBFFD_WEIGHTS.z);
+    %% These project vectors onto plane tangent to the CENTER NODE (I-X_k*X_k'). All of row 1 is scaled by (I-X_1*X_1').
+    %% THIS IS HOW Flyer, Lehto, Blaise, Wright and St-Cyr handle projection. 
+    %% NOTE: P_k * (x_c - x_k) = -P_k*x_k, but P_c * (x_c - x_k) = P_c * x_c
+      RBFFD_WEIGHTS.xsfc_alt = -(spdiags(1-Xx.^2,0,N,N) * RBFFD_WEIGHTS.x + spdiags(-Xx.*Yy,0,N,N) * RBFFD_WEIGHTS.y + spdiags(-Xx.*Zz,0,N,N) * RBFFD_WEIGHTS.z);
+      RBFFD_WEIGHTS.ysfc_alt = -(spdiags(-Xx.*Yy,0,N,N) * RBFFD_WEIGHTS.x + spdiags(1-Yy.^2,0,N,N) * RBFFD_WEIGHTS.y + spdiags(-Yy.*Zz,0,N,N) * RBFFD_WEIGHTS.z);
+      RBFFD_WEIGHTS.zsfc_alt = -(spdiags(-Xx.*Zz,0,N,N) * RBFFD_WEIGHTS.x + spdiags(-Yy.*Zz,0,N,N) * RBFFD_WEIGHTS.y + spdiags(1-Zz.^2,0,N,N) * RBFFD_WEIGHTS.z);
+    
+   %% These project vectors onto plane tangent to the STENCIL NODES (I-X*X'). All of the nonzeros in row 1 are matched with (I-X_i*X_i'). 
+%    RBFFD_WEIGHTS.xsfc_alt = -(RBFFD_WEIGHTS.x * spdiags(1-Xx.^2,0,N,N) + RBFFD_WEIGHTS.y * spdiags(-Xx.*Yy,0,N,N) + RBFFD_WEIGHTS.z * spdiags(-Xx.*Zz,0,N,N));
+%    RBFFD_WEIGHTS.ysfc_alt = -(RBFFD_WEIGHTS.x * spdiags(-Xx.*Yy,0,N,N) + RBFFD_WEIGHTS.y * spdiags(1-Yy.^2,0,N,N) + RBFFD_WEIGHTS.z * spdiags(-Yy.*Zz,0,N,N));
+%    RBFFD_WEIGHTS.zsfc_alt = -(RBFFD_WEIGHTS.x * spdiags(-Xx.*Zz,0,N,N) + RBFFD_WEIGHTS.y * spdiags(-Yy.*Zz,0,N,N) + RBFFD_WEIGHTS.z * spdiags(1-Zz.^2,0,N,N));
+%     
 end
 
 % Tell the caller which weights are available for use:

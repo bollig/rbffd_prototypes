@@ -8,7 +8,7 @@ close all;
 test_cases = ['md010.00121'; 'md015.00256'; 'md019.00400'; 'md028.00841'; 'md031.01024'; 'md049.02500'; 'md063.04096'; 'md079.06400'; 'md089.08100' ; 'md100.10201' ; 'md127.16384' ; 'md165.27556'];
 prob_sizes = zeros(size(test_cases,1),1); 
 l1_err_indirect = zeros(size(test_cases,1),1); 
-l2_err_indirect = zeros(size(test_cases,1),1); 
+l2_err_indirect = zeros(size(test_cases,1),4); 
 linf_err_indirect = zeros(size(test_cases,1),1); 
 l1_err_direct = zeros(size(test_cases,1),1); 
 l2_err_direct = zeros(size(test_cases,1),4); 
@@ -113,7 +113,7 @@ myfunc_lapl =         -((sqrt(105./pi).*Zz.*(-10.*Xx.*(3.*Xx.^6 + 5.*Yy.^2 + 2.*
     
     indirect_err = indirect - myfunc_pdx; 
     l1_err_indirect(i) = norm(indirect_err,1)/norm(myfunc_pdx, 1);
-    l2_err_indirect(i) = norm(indirect_err,2)/norm(myfunc_pdx, 2);
+    l2_err_indirect(i,indx) = norm(indirect_err,2)/norm(myfunc_pdx, 2);
     linf_err_indirect(i) = norm(indirect_err,inf)/norm(myfunc_pdx, inf);
         
     %conds(i,indx) = condest(RBFFD_WEIGHTS.xsfc);
@@ -124,7 +124,8 @@ myfunc_lapl =         -((sqrt(105./pi).*Zz.*(-10.*Xx.*(3.*Xx.^6 + 5.*Yy.^2 + 2.*
         figure(2)
     plotScalarfield(indirect, nodes, 'Indirect')
     figure(3)
-        plotScalarfield(myfunc, nodes, 'Sph[3,2] * Sin[20x]')
+     plotScalarfield(myfunc_pdx, nodes, 'Px*d/dx[Sph[3,2] * Sin[20x]]')
+        %plotScalarfield(myfunc, nodes, 'Sph[3,2] * Sin[20x]')
     pause
     end
 end
@@ -173,7 +174,7 @@ end
 % hold off;
     
    abs_l1_diff(:,indx) = l1_err_direct - l1_err_indirect ;
-   abs_l2_diff(:,indx) = l2_err_direct(:,indx)  - l2_err_indirect;
+   abs_l2_diff(:,indx) = l2_err_direct(:,indx)  - l2_err_indirect(:,indx);
    abs_linf_diff(:,indx) = linf_err_direct - linf_err_indirect ;
 end
 %     figure(1)
@@ -226,13 +227,22 @@ end
     set(gca,'FontSize', 28);
     legend('n=17', 'n=31', 'n=50', 'n=101');
     
-    
+           
     figure(3)
-    loglog(prob_sizes, conds,'LineWidth',2);
-    %title({'Condition Estimates','condest(DM_{XSFC})'},'FontSize',28);
+    loglog(prob_sizes, l2_err_indirect,'LineWidth',2);
+    %title({'Relative l2 Error','norm(direct-exact)/norm(exact)'},'FontSize',28);
     xlabel('N','FontSize',28);
-    ylabel('Condition Number','FontSize',28);
-    set(gca,'YTick',[1e16 1e18 1e20]);
+    ylabel('Relative l2 Error','FontSize',28);
     set(gca,'FontSize', 28);
     legend('n=17', 'n=31', 'n=50', 'n=101');
+    
+%     
+%     figure(3)
+%     loglog(prob_sizes, conds,'LineWidth',2);
+%     %title({'Condition Estimates','condest(DM_{XSFC})'},'FontSize',28);
+%     xlabel('N','FontSize',28);
+%     ylabel('Condition Number','FontSize',28);
+%     set(gca,'YTick',[1e16 1e18 1e20]);
+%     set(gca,'FontSize', 28);
+%     legend('n=17', 'n=31', 'n=50', 'n=101');
 return
