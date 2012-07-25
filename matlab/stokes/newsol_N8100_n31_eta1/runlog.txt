@@ -1,0 +1,558 @@
+Using RBF Support Parameter ep=3.050000
+Calculating weights (N=8100, n=31, ep=3.050000, hv_k=4, hv_gamma=8.000000e+02)
+Dimension not specified, assuming maximum allowed by nodes: 3
+Elapsed time is 5.530625 seconds.
+Filling LHS Collocation Matrix
+Allocate LHS
+Fill COL 1
+Fill COL 2
+Fill COL 3
+Fill COL 4
+Fill EXTRA CONSTRAINTS
+Construct Sparse From Tuples
+Over-Allocation for LHS (2324700 expected - 2324638 actual elements): -142.84 KB
+Sample DIV Operator
+Elapsed time is 1.244870 seconds.
+Printing figure: ./newsol_N8100_n31_eta1/LHS
+Printing figure: ./newsol_N8100_n31_eta1/LHS
+Filling RHS Vector
+
+
+--> Checking Relative Error of RHS: 
+Global_RHS_Rel_Error_1 =
+   NaN
+Global_RHS_Rel_Error_2 =
+   NaN
+Global_RHS_Rel_Error_inf =
+   NaN
+s =
+  430.1656
+s =
+   NaN
+ans =
+   NaN
+RHS_U_rel_err_l1 =
+   4.7303e-05
+RHS_U_rel_err_l2 =
+   6.2193e-05
+RHS_U_rel_err_linf =
+   1.8688e-04
+RHS_V_rel_err_l1 =
+   4.7870e-05
+RHS_V_rel_err_l2 =
+   6.2733e-05
+RHS_V_rel_err_linf =
+   1.9712e-04
+RHS_W_rel_err_l1 =
+   NaN
+RHS_W_rel_err_l2 =
+   NaN
+RHS_W_rel_err_linf =
+   NaN
+RHS_P_abs_err_l1 =
+   Inf
+RHS_P_abs_err_l2 =
+   Inf
+RHS_P_abs_err_linf =
+   Inf
+Elapsed Time: 0.366529
+Printing figure: ./newsol_N8100_n31_eta1/RHS
+Printing figure: ./newsol_N8100_n31_eta1/RHS_discrete
+Printing figure: ./newsol_N8100_n31_eta1/RHS_AbsError
+Printing figure: ./newsol_N8100_n31_eta1/U_exact
+[RC, RD, UC] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
+
+
+--> Checking Relative Error of RHS: 
+Global_RHS_Rel_Error_1 =
+   NaN
+Global_RHS_Rel_Error_2 =
+   NaN
+Global_RHS_Rel_Error_inf =
+   NaN
+{Warning: Integer operands are required for colon operator when used as index} 
+> In <a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/stokes/fillRHS.m',94,1)">fillRHS at 94</a>
+s =
+   1.2650e+04
+{Warning: Integer operands are required for colon operator when used as index} 
+> In <a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/stokes/fillRHS.m',95,1)">fillRHS at 95</a>
+s =
+   NaN
+ans =
+   NaN
+RHS_U_rel_err_l1 =
+   4.7303e-05
+RHS_U_rel_err_l2 =
+   6.2193e-05
+RHS_U_rel_err_linf =
+   1.8688e-04
+RHS_V_rel_err_l1 =
+   4.7870e-05
+RHS_V_rel_err_l2 =
+   6.2733e-05
+RHS_V_rel_err_linf =
+   1.9712e-04
+RHS_W_rel_err_l1 =
+   NaN
+RHS_W_rel_err_l2 =
+   NaN
+RHS_W_rel_err_linf =
+   NaN
+RHS_P_abs_err_l1 =
+   Inf
+RHS_P_abs_err_l2 =
+   Inf
+RHS_P_abs_err_linf =
+   Inf
+[RC, RD, UC] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
+
+
+--> Checking Relative Error of RHS: 
+Global_RHS_Rel_Error_1 =
+   NaN
+Global_RHS_Rel_Error_2 =
+   NaN
+Global_RHS_Rel_Error_inf =
+   NaN
+{Warning: Integer operands are required for colon operator when used as index} 
+> In <a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/stokes/fillRHS.m',94,1)">fillRHS at 94</a>
+s =
+   7.5869e+03
+{Warning: Integer operands are required for colon operator when used as index} 
+> In <a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/stokes/fillRHS.m',95,1)">fillRHS at 95</a>
+s =
+   NaN
+ans =
+   NaN
+RHS_U_rel_err_l1 =
+   4.7303e-05
+RHS_U_rel_err_l2 =
+   6.2193e-05
+RHS_U_rel_err_linf =
+   1.8688e-04
+RHS_V_rel_err_l1 =
+   4.7870e-05
+RHS_V_rel_err_l2 =
+   6.2733e-05
+RHS_V_rel_err_linf =
+   1.9712e-04
+RHS_W_rel_err_l1 =
+   NaN
+RHS_W_rel_err_l2 =
+   NaN
+RHS_W_rel_err_linf =
+   NaN
+RHS_P_abs_err_l1 =
+   Inf
+RHS_P_abs_err_l2 =
+   Inf
+RHS_P_abs_err_linf =
+   Inf
+[RC, RD, UC] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
+
+
+--> Checking Relative Error of RHS: 
+Global_RHS_Rel_Error_1 =
+   NaN
+Global_RHS_Rel_Error_2 =
+   NaN
+Global_RHS_Rel_Error_inf =
+   NaN
+{Warning: Integer operands are required for colon operator when used as index} 
+> In <a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/stokes/fillRHS.m',94,1)">fillRHS at 94</a>
+s =
+   4.2129e+03
+{Warning: Integer operands are required for colon operator when used as index} 
+> In <a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/stokes/fillRHS.m',95,1)">fillRHS at 95</a>
+s =
+   NaN
+ans =
+   NaN
+RHS_U_rel_err_l1 =
+   4.7303e-05
+RHS_U_rel_err_l2 =
+   6.2193e-05
+RHS_U_rel_err_linf =
+   1.8688e-04
+RHS_V_rel_err_l1 =
+   4.7870e-05
+RHS_V_rel_err_l2 =
+   6.2733e-05
+RHS_V_rel_err_linf =
+   1.9712e-04
+RHS_W_rel_err_l1 =
+   NaN
+RHS_W_rel_err_l2 =
+   NaN
+RHS_W_rel_err_linf =
+   NaN
+RHS_P_abs_err_l1 =
+   Inf
+RHS_P_abs_err_l2 =
+   Inf
+RHS_P_abs_err_linf =
+   Inf
+[RC, RD, UC] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
+
+
+--> Checking Relative Error of RHS: 
+Global_RHS_Rel_Error_1 =
+   NaN
+Global_RHS_Rel_Error_2 =
+   NaN
+Global_RHS_Rel_Error_inf =
+   NaN
+s =
+  -1.7180e+03
+s =
+   NaN
+ans =
+   NaN
+RHS_U_rel_err_l1 =
+   4.7303e-05
+RHS_U_rel_err_l2 =
+   6.2193e-05
+RHS_U_rel_err_linf =
+   1.8688e-04
+RHS_V_rel_err_l1 =
+   4.7870e-05
+RHS_V_rel_err_l2 =
+   6.2733e-05
+RHS_V_rel_err_linf =
+   1.9712e-04
+RHS_W_rel_err_l1 =
+   NaN
+RHS_W_rel_err_l2 =
+   NaN
+RHS_W_rel_err_linf =
+   NaN
+RHS_P_abs_err_l1 =
+   Inf
+RHS_P_abs_err_l2 =
+   Inf
+RHS_P_abs_err_linf =
+   Inf
+[RC, RD, UC] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
+
+
+--> Checking Relative Error of RHS: 
+Global_RHS_Rel_Error_1 =
+   NaN
+Global_RHS_Rel_Error_2 =
+   NaN
+Global_RHS_Rel_Error_inf =
+   NaN
+s =
+   4.2923e+03
+s =
+   NaN
+ans =
+   NaN
+RHS_U_rel_err_l1 =
+   4.7303e-05
+RHS_U_rel_err_l2 =
+   6.2193e-05
+RHS_U_rel_err_linf =
+   1.8688e-04
+RHS_V_rel_err_l1 =
+   4.7870e-05
+RHS_V_rel_err_l2 =
+   6.2733e-05
+RHS_V_rel_err_linf =
+   1.9712e-04
+RHS_W_rel_err_l1 =
+   NaN
+RHS_W_rel_err_l2 =
+   NaN
+RHS_W_rel_err_linf =
+   NaN
+RHS_P_abs_err_l1 =
+   Inf
+RHS_P_abs_err_l2 =
+   Inf
+RHS_P_abs_err_linf =
+   Inf
+[RC, RD, UC] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
+
+
+--> Checking Relative Error of RHS: 
+Global_RHS_Rel_Error_1 =
+   NaN
+Global_RHS_Rel_Error_2 =
+   NaN
+Global_RHS_Rel_Error_inf =
+   NaN
+{Warning: Integer operands are required for colon operator when used as index} 
+> In <a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/stokes/fillRHS.m',94,1)">fillRHS at 94</a>
+s =
+   1.4077e+03
+{Warning: Integer operands are required for colon operator when used as index} 
+> In <a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/stokes/fillRHS.m',95,1)">fillRHS at 95</a>
+s =
+   NaN
+ans =
+   NaN
+RHS_U_rel_err_l1 =
+   4.7303e-05
+RHS_U_rel_err_l2 =
+   6.2193e-05
+RHS_U_rel_err_linf =
+   1.8688e-04
+RHS_V_rel_err_l1 =
+   4.7870e-05
+RHS_V_rel_err_l2 =
+   6.2733e-05
+RHS_V_rel_err_linf =
+   1.9712e-04
+RHS_W_rel_err_l1 =
+   NaN
+RHS_W_rel_err_l2 =
+   NaN
+RHS_W_rel_err_linf =
+   NaN
+RHS_P_abs_err_l1 =
+   Inf
+RHS_P_abs_err_l2 =
+   Inf
+RHS_P_abs_err_linf =
+   Inf
+[RC, RD, UC] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
+
+
+--> Checking Relative Error of RHS: 
+Global_RHS_Rel_Error_1 =
+   NaN
+Global_RHS_Rel_Error_2 =
+   NaN
+Global_RHS_Rel_Error_inf =
+   NaN
+{Warning: Integer operands are required for colon operator when used as index} 
+> In <a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/stokes/fillRHS.m',94,1)">fillRHS at 94</a>
+s =
+   1.4077e+03
+ans =
+       16201
+{Warning: Integer operands are required for colon operator when used as index} 
+> In <a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/stokes/fillRHS.m',96,1)">fillRHS at 96</a>
+s =
+   NaN
+ans =
+   NaN
+RHS_U_rel_err_l1 =
+   4.7303e-05
+RHS_U_rel_err_l2 =
+   6.2193e-05
+RHS_U_rel_err_linf =
+   1.8688e-04
+RHS_V_rel_err_l1 =
+   4.7870e-05
+RHS_V_rel_err_l2 =
+   6.2733e-05
+RHS_V_rel_err_linf =
+   1.9712e-04
+RHS_W_rel_err_l1 =
+   NaN
+RHS_W_rel_err_l2 =
+   NaN
+RHS_W_rel_err_linf =
+   NaN
+RHS_P_abs_err_l1 =
+   Inf
+RHS_P_abs_err_l2 =
+   Inf
+RHS_P_abs_err_linf =
+   Inf
+help find
+ FIND   Find indices of nonzero elements.
+    I = FIND(X) returns the linear indices corresponding to 
+    the nonzero entries of the array X.  X may be a logical expression. 
+    Use IND2SUB(SIZE(X),I) to calculate multiple subscripts from 
+    the linear indices I.
+  
+    I = FIND(X,K) returns at most the first K indices corresponding to 
+    the nonzero entries of the array X.  K must be a positive integer, 
+    but can be of any numeric type.
+ 
+    I = FIND(X,K,'first') is the same as I = FIND(X,K).
+ 
+    I = FIND(X,K,'last') returns at most the last K indices corresponding 
+    to the nonzero entries of the array X.
+ 
+    [I,J] = FIND(X,...) returns the row and column indices instead of
+    linear indices into X. This syntax is especially useful when working
+    with sparse matrices.  If X is an N-dimensional array where N > 2, then
+    J is a linear index over the N-1 trailing dimensions of X.
+ 
+    [I,J,V] = FIND(X,...) also returns a vector V containing the values
+    that correspond to the row and column indices I and J.
+ 
+    Example:
+       A = magic(3)
+       find(A > 5)
+ 
+    finds the linear indices of the 4 entries of the matrix A that are
+    greater than 5.
+ 
+       [rows,cols,vals] = find(speye(5))
+ 
+    finds the row and column indices and nonzero values of the 5-by-5
+    sparse identity matrix.
+ 
+    See also <a href="matlab:help sparse">sparse</a>, <a href="matlab:help ind2sub">ind2sub</a>, <a href="matlab:help relop">relop</a>, <a href="matlab:help nonzeros">nonzeros</a>.
+
+    Overloaded methods:
+       <a href="matlab:help codistributed/find">codistributed/find</a>
+
+    Reference page in Help browser
+       <a href="matlab:doc find">doc find</a>
+
+[RC, RD, UC] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
+
+
+--> Checking Relative Error of RHS: 
+Global_RHS_Rel_Error_1 =
+   NaN
+Global_RHS_Rel_Error_2 =
+   NaN
+Global_RHS_Rel_Error_inf =
+   NaN
+{Warning: Integer operands are required for colon operator when used as index} 
+> In <a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/stokes/fillRHS.m',94,1)">fillRHS at 94</a>
+s =
+   1.4077e+03
+{Warning: Integer operands are required for colon operator when used as index} 
+> In <a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/stokes/fillRHS.m',96,1)">fillRHS at 96</a>
+s =
+   3.6723e+03
+ans =
+   3.6723e+03
+RHS_U_rel_err_l1 =
+   4.7303e-05
+RHS_U_rel_err_l2 =
+   6.2193e-05
+RHS_U_rel_err_linf =
+   1.8688e-04
+RHS_V_rel_err_l1 =
+   4.7870e-05
+RHS_V_rel_err_l2 =
+   6.2733e-05
+RHS_V_rel_err_linf =
+   1.9712e-04
+RHS_W_rel_err_l1 =
+   NaN
+RHS_W_rel_err_l2 =
+   NaN
+RHS_W_rel_err_linf =
+   NaN
+RHS_P_abs_err_l1 =
+   Inf
+RHS_P_abs_err_l2 =
+   Inf
+RHS_P_abs_err_linf =
+   Inf
+[RC, RD, UC] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
+
+
+--> Checking Relative Error of RHS: 
+Global_RHS_Rel_Error_1 =
+   8.2916e-05
+Global_RHS_Rel_Error_2 =
+   1.3787e-04
+Global_RHS_Rel_Error_inf =
+    0.0020
+RHS_U_rel_err_l1 =
+   4.7303e-05
+RHS_U_rel_err_l2 =
+   6.2193e-05
+RHS_U_rel_err_linf =
+   1.8688e-04
+RHS_V_rel_err_l1 =
+   4.7870e-05
+RHS_V_rel_err_l2 =
+   6.2733e-05
+RHS_V_rel_err_linf =
+   1.9712e-04
+RHS_W_rel_err_l1 =
+   1.0443e-04
+RHS_W_rel_err_l2 =
+   1.1847e-04
+RHS_W_rel_err_linf =
+   4.6269e-04
+RHS_P_abs_err_l1 =
+   Inf
+RHS_P_abs_err_l2 =
+   Inf
+RHS_P_abs_err_linf =
+   Inf
+[RC, RD, UC] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
+
+
+--> Checking Relative Error of RHS: 
+Global_RHS_Rel_Error_1 =
+   8.2916e-05
+Global_RHS_Rel_Error_2 =
+   1.3787e-04
+Global_RHS_Rel_Error_inf =
+    0.0020
+RHS_U_rel_err_l1 =
+   4.7303e-05
+RHS_U_rel_err_l2 =
+   6.2193e-05
+RHS_U_rel_err_linf =
+   1.8688e-04
+RHS_V_rel_err_l1 =
+   4.7870e-05
+RHS_V_rel_err_l2 =
+   6.2733e-05
+RHS_V_rel_err_linf =
+   1.9712e-04
+RHS_W_rel_err_l1 =
+   1.0443e-04
+RHS_W_rel_err_l2 =
+   1.1847e-04
+RHS_W_rel_err_linf =
+   4.6269e-04
+RHS_P_abs_err_l1 =
+   40.0821
+RHS_P_abs_err_l2 =
+    0.7400
+RHS_P_abs_err_linf =
+    0.0822
+[RC, RD, UC] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
+
+
+--> Checking Relative Error of RHS: 
+Global_RHS_Rel_Error_1 =
+   8.2916e-05
+Global_RHS_Rel_Error_2 =
+   1.3787e-04
+Global_RHS_Rel_Error_inf =
+    0.0020
+RHS_U_rel_err_l1 =
+   4.7303e-05
+RHS_U_rel_err_l2 =
+   6.2193e-05
+RHS_U_rel_err_linf =
+   1.8688e-04
+RHS_V_rel_err_l1 =
+   4.7870e-05
+RHS_V_rel_err_l2 =
+   6.2733e-05
+RHS_V_rel_err_linf =
+   1.9712e-04
+RHS_W_rel_err_l1 =
+   1.0443e-04
+RHS_W_rel_err_l2 =
+   1.1847e-04
+RHS_W_rel_err_linf =
+   4.6269e-04
+RHS_P_abs_err_l1 =
+   40.0821
+RHS_P_abs_err_l2 =
+    0.7400
+RHS_P_abs_err_linf =
+    0.0822
+stokes_driver
+Making directory: ./newsol_N10201_n31_eta1/
+{Warning: File './newsol_N10201_n31_eta1/runlog.txt' not found.} 
+> In <a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/stokes/stokes_driver.m',62,1)">stokes_driver at 62</a>

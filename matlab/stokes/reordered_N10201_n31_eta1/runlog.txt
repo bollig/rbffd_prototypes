@@ -1,0 +1,22 @@
+Using RBF Support Parameter ep=3.435000
+Calculating weights (N=10201, n=31, ep=3.435000, hv_k=4, hv_gamma=8.000000e+02)
+Elapsed time is 6.988986 seconds.
+Filling LHS Collocation Matrix
+Allocate LHS
+Fill COL 1
+Fill COL 2
+Fill COL 3
+Fill COL 4
+Fill EXTRA CONSTRAINTS
+Construct Sparse From Tuples
+Over-Allocation for LHS (2927687 expected - 2927625 actual elements): -2.34 KB
+Sample DIV Operator
+Elapsed time is 1.296869 seconds.
+Printing figure: ./reordered_N10201_n31_eta1/LHS
+Printing figure: ./reordered_N10201_n31_eta1/LHS
+Printing figure: ./reordered_N10201_n31_eta1/LHS_10to50
+Printing figure: ./reordered_N10201_n31_eta1/LHS_10to50
+stokes_driver
+Making directory: ./original_N10201_n31_eta1/
+{Warning: Directory already exists.} 
+> In <a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/stokes/stokes_driver.m',60,1)">stokes_driver at 60</a>

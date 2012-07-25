@@ -1,0 +1,25 @@
+Using RBF Support Parameter ep=1.020000
+Calculating weights (N=1024, n=31, ep=1.020000, hv_k=4, hv_gamma=8.000000e+02)
+Dimension not specified, assuming maximum allowed by nodes: 3
+Elapsed time is 0.599197 seconds.
+Filling LHS Collocation Matrix
+Allocate LHS
+Fill COL 1
+Fill COL 2
+Fill COL 3
+Fill COL 4
+Fill EXTRA CONSTRAINTS
+Construct Sparse From Tuples
+Over-Allocation for LHS (293888 expected - 293826 actual elements): 6888.00 KB
+Sample DIV Operator
+Elapsed time is 0.172372 seconds.
+Printing figure: ./newsol_N1024_n31_eta1/LHS
+Printing figure: ./newsol_N1024_n31_eta1/LHS
+Filling RHS Vector
+{??? Operation terminated by user during ==> <a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/stokes/fillRHS.m',121,0)">fillRHS at 121</a>
+
+In ==> <a href="matlab: opentoline('/Users/efb06/rbffd_prototypes/matlab/stokes/stokes_driver.m',152,0)">stokes_driver at 152</a>
+[RHS_continuous, RHS_discrete, U_exact] = fillRHS(nodes, LHS, constantViscosity, eta, 0);
+} 
+stokes_driver
+Making directory: ./newsol_N4096_n31_eta1/

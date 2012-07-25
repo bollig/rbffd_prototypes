@@ -1,0 +1,58 @@
+Using RBF Support Parameter ep=5.698000
+Calculating weights (N=10201, n=110, ep=5.698000, hv_k=4, hv_gamma=4.000000e+01)
+Dimension not specified, assuming maximum allowed by nodes: 3
+Elapsed time is 19.698135 seconds.
+Filling LHS Collocation Matrix
+Allocate LHS
+Fill COL 1
+Fill COL 2
+Fill COL 3
+Fill COL 4
+Fill EXTRA CONSTRAINTS
+Construct Sparse From Tuples
+Over-Allocation for LHS (10180598 expected - 10180378 actual elements): 238607.77 KB
+Sample DIV Operator
+Elapsed time is 4.827261 seconds.
+Printing figure: ./newsol_N10201_n110_eta1/LHS
+Printing figure: ./newsol_N10201_n110_eta1/LHS
+Filling RHS Vector
+
+
+--> Checking Relative Error of RHS: 
+nan_detected_in_RHS_continuous_index =
+       20403
+Global_RHS_Rel_Error_1 =
+   3.6874e-07
+Global_RHS_Rel_Error_2 =
+   3.3038e-07
+Global_RHS_Rel_Error_inf =
+   6.2498e-07
+RHS_U_rel_err_l1 =
+   3.7783e-07
+RHS_U_rel_err_l2 =
+   4.0246e-07
+RHS_U_rel_err_linf =
+   1.2201e-06
+RHS_V_rel_err_l1 =
+   3.7426e-07
+RHS_V_rel_err_l2 =
+   3.9643e-07
+RHS_V_rel_err_linf =
+   6.5132e-07
+RHS_W_rel_err_l1 =
+   3.5099e-07
+RHS_W_rel_err_l2 =
+   3.1656e-07
+RHS_W_rel_err_linf =
+   6.2498e-07
+RHS_P_rel_err_l1 =
+    0.1874
+RHS_P_rel_err_l2 =
+    0.0025
+RHS_P_rel_err_linf =
+   1.3070e-04
+Elapsed Time: 0.257356
+Printing figure: ./newsol_N10201_n110_eta1/RHS
+Printing figure: ./newsol_N10201_n110_eta1/RHS_discrete
+Printing figure: ./newsol_N10201_n110_eta1/RHS_AbsError
+Printing figure: ./newsol_N10201_n110_eta1/U_exact

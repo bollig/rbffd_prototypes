@@ -1,0 +1,100 @@
+Using RBF Support Parameter ep=1.020000
+Calculating weights (N=1024, n=31, ep=1.020000, hv_k=4, hv_gamma=8.000000e+02)
+Dimension not specified, assuming maximum allowed by nodes: 3
+Elapsed time is 0.851260 seconds.
+Filling LHS Collocation Matrix
+Allocate LHS
+Fill COL 1
+Fill COL 2
+Fill COL 3
+Fill COL 4
+Fill EXTRA CONSTRAINTS
+Construct Sparse From Tuples
+Over-Allocation for LHS (293888 expected - 293826 actual elements): 7456.00 KB
+Sample DIV Operator
+Elapsed time is 0.149091 seconds.
+Printing figure: ./direct_convergence_N1024_n31_eta1/LHS
+Printing figure: ./direct_convergence_N1024_n31_eta1/LHS
+Filling RHS Vector
+
+
+--> Checking Relative Error of RHS: 
+nan_detected_in_RHS_continuous_index =
+        2049
+Global_RHS_Rel_Error_1 =
+    0.0467
+Global_RHS_Rel_Error_2 =
+    0.0611
+Global_RHS_Rel_Error_inf =
+    0.0805
+RHS_U_rel_err_l1 =
+    0.0267
+RHS_U_rel_err_l2 =
+    0.0336
+RHS_U_rel_err_linf =
+    0.0404
+RHS_V_rel_err_l1 =
+    0.0273
+RHS_V_rel_err_l2 =
+    0.0347
+RHS_V_rel_err_linf =
+    0.0399
+RHS_W_rel_err_l1 =
+    0.0584
+RHS_W_rel_err_l2 =
+    0.0646
+RHS_W_rel_err_linf =
+    0.0805
+RHS_P_rel_err_l1 =
+   5.0905e+03
+RHS_P_rel_err_l2 =
+  255.7357
+RHS_P_rel_err_linf =
+   42.9909
+Elapsed Time: 0.053057
+Printing figure: ./direct_convergence_N1024_n31_eta1/RHS
+Printing figure: ./direct_convergence_N1024_n31_eta1/RHS_discrete
+Printing figure: ./direct_convergence_N1024_n31_eta1/RHS_AbsError
+Printing figure: ./direct_convergence_N1024_n31_eta1/U_exact
+Solving Lu=F
+ans =
+   -32
+ans =
+  724.2600
+ans =
+   -3.8444
+ans =
+    3.8444
+Direct Solve		 Elapsed Time: 0.704229 seconds
+Printing figure: ./direct_convergence_N1024_n31_eta1/U_computed
+
+
+--> Checking Relative Error of Computed Solution: 
+U_rel_err_l1 =
+    0.8803
+U_rel_err_l2 =
+    0.8233
+U_rel_err_linf =
+    0.6580
+V_rel_err_l1 =
+    0.6371
+V_rel_err_l2 =
+    0.6696
+V_rel_err_linf =
+    0.6974
+W_rel_err_l1 =
+    0.5469
+W_rel_err_l2 =
+    0.5639
+W_rel_err_linf =
+    0.8599
+P_rel_err_l1 =
+  306.1194
+P_rel_err_l2 =
+  336.7871
+P_rel_err_linf =
+  763.1936
+
+
+Printing figure: ./direct_convergence_N1024_n31_eta1/U_AbsError
+Printing figure: ./direct_convergence_N1024_n31_eta1/U_RelError
