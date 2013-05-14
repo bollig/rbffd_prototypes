@@ -247,13 +247,13 @@ for j=1:N
     %weights = UA\(LA\(P*B));
     %% SAME THING INTERNALLY AS CALLING LU(A) and APPLYING AS WE DO ABOVE, BUT
     %THIS PERFORMS SLIGHTLY BETTER BECAUSE THE LU STAYS AT THE NATIVE LEVEL
-    weights = A\B 
+    weights = A\B ;
   
     % Put each weight type into its own DM page (NOTE: could be useful to
     % access these instead of the Matlab sparse representation (or, say,
     % to make my own sparse rep)
     for windx=1:length(which)
-        weights_temp(1:n,j,windx) = weights(1:n,windx);
+        weights_temp(1:n,j,windx) = weights(1:n,windx) * h_scale;
     end
     
     if computeSFCOperators
