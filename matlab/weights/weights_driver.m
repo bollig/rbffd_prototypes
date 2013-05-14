@@ -26,7 +26,7 @@ dim = 2;
 %nodes = load('~/GRIDS/md/md006.00049');
 %nodes = load('~/GRIDS/md/md009.00100');
 %nodes = load('~/GRIDS/md/md019.00400');
-%nodes = load('~/GRIDS/md/md031.01024');
+nodes = load('~/GRIDS/md/md031.01024');
 %nodes = load('~/GRIDS/md/md031.01024');
 %nodes = load('~/GRIDS/md/md050.02601'); 
 %nodes = load('~/GRIDS/md/md059.03600'); 
@@ -35,7 +35,7 @@ dim = 2;
 %nodes = load('~/GRIDS/md/md089.08100'); 
 %nodes = load('~/GRIDS/md/md099.10000');
 %nodes = load('~/GRIDS/md/md122.15129');
-nodes = load('~/GRIDS/md/md159.25600');
+%nodes = load('~/GRIDS/md/md159.25600');
 
 %nodes = load('~/GRIDS/icos/icos42.mat');
 %nodes = load('~/GRIDS/icos/icos162.mat');
@@ -73,15 +73,13 @@ kappa = 1e13;
 beta = (1/-(2 * floor( ( sqrt(8*fdsize - 7) - 1) / 2)));
 ep_alt = kappa^beta;
 
-
-global RBFFD_WEIGHTS2;
-
-fprintf('Calculating weights (N=%d, n=%d, ep=%f, hv_k=%d, hv_gamma=%e)\n', N, fdsize, ep, hv_k, hv_gamma); 
-tic
-[weights_available, nodes] = ParallelWeights({'lsfc', 'xsfc', 'ysfc', 'zsfc'}, N, nodes, fdsize, ep, hv_k);
-toc
-
-
+% 
+%     global RBFFD_WEIGHTS2;
+% 
+%     fprintf('Calculating weights (N=%d, n=%d, ep=%f, hv_k=%d, hv_gamma=%e)\n', N, fdsize, ep, hv_k, hv_gamma); 
+%     tic
+%     [weights_available, nodes] = ParallelWeights({'lsfc', 'xsfc', 'ysfc', 'zsfc'}, N, nodes, fdsize, ep, hv_k);
+%     toc
 
 % We declare this to be global so we can use the weights produced in the
 % following subroutine. 
@@ -92,8 +90,14 @@ global RBFFD_WEIGHTS;
 % We replace the nodes JUST IN CASE our weight calculator re-orders them
 % for cache optimality. 
 fprintf('Calculating weights (N=%d, n=%d, ep=%f, hv_k=%d, hv_gamma=%e)\n', N, fdsize, ep, hv_k, hv_gamma); 
+
+global RBFFD_WEIGHTS2;
+[weights_available, nodes] = Calc_RBFFD_Weights_Unit_Circle({'lsfc'}, N, nodes, fdsize, 2, hv_k);
+
+
 tic
-[weights_available, nodes] = Calc_RBFFD_Weights({'lsfc', 'xsfc', 'ysfc', 'zsfc'}, N, nodes, fdsize, ep, hv_k);
+%[weights_available, nodes] = Calc_RBFFD_Weights({'lsfc', 'xsfc', 'ysfc', 'zsfc'}, N, nodes, fdsize, ep, hv_k);
+[weights_available, nodes] = Calc_RBFFD_Weights({'lsfc'}, N, nodes, fdsize, ep, hv_k);
 toc
 
 

@@ -15,4 +15,8 @@ function [disttbl] = distmat(nodes)
         end
         disttbl(:,j) = sqrt(d2);
     end
+
+    %disttbl
+    %plot3(nodes(:,1), nodes(:,2), nodes(:,3), '.'); 
+    %pause
 end
