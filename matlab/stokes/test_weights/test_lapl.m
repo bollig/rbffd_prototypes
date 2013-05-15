@@ -62,7 +62,8 @@ dim = 2;
     clearvars -global RBFFD_WEIGHTS; 
     clear weights_available;
     global RBFFD_WEIGHTS;
-
+    global RBFFD_WEIGHTS2;
+    
 for i = 1:size(test_cases,1)
     test = test_cases(i,:);
     
@@ -79,7 +80,10 @@ for i = 1:size(test_cases,1)
     fprintf('Calculating weights (N=%d, n=%d, ep=%f, hv_k=%d, hv_gamma=%e)\n', N, fdsize, ep, hv_k, hv_gamma); 
     tic
     [weights_available, nodes] = Calc_RBFFD_Weights({'lsfc','xsfc','ysfc','zsfc'}, N, nodes, fdsize, ep, hv_k);
+    [weights_available, nodes] = Calc_RBFFD_Weights_Unit_Circle({'lsfc','xsfc','ysfc','zsfc'}, N, nodes, fdsize, 4, hv_k);
     toc
+    
+    RBFFD_WEIGHTS = RBFFD_WEIGHTS2; 
     
     Xx = nodes(:,1); 
     Yy = nodes(:,2); 

@@ -144,7 +144,7 @@ for j=1:N
     %scale to put farthest node on unit circle. Everything else is interior. 
     x_n = nodes(idx(end),:);
     x_c = nodes(idx(1),:);
-    h_scale = sqrt(sum ((x_n - x_c).^2))
+    h_scale = sqrt(sum ((x_n - x_c).^2));
     
     % Euclidean distance matrix
     %dist = distmat(nodes(idx,:)); %sqrt(max(0,2*(1-nodes(idx,1)*nodes(idx,1).'-nodes(idx,2)*nodes(idx,2).'-nodes(idx,3)*nodes(idx,3).')));
@@ -158,7 +158,8 @@ for j=1:N
     stencil_nodes = nodes(imat,:) ./ h_scale;
     [n dim] = size(stencil_nodes); 
 
-    rd = distmat(stencil_nodes(:,:)); %sqrt(max(0,2*(1-nodes(imat,1)*nodes(imat,1).'-nodes(imat,2)*nodes(imat,2).'-nodes(imat,3)*nodes(imat,3).')));
+    %rd = distmat(stencil_nodes(:,:)); %sqrt(max(0,2*(1-nodes(imat,1)*nodes(imat,1).'-nodes(imat,2)*nodes(imat,2).'-nodes(imat,3)*nodes(imat,3).')));
+    rd = DistanceMatrixA(nodes(imat,:), nodes(imat,:));
     
     %% The euclidean distances for each node from the stencil center
     rdv = rd(:,1);
@@ -252,8 +253,12 @@ for j=1:N
     % Put each weight type into its own DM page (NOTE: could be useful to
     % access these instead of the Matlab sparse representation (or, say,
     % to make my own sparse rep)
+    %
+    % No need to scale the weights back with the h_scale since we require that
+    % they sum to 0. If we did not require that, then we might need the
+    % constant to keep the derivative scaled down. The weights `
     for windx=1:length(which)
-        weights_temp(1:n,j,windx) = weights(1:n,windx) * h_scale;
+        weights_temp(1:n,j,windx) = weights(1:n,windx) ;
     end
     
     if computeSFCOperators
