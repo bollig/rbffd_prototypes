@@ -92,7 +92,7 @@ global RBFFD_WEIGHTS;
 fprintf('Calculating weights (N=%d, n=%d, ep=%f, hv_k=%d, hv_gamma=%e)\n', N, fdsize, ep, hv_k, hv_gamma); 
 
 global RBFFD_WEIGHTS2;
-[weights_available, nodes] = Calc_RBFFD_Weights_Unit_Circle({'lsfc'}, N, nodes, fdsize, 1.0, hv_k);
+[weights_available, nodes] = Calc_RBFFD_Weights_Unit_Circle({'lsfc'}, N, nodes, fdsize, 0.25, hv_k);
 
 
 tic

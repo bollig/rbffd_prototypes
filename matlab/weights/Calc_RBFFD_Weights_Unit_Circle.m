@@ -159,7 +159,7 @@ for j=1:N
     [n dim] = size(stencil_nodes); 
 
     %rd = distmat(stencil_nodes(:,:)); %sqrt(max(0,2*(1-nodes(imat,1)*nodes(imat,1).'-nodes(imat,2)*nodes(imat,2).'-nodes(imat,3)*nodes(imat,3).')));
-    rd = DistanceMatrixA(nodes(imat,:), nodes(imat,:));
+    rd = DistanceMatrixA(stencil_nodes, stencil_nodes);
     
     %% The euclidean distances for each node from the stencil center
     rdv = rd(:,1);
@@ -179,15 +179,15 @@ for j=1:N
         switch dertype
             case 'x'
                 % X separation
-                xdv = nodes(imat,1) - nodes(imat(1),1);
+                xdv = stencil_nodes(:,1) - stencil_nodes(1,1);
                 B(1:n,windx) = rbf.DphiDx(ep, rdv, xdv);
             case 'xsfc'
                 % Same as X but we project the operator following Flyer,
                 % Wright 2009 (A Radial Basis Function Method for the
                 % Shallow Water Equations on a Sphere)
                 % This line is (X'X_k)' = (X_k'X)
-                X_k = nodes(imat,:); 
-                X = nodes(imat(1),:);
+                X_k = stencil_nodes(:,:); 
+                X = stencil_nodes(1,:);
                 xTx_k = X_k * X'; 
                 % We seek: (x_k - x * (X'X_k)) {See handout}
                 xdv = X(:,1).*xTx_k - X_k(:,1); 
@@ -197,8 +197,8 @@ for j=1:N
                 % Wright 2009 (A Radial Basis Function Method for the
                 % Shallow Water Equations on a Sphere)
                 % This line is (X'X_k)' = (X_k'X)
-                X_k = nodes(imat,:);
-                X = nodes(imat(1),:);
+                X_k = stencil_nodes(:,:);
+                X = stencil_nodes(1,:);
                 xTx_k = X_k * X';
                 % We seek: (y_k - y * (X'X_k)) {See handout}
                 ydv = X(:,2).*xTx_k - X_k(:,2);
@@ -208,19 +208,19 @@ for j=1:N
                 % Wright 2009 (A Radial Basis Function Method for the
                 % Shallow Water Equations on a Sphere)
                 % This line is (X'X_k)' = (X_k'X)
-                X_k = nodes(imat,:);
-                X = nodes(imat(1),:);
+                X_k = stencil_nodes(:,:);
+                X = stencil_nodes(1,:);
                 xTx_k = X_k * X';
                 % We seek: (z_k - z * (X'X_k)) {See handout}
                 xdv = X(:,3).*xTx_k - X_k(:,3);
                 B(1:n,windx) = xdv .* rbf.Dphi_Dr_times_r_inv(ep, rdv);
             case 'y'
                 % Y separation
-                xdv = nodes(imat,2) - nodes(imat(1),1);
+                xdv = stencil_nodes(:,2) - stencil_nodes(1,1);
                 B(1:n,windx) = rbf.DphiDx(ep, rdv, xdv);
             case 'z'
                 % Z separation
-                xdv = nodes(imat,3) - nodes(imat(1),1);
+                xdv = stencil_nodes(:,3) - stencil_nodes(1,1);
                 B(1:n,windx) = rbf.DphiDx(ep, rdv, xdv);
             case {'theta', 'lambda'}
                 [lam_j,th_j,temp] = cart2sph(nodes(idx,1),nodes(idx,2),nodes(idx,3));
