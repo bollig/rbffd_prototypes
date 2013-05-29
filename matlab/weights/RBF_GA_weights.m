@@ -27,13 +27,14 @@ function [] = RBF_GA_weights(nodes, stencil, dim, epsilon)
     [A_GA] = Assemble_LHS(P_max_k, dim, max_k, nodes(:,1:dim), stencil, epsilon);
     A_GA = [A_GA ones(size(stencil,2),1); ones(1,size(stencil,2)) 0]; 
     cond(A_GA)
-    w2 = A_GA \ ones(size(stencil,2) + 1, 1)
+    w2 = A_GA \ [ones(size(stencil,2), 1);0]
      
    
-    norm(w1 - w2(1:size(stencil,2)), 1)
-    norm(w1 - w2(1:size(stencil,2)), 2)
-    norm(w1 - w2(1:size(stencil,2)), inf)
-    rbf(0, 0.1)
+   l1 =  norm(w1 - w2(1:size(stencil,2)), 1)
+   l2 =  norm(w1 - w2(1:size(stencil,2)), 2)
+   linf = norm(w1 - w2(1:size(stencil,2)), inf)
+   sum(w1)
+   sum(w2(1:end-1))
 end
 
 function [val] = rbf(X,epsilon)
@@ -94,8 +95,14 @@ function [B_sub_k] = Get_B_k(P_max_k, dim, k)
 %% Returns the sub-block B_k from the matrix P_max_k
     if k > 0
         [B_sub_k__nrows, B_sub_k__ncols] = Get_Dims_for_k(dim, k);
-        B_sub_k = P_max_k(1:B_sub_k__nrows,1:B_sub_k__ncols);
-        B_sub_k = null(B_sub_k)';
+        P_sub_k = P_max_k(1:B_sub_k__nrows,1:B_sub_k__ncols);
+
+        % As suggested, use QR for faster null space
+        [Q R] = qr(P_sub_k'); 
+        [m n] = size(R);
+
+        B_sub_k = Q(:,n+1:m)';
+        %B_sub_k = null(P_sub_k)';
     else 
         B_sub_k = 1;
     end
