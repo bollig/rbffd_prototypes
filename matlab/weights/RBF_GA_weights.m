@@ -33,8 +33,8 @@ function [] = RBF_GA_weights(nodes, stencil, dim, epsilon)
    l1 =  norm(w1 - w2(1:size(stencil,2)), 1)
    l2 =  norm(w1 - w2(1:size(stencil,2)), 2)
    linf = norm(w1 - w2(1:size(stencil,2)), inf)
-   sum(w1)
-   sum(w2(1:end-1))
+   sum_no_monomials = sum(w1)
+   sum_w_monomial = sum(w2(1:end-1))
 end
 
 function [val] = rbf(X,epsilon)
