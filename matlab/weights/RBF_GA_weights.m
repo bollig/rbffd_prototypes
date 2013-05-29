@@ -2,6 +2,12 @@ function [] = RBF_GA_weights(nodes, stencil, dim, epsilon)
 
 %% The RBF-GA (Gamma Incomplete for Gaussian RBF-FD), based on Fornberg, Lehto and Powell 2012
 % 
+%% d = 3
+%% p = haltonset(d,'Skip',1e3,'Leap',1e2)
+%% nodes = net(p,120)
+%% stencil = [1:50]
+%% plot3(nodes(stencil,1), nodes(stencil,2), nodes(stencil,3), '.')
+%% RBF_GA_weights(nodes, stencil, d, 0.4)
 
     % Get the full B_k from which all other B_k's will be drawn
     [P_max_k, max_k] = Build_P_max_k(nodes(:,1:dim), stencil, dim);
@@ -14,9 +20,18 @@ function [] = RBF_GA_weights(nodes, stencil, dim, epsilon)
 %         sub_k = sub_k - 1;
 %     end
   
+    [A_GA] = Assemble_LHS(P_max_k, dim, max_k, nodes(:,1:dim), stencil, 1);
+    cond(A_GA)
+    w1 = A_GA \ ones(size(stencil,2), 1)
+    
     [A_GA] = Assemble_LHS(P_max_k, dim, max_k, nodes(:,1:dim), stencil, epsilon);
     cond(A_GA)
-    A_GA \ ones(size(stencil,2), 1)
+    w2 = A_GA \ ones(size(stencil,2), 1)
+     
+   
+    norm(w1 - w2, 1)
+    norm(w1 - w2, 2)
+    norm(w1 - w2, inf)
 end
 
 function [val] = rbf(X,epsilon)
