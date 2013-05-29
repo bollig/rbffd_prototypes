@@ -1,4 +1,8 @@
 function [B_max_k, max_k] = RBF_GA_weights(nodes, stencil, dim)
+%% The RBF-GA (Gamma Incomplete for Gaussian RBF-FD), based on Fornberg, Lehto and Powell 2012
+% 
+% Detects necessary $k$ based on stencil size
+% Assembles B_k given dimension, $d$, $k$ and stencil of nodes
 
 % Dimension
 d = dim;
@@ -37,7 +41,8 @@ if max_k
     % available
     B_n__ncols = min(nchoosek(d+max_k, d), n)
 
-    B_max_k = zeros(B_n__nrows, B_n__ncols);
+   B_max_k = zeros(B_n__nrows, nchoosek(d+max_k, d));
+    %B_max_k = zeros(B_n__nrows, B_n__ncols);
 
     if 0
     %if d == 2
@@ -54,7 +59,7 @@ if max_k
                 %qq
                 row1 = nodes(1:B_n__ncols,1)';
                 row2 = nodes(1:B_n__ncols,2)';
-                B_max_k(nrow+(pp),:) = (row1).^(qq) .* (row2).^(pp);
+                B_max_k(nrow+(pp),1:B_n__ncols) = (row1).^(qq) .* (row2).^(pp);
                 qq = qq - 1;
             end
             nrow = nrow + kk
@@ -73,38 +78,53 @@ if max_k
         p = max_k-1;
         [outArgs{1:d}] = ndgrid(0:p);
         % The UniformOutput is false because our cells change shape
-        powers = cell2mat(cellfun(@(x) x(:), outArgs, 'UniformOutput', false));
-        % Filter off unnecessary combinations.
-        powers = powers(sum(powers,2) <= p,:)
+        polypowers = cell2mat(cellfun(@(x) x(:), outArgs, 'UniformOutput', false));
         
-        for nrow=1:size(powers,1)
+        % Filter off unnecessary combinations.
+        polypowers = polypowers(sum(polypowers,2) <= p,:)
+        
+        % This sorting is unnecessary, but it allow us to recover the sub
+        % B_k's faster because they will originate in the left corner of
+        % this matrix.
+        [junk ii] = sort(sum(polypowers,2));
+        polypowers = polypowers(ii,:)
+        
+        for nrow=1:size(polypowers,1)
             row = ones(1,B_n__ncols);
             for nd=1:d
-                %powers(nrow,:)
-                %powers(nrow,d)
-                %nodes(stencil, nd)
-                %nodes(stencil,nd).^(powers(nrow,nd))
-                row = row .* (nodes(stencil,nd).^(powers(nrow,nd)))';
+                row = row .* (nodes(stencil,nd).^(polypowers(nrow,nd)))';
             end
             % Now we have a matrix of powers, we need to translate them into
             % powers for our assembled B_k: 
             %   each row provides the powers for a row of B_k
-            B_max_k(nrow,:) = row;
+            B_max_k(nrow,1:B_n__ncols) = row;
         end
     end
+    
+    
+    % Here we acquire the sub matrix B_{k-1}:
+    sub_k = max_k - 2; 
+    % We use a filter based on teh polypowers to safely filter rows assuming
+    % odd ordering could happen. Although, we also sort above to ensure this is
+    % never truly required.
+    ind_for_k = sum(polypowers,2) <= sub_k
+    B_sub_k__ncols = nchoosek(d+(max_k-1), d);
+    if B_sub_k__ncols > 1
+        B_sub_k = B_max_k(ind_for_k(:,1),1:nchoosek(d+(max_k-1), d));
+    else 
+        B_sub_k = 1;
+    end 
+
+    B_sub_k
+    
+    
 else 
     B_max_k = 1;
 end
 
 sz = size(B_max_k)
 
-%q = 0
-%for p=2:-1:0
-%    append x.^p y.^q
-%    q = q+1
 
-% rank of kth set
-%r_k = 
 
 % 
 %z =
