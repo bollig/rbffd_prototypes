@@ -4,15 +4,15 @@ function [] = RBF_GA_weights(nodes, stencil, dim, epsilon)
 % 
 
     % Get the full B_k from which all other B_k's will be drawn
-    [P_max_k, max_k] = Build_P_max_k(nodes(:,1:dim), stencil, dim)
+    [P_max_k, max_k] = Build_P_max_k(nodes(:,1:dim), stencil, dim);
 
-    % Here we acquire the sub matrix B_{k-1} = null(P_k), where P_k is subset of P_max_k:
-    sub_k = max_k - 1;
-    while sub_k >= 0
-        [B_sub_k] = Get_B_k(P_max_k, dim, sub_k)
-       
-        sub_k = sub_k - 1;
-    end
+%     % Here we acquire the sub matrix B_{k-1} = null(P_k), where P_k is subset of P_max_k:
+%     sub_k = max_k - 1;
+%     while sub_k >= 0
+%         [B_sub_k] = Get_B_k(P_max_k, dim, sub_k)
+%        
+%         sub_k = sub_k - 1;
+%     end
   
     [A_GA] = Assemble_LHS(P_max_k, dim, max_k, nodes(:,1:dim), stencil, epsilon);
     cond(A_GA)
@@ -30,7 +30,7 @@ function [A_GA] = Assemble_LHS(P_max_k, dim, k, nodes, stencil, epsilon)
 %% Assembles the LHS matrix that will be solved for RBF-GA weights
     [m n] = size(stencil); 
 
-    A_GA = ones(n, n)
+    A_GA = ones(n, n);
     cur_basis_indx = 1; 
     
     for kk = 0:k 
@@ -41,30 +41,30 @@ function [A_GA] = Assemble_LHS(P_max_k, dim, k, nodes, stencil, epsilon)
 
             B_k__ncols = min(n, B_k__ncols); 
             
-            B_k = B_k(:,1:B_k__ncols)
+            B_k = B_k(:,1:B_k__ncols);
             
             X_c = nodes(stencil(1:B_k__ncols),:);
             X = nodes(stencil(1:end),:);
 
             z = 2*epsilon.^2 * X * X_c';
-            G_k = gammainc(z,kk)'
+            G_k = gammainc(z,kk)';
             
             % Make sure we only use the subset of the B_k necessary for
             % the stencil
-            BG_prod = ( B_k(:,1:B_k__ncols) * G_k)
+            BG_prod = ( B_k(:,1:B_k__ncols) * G_k);
             
             % The power on 1/epsilon is not obvious. I will need to contact Natasha and
             % Bengt for an idea of how it scales. 
 
             for j = 0:B_k__nrows-1
-                if (cur_basis_indx+j < n) 
-                    eps_scale_fact = 2.^kk
+                if (cur_basis_indx+j <= n) 
+                    eps_scale_fact = 2.^kk;
                     
                     A_GA(cur_basis_indx + j,:) = BG_prod(j+1,:) .* (rbf(nodes(stencil,:),epsilon) .* (1/(epsilon.^(eps_scale_fact))))';
                 end
             end
             cur_basis_indx = cur_basis_indx + B_k__nrows; 
-            A_GA
+           % A_GA
     end
 
 end
@@ -75,7 +75,7 @@ function [B_sub_k] = Get_B_k(P_max_k, dim, k)
     if k > 0
         [B_sub_k__nrows, B_sub_k__ncols] = Get_Dims_for_k(dim, k);
         B_sub_k = P_max_k(1:B_sub_k__nrows,1:B_sub_k__ncols);
-        B_sub_k = null(B_sub_k,'r')';
+        B_sub_k = null(B_sub_k)';
     else 
         B_sub_k = 1;
     end
@@ -96,21 +96,17 @@ function [P_max_k, max_k] = Build_P_max_k(nodes, stencil, dim)
 d = dim;
 
 % Stencil size
-n = size(stencil, 2)
+n = size(stencil, 2);
 
 % Basis set index
 max_k = 0;
-nn = nchoosek(d+max_k, d)
+nn = nchoosek(d+max_k, d);
 
 % A quick iteration can get us the max B_k required for the expansion.
 while nn < n 
     max_k = max_k + 1;
-    nn = nchoosek(d+max_k, d)
+    nn = nchoosek(d+max_k, d);
 end
-
-%nn 
-%n
-
 
 % Row and column counts for B_k
 % Fornberg paper has nrows as nchoosek(d+max_k-1, d-1), 
@@ -120,11 +116,11 @@ end
 %    k starts at 0, ends at max_k - 1. 
 %    the dimensions are given by: [nchoosek(d+k-1, d)-by-nchoosek(d+k,d)] 
 %       so long as the maximum k required is > 0. For max_k = 0, B_0=[1]
-max_k
+%max_k
 
 % NOTE: max_k is already adjusted by 1.
 if max_k 
-    [B_n__nrows, B_n__ncols] = Get_Dims_for_k(d, max_k)
+    [B_n__nrows, B_n__ncols] = Get_Dims_for_k(d, max_k);
     % B_n__nrows = nchoosek(d+max_k-1, d)
     % NOTE: We truncate the matrix if it exceeds the number of stencil nodes
     % available
@@ -151,13 +147,13 @@ if max_k
     polypowers = cell2mat(cellfun(@(x) x(:), outArgs, 'UniformOutput', false));
 
     % Filter off unnecessary combinations.
-    polypowers = polypowers(sum(polypowers,2) <= p,:)
+    polypowers = polypowers(sum(polypowers,2) <= p,:);
 
     % This sorting is unnecessary, but it allow us to recover the sub
     % B_k's faster because they will originate in the left corner of
     % this matrix and be a contiguous rectangular block.
     [junk ii] = sort(sum(polypowers,2));
-    polypowers = polypowers(ii,:)
+    polypowers = polypowers(ii,:);
 
     for nrow=1:size(polypowers,1)
         row = ones(1,B_n__ncols);
@@ -189,6 +185,6 @@ else
     P_max_k = 1;
 end
 
-sz = size(P_max_k)
+%sz = size(P_max_k)
 
 end
