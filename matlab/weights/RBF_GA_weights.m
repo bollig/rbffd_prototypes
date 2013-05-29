@@ -69,23 +69,22 @@ function [A_GA] = Assemble_LHS(P_max_k, dim, k, nodes, stencil, epsilon)
             
             % Make sure we only use the subset of the B_k necessary for
             % the stencil
-            BG_prod = ( B_k(:,1:B_k__ncols) * G_k)
+            BG_prod = ( B_k(:,1:B_k__ncols) * G_k);
             
             % The power on 1/epsilon is not obvious. I will need to contact Natasha and
             % Bengt for an idea of how it scales. 
 
             for j = 0:B_k__nrows-1
                 if (cur_basis_indx+j <= n) 
-                    kk
-                    rbf_sample = rbf(nodes(stencil,:),epsilon); 
-                    % this gives: 0, 2, 4, ...
                     
+                    rbf_sample = rbf(nodes(stencil,:),epsilon); 
+                    % this gives: 1/eps^0, 2, 4, ...
                     epsilon_scale_fact = epsilon.^(-(kk)*2);
                     A_GA(cur_basis_indx + j,:) = BG_prod(j+1,:) .* (rbf_sample * epsilon_scale_fact)';
                 end
             end
             cur_basis_indx = cur_basis_indx + B_k__nrows; 
-            A_GA
+           % A_GA
     end
 
 end
