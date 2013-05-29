@@ -15,7 +15,8 @@ function [] = RBF_GA_weights(nodes, stencil, dim, epsilon)
     end
   
     [A_GA] = Assemble_LHS(P_max_k, dim, max_k, nodes(:,1:dim), stencil, epsilon);
-    
+    cond(A_GA)
+    A_GA \ ones(size(stencil,2), 1)
 end
 
 function [val] = rbf(X,epsilon)
@@ -38,19 +39,29 @@ function [A_GA] = Assemble_LHS(P_max_k, dim, k, nodes, stencil, epsilon)
             
             [B_k__nrows, B_k__ncols] = size(B_k);
 
+            B_k__ncols = min(n, B_k__ncols); 
+            
+            B_k = B_k(:,1:B_k__ncols)
+            
             X_c = nodes(stencil(1:B_k__ncols),:);
             X = nodes(stencil(1:end),:);
 
             z = 2*epsilon.^2 * X * X_c';
-            G_k = gammainc(z,kk)';
+            G_k = gammainc(z,kk)'
             
-            BG_prod = (B_k * G_k);
+            % Make sure we only use the subset of the B_k necessary for
+            % the stencil
+            BG_prod = ( B_k(:,1:B_k__ncols) * G_k)
             
             % The power on 1/epsilon is not obvious. I will need to contact Natasha and
             % Bengt for an idea of how it scales. 
 
             for j = 0:B_k__nrows-1
-                A_GA(cur_basis_indx + j,:) = BG_prod(j+1,:) .* (rbf(nodes(stencil,:),epsilon) .* (1/(epsilon.^(kk))))';
+                if (cur_basis_indx+j < n) 
+                    eps_scale_fact = 2.^kk
+                    
+                    A_GA(cur_basis_indx + j,:) = BG_prod(j+1,:) .* (rbf(nodes(stencil,:),epsilon) .* (1/(epsilon.^(eps_scale_fact))))';
+                end
             end
             cur_basis_indx = cur_basis_indx + B_k__nrows; 
             A_GA
