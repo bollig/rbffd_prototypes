@@ -1,5 +1,19 @@
 function [] = RBF_GA_weights(nodes, stencil, dim, epsilon)
 
+%TODO: 
+%       a) Derive RHS for X, Y, Z and Lapl. also, projected operators on
+%           sphere for Stokes. Utilize Mathematica where possible
+%       b) Test on Stokes problem
+%       c) Check if weights are in right half plane for cosine and vortex?
+%       d) port to C++: 
+%
+% In C++ I will need boost::gamma_p(k, z)
+% (http://www.boost.org/doc/libs/1_35_0/libs/math/doc/sf_and_dist/html/math_toolkit/special/sf_gamma/igamma.html)
+% and 
+% Armadillo's QR method for nullspace
+% Everything else should be possible within armadillo as well. 
+
+
 %% The RBF-GA (Gamma Incomplete for Gaussian RBF-FD), based on Fornberg, Lehto and Powell 2012
 % 
 %% d = 3
