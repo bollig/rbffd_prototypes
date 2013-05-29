@@ -1,26 +1,73 @@
-function [] = RBF_GA_weights(nodes, stencil, dim)
+function [] = RBF_GA_weights(nodes, stencil, dim, epsilon)
 
 %% The RBF-GA (Gamma Incomplete for Gaussian RBF-FD), based on Fornberg, Lehto and Powell 2012
 % 
 
     % Get the full B_k from which all other B_k's will be drawn
-    [B_max_k, max_k] = Build_B_max_k(nodes, stencil, dim)
+    [P_max_k, max_k] = Build_P_max_k(nodes(:,1:dim), stencil, dim)
 
+    % Here we acquire the sub matrix B_{k-1} = null(P_k), where P_k is subset of P_max_k:
+    sub_k = max_k - 1;
+    while sub_k >= 0
+        [B_sub_k] = Get_B_k(P_max_k, dim, sub_k)
+       
+        sub_k = sub_k - 1;
+    end
   
-    % Here we acquire the sub matrix B_{k-1}:
-    sub_k = max_k - 1; 
-    % We use a filter based on teh polypowers to safely filter rows assuming
-    % odd ordering could happen. Although, we also sort above to ensure this is
-    % never truly required.
-    [B_sub_k__nrows, B_sub_k__ncols] = Get_Dims_for_k(dim, sub_k)
-    if B_sub_k__ncols > 1
-        B_sub_k = B_max_k(1:B_sub_k__nrows,1:B_sub_k__ncols);
+    [A_GA] = Assemble_LHS(P_max_k, dim, max_k, nodes(:,1:dim), stencil, epsilon);
+    
+end
+
+function [val] = rbf(X,epsilon)
+    
+    %% e^(-eps^2 (x^2 + y^2))
+    val = exp(-epsilon.^2 * (dot(X,X,2)));
+
+end
+
+function [A_GA] = Assemble_LHS(P_max_k, dim, k, nodes, stencil, epsilon)
+%% Assembles the LHS matrix that will be solved for RBF-GA weights
+    [m n] = size(stencil); 
+
+    A_GA = ones(n, n)
+    cur_basis_indx = 1; 
+    
+    for kk = 0:k 
+
+            B_k = Get_B_k(P_max_k, dim, kk);
+            
+            [B_k__nrows, B_k__ncols] = size(B_k);
+
+            X_c = nodes(stencil(1:B_k__ncols),:);
+            X = nodes(stencil(1:end),:);
+
+            z = 2*epsilon.^2 * X * X_c';
+            G_k = gammainc(z,kk)';
+            
+            BG_prod = (B_k * G_k);
+            
+            % The power on 1/epsilon is not obvious. I will need to contact Natasha and
+            % Bengt for an idea of how it scales. 
+
+            for j = 0:B_k__nrows-1
+                A_GA(cur_basis_indx + j,:) = BG_prod(j+1,:) .* (rbf(nodes(stencil,:),epsilon) .* (1/(epsilon.^(kk))))';
+            end
+            cur_basis_indx = cur_basis_indx + B_k__nrows; 
+            A_GA
+    end
+
+end
+
+
+function [B_sub_k] = Get_B_k(P_max_k, dim, k)
+%% Returns the sub-block B_k from the matrix P_max_k
+    if k > 0
+        [B_sub_k__nrows, B_sub_k__ncols] = Get_Dims_for_k(dim, k);
+        B_sub_k = P_max_k(1:B_sub_k__nrows,1:B_sub_k__ncols);
+        B_sub_k = null(B_sub_k,'r')';
     else 
         B_sub_k = 1;
-    end 
-
-    B_sub_k
-
+    end
 end
 
 function [nrows,ncols] = Get_Dims_for_k(dim, k)
@@ -30,7 +77,7 @@ function [nrows,ncols] = Get_Dims_for_k(dim, k)
 end
 
 
-function [B_max_k, max_k] = Build_B_max_k(nodes, stencil, dim)
+function [P_max_k, max_k] = Build_P_max_k(nodes, stencil, dim)
 % Detects necessary $k$ based on stencil size
 % Assembles B_k given dimension, $d$, $k$ and stencil of nodes
 
@@ -74,8 +121,8 @@ if max_k
     B_n__ncols = min(B_n__ncols, n);
 
     %% TEsting: override truncation to see padded zeros
-    B_max_k = zeros(B_n__nrows, nchoosek(d+max_k, d));
-    %B_max_k = zeros(B_n__nrows, B_n__ncols);
+    P_max_k = zeros(B_n__nrows, nchoosek(d+max_k, d));
+    %P_max_k = zeros(B_n__nrows, B_n__ncols);
 
 
     % This is some fancy matlab; 
@@ -109,7 +156,7 @@ if max_k
         % Now we have a matrix of powers, we need to translate them into
         % powers for our assembled B_k: 
         %   each row provides the powers for a row of B_k
-        B_max_k(nrow,1:B_n__ncols) = row;
+        P_max_k(nrow,1:B_n__ncols) = row;
     end
 
 %      % Here we acquire the sub matrix B_{k-1}:
@@ -120,7 +167,7 @@ if max_k
 %     ind_for_k = sum(polypowers,2) <= sub_k
 %     B_sub_k__ncols = nchoosek(d+sub_k, d);
 %     if B_sub_k__ncols > 1
-%         B_sub_k = B_max_k(ind_for_k(:,1),1:nchoosek(d+sub_k, d));
+%         B_sub_k = P_max_k(ind_for_k(:,1),1:nchoosek(d+sub_k, d));
 %     else 
 %         B_sub_k = 1;
 %     end 
@@ -128,9 +175,9 @@ if max_k
 %     B_sub_k
     
 else 
-    B_max_k = 1;
+    P_max_k = 1;
 end
 
-sz = size(B_max_k)
+sz = size(P_max_k)
 
 end
