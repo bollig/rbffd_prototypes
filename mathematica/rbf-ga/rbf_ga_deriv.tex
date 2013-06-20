@@ -1,0 +1,126 @@
+\makeatletter
+\@ifundefined{standalonetrue}{\newif\ifstandalone}{}
+\@ifundefined{section}{\standalonetrue}{\standalonefalse}
+\makeatother
+\ifstandalone
+\documentclass[11pt]{report}
+
+\input{all_usepackages}
+\usepackage[margin=1.25in]{geometry}
+\usepackage{xcolor}
+
+% Sepia
+%\definecolor{myBGcolor}{HTML}{F6F0D6}
+%\definecolor{myTextcolor}{HTML}{4F452C}
+
+\definecolor{myBGcolor}{HTML}{3E3535}
+\definecolor{myTextcolor}{HTML}{CFECEC}
+%\pagecolor{myBGcolor}
+%\color{myTextcolor}
+
+\begin{document}
+\tableofcontents
+\fi
+
+{ \graphicspath{{rbffd_methods_content/}}
+
+\chapter{Derivatives for RHS of Weight System}
+We start with:
+\begin{align} 
+\psi (x,y) = e^{-\epsilon^2(x^2+y^2)} \cdot G_k(2\epsilon^2(x x_i +y y_i)) \label{eq:rbf_ga_basis}
+\end{align}
+
+Fornberg et al. \cite{FornbergLehtoPowell12} provide that derivatives of the basis functions requires:
+\begin{align}
+\pd{^p G_k(z)}{z^p} = G_{max(0,k-p)} (z), \ \ \ \ \ p = 0, 1, 2 \cdots 
+\end{align}
+and derivatives of Equation~\ref{eq:rbf_ga_basis} can be obtained via the \emph{product rule}. 
+
+For RBF-GA, we have: 
+\begin{align}
+z & = 2\epsilon^2(x x_i + y y_i) \label{eq:gamma_z}
+\end{align}
+
+\section{$\pd{}{x}$}
+
+First, we test derivation for $\pd{}{x}$. 
+
+Apply the product rule: 
+\begin{align}
+\pd{\psi(x,y)}{x} & = \pd{}{x} \left( e^{-\epsilon^2(x^2+y^2)} \cdot G_k(z)  \right) \nonumber \\
+& = \pd{}{x}\left( e^{-\epsilon^2 (x^2 + y^2)} \right) G_k(z) + e^{-\epsilon^2(x^2 + y^2)} \pd{G_k(z)}{x} \label{eq:x_product_rule}
+\end{align}
+
+Use of the chain rule is also required:
+\begin{align}
+\pd{}{x}\left( e^{-\epsilon^2 (x^2 + y^2)} \right) & = e^{-\epsilon^2 (x^2 + y^2)} \cdot \pd{}{x} \left( \epsilon^2(x^2+y^2) \right) \nonumber \\
+        & = e^{-\epsilon^2 (x^2 + y^2)} \left(2x \epsilon^2 \right) \label{eq:x_part1}
+\end{align}
+
+%\begin{align}
+%\pd{}{x} \left( \epsilon^2(x^2+y^2) \right) &= \pd{}{x}(\epsilon^2 x^2) + \pd{}{x}(\epsilon^2 y^2) \\
+%&= 2x \epsilon^2 + 0
+%\end{align}
+
+\begin{align}
+\pd{G_k(z)}{x} & = \pd{z}{x} \pd{}{z} G_k(z) \nonumber \\
+               & = \pd{}{x} \left( 2\epsilon^2(x x_i + y y_i) \right) G_{max(0,k-p)}(z) \nonumber \\ 
+               & = 2 \epsilon^2 x_i G_{max(0,k-p)}( z ) \label{eq:x_part2}
+\end{align}
+Note that in the derivative of $z$ we assume the center coordinates $x_i$ and $y_i$ are considered scalars. 
+
+
+Finally, we substitute Equation~\ref{eq:x_part1} and \ref{eq:x_part2} into Equation~\ref{eq:x_product_rule} to get:
+\begin{align}
+\pd{\psi(x,y)}{x} & = \left( 2x\epsilon^2 G_k(z) + \pd{G_k(z)}{x} \right) e^{-\epsilon^2(x^2 + y^2)} \nonumber \\
+                 & = \left[ 2x\epsilon^2 G_k(z) + 2 \epsilon^2 x_i G_{max(0,k-p)}( z )  \right] e^{-\epsilon^2(x^2 + y^2)} \label{eq:rbf_ga_xderiv}
+\end{align}
+
+
+\section{$\pd{}{y}$, and higher dimensions}
+
+We repeat the process for $\pd{}{y}$, but due to similarity to $\pd{}{x}$, we can conclude: 
+
+\begin{align}
+\pd{\psi(x,y)}{y}   & = \left[ 2y\epsilon^2 G_k(z) + 2 \epsilon^2 y_i G_{max(0,k-p)}( z )  \right] e^{-\epsilon^2(x^2 + y^2)} \label{eq:rbf_ga_yderiv}
+\end{align}
+As the problem dimension increases, each first order derivative results similar equations.
+
+We generalize to:
+\begin{align}
+\pd{\psi(\vx)}{x}   & = \left[ 2 x \epsilon^2 G_k(z) + 2 \epsilon^2 x_i G_{max(0,k-p)}( z )  \right] e^{-\epsilon^2 r(\vx)^2} \label{eq:rbf_ga_yderiv}
+\end{align}
+
+
+\section{Laplacian $\Laplacian$}
+
+The Laplacian, $\Laplacian = \sum_{d=1}^{D}  \pdd{}{x_d}$ (where $D$ is the problem dimension) can be obtained following \cite{FornbergLehtoPowell12} to rewrite Equation~\ref{eq:rbf_ga_basis} as the product of two functions in one variable. 
+
+\subsection{2D}
+
+\subsection{3D}
+
+
+\section{Projected Operators}
+
+For the Stokes problem we need projected operators on the sphere. Derivation of these operators can be done via the chain rule, but I suspect that we may be able to compose the projected operators using only the basic operators for $\pd{}{x}$,  $\pd{}{y}$, and $\pd{}{z}$ as demonstrated in one of my dissertation Appendices---I was able to compose Differentiation Matrices for projected operators based on DMs for the unprojected operators with minimal loss of accuracy. 
+
+In theory the composition/indirect approach to obtaining the projected operators will suffice. If not, we shall return to derive the RHS forms. 
+
+
+}
+
+%\part{Appendices}
+%\appendix
+%The following appendices are included to illuminate subtleties of the RBF-FD method. The first discusses the method's ability to avoid pole singularities when applied to solid body transport on the sphere. The second considers the difference between directly computing weights for differentiation operators versus leveraging linear combinations of weights to indirectly construct the same operators.
+%\include{rbffd_avoid_pole_singularities}
+%\include{rbffd_weights_on_sphere}
+
+\ifstandalone
+\bibliographystyle{plain}
+\bibliography{merged_references}
+\end{document}
+\else
+\expandafter\endinput
+\fi
+
