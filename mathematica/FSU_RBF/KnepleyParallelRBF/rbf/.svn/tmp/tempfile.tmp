@@ -1,0 +1,335 @@
+#include <mpi.h>
+#include <cmath>
+#include <ctime>
+#include <fstream>
+#include <iostream>
+#include <petscksp.h>
+#include <petscis.h>
+
+#include "../par.h"
+#include "sort.h"
+#include "gauss.h"
+#include "mpi_range.h"
+#include "get_cluster.h"
+#include "get_buffer2.h"
+#include "get_trunc.h"
+#include "get_vorticity.h"
+  
+PetscErrorCode mymatmult(Mat A,Vec x,Vec y)
+{
+  CLUSTER       *cluster;
+  int            i, j;
+  double         dx,dy;
+  PetscScalar   *ax,*ay;
+  PetscErrorCode ierr;
+
+  PetscFunctionBegin;
+  ierr = MatShellGetContext(A, (void **) &cluster);CHKERRQ(ierr);
+  ierr = VecGetArray(x, &ax);CHKERRQ(ierr);
+  ierr = VecGetArray(y, &ay);CHKERRQ(ierr);
+  for(i = 0; i < cluster->ni; i++) {
+    ay[i] = 0;
+    for(j = 0; j < cluster->ni; j++) {
+      dx = cluster->xi[i]-cluster->xi[j];
+      dy = cluster->yi[i]-cluster->yi[j];
+      ay[i] += ax[j]*exp(-(dx*dx+dy*dy)/(2*cluster->sigma*cluster->sigma))/
+        (2*pi*cluster->sigma*cluster->sigma);
+    }
+  }
+  ierr = VecRestoreArray(x, &ax);CHKERRQ(ierr);
+  ierr = VecRestoreArray(y, &ay);CHKERRQ(ierr);
+  PetscFunctionReturn(0);
+}
+
+PetscErrorCode mysubmat(Mat mat,PetscInt n,const IS irow[],const IS icol[],MatReuse scall,Mat *submat[])
+{
+  int i,ic,j,ista,iend;
+  double dx,dy;
+  PetscInt *idx;
+  PetscScalar *A;
+  PetscErrorCode ierr;
+  CLUSTER *cluster;
+  ierr = MatShellGetContext(mat, (void **) &cluster);CHKERRQ(ierr);
+
+  idx = new PetscInt [cluster->maxbuffer];
+  A = new PetscScalar [cluster->maxbuffer*cluster->maxbuffer];
+
+  PetscFunctionBegin;
+  if (scall == MAT_REUSE_MATRIX) {SETERRQ(PETSC_ERR_SUP, "Cannot handle submatrix reuse yet");}
+  ierr = PetscMalloc(n * sizeof(Mat*), submat);CHKERRQ(ierr);
+  for(ic = 0; ic < n; ++ic) {
+    Get_buffer buffer;
+    buffer.get_buffer(cluster,ic);
+    ierr = MatCreate(PETSC_COMM_SELF,&(*submat)[ic]);CHKERRQ(ierr);
+    ierr = MatSetSizes((*submat)[ic],cluster->npbufferi,cluster->npbufferi,PETSC_DECIDE,PETSC_DECIDE);CHKERRQ(ierr);
+    ierr = MatSetFromOptions((*submat)[ic]);CHKERRQ(ierr);
+    ierr = MatSeqAIJSetPreallocation((*submat)[ic],cluster->npbufferi,PETSC_NULL);CHKERRQ(ierr);
+    ista = cluster->ista[ic];
+    iend = cluster->iend[ic];
+    if (ista <= iend) {
+      for (i=0; i<cluster->npbufferi; i++) {
+        for (j=0; j<cluster->npbufferi; j++) {
+          dx = cluster->xib[i]-cluster->xib[j];
+          dy = cluster->yib[i]-cluster->yib[j];
+          A[i*cluster->npbufferi+j] = exp(-(dx*dx+dy*dy)/(2*cluster->sigma*cluster->sigma))/
+            (2*pi*cluster->sigma*cluster->sigma);
+        }
+        idx[i] = i;
+      }
+    }
+    ierr = MatSetValues((*submat)[ic],cluster->npbufferi,idx,cluster->npbufferi,idx,A,INSERT_VALUES);CHKERRQ(ierr);
+    ierr = MatAssemblyBegin((*submat)[ic], MAT_FINAL_ASSEMBLY);CHKERRQ(ierr);
+    ierr = MatAssemblyEnd((*submat)[ic], MAT_FINAL_ASSEMBLY);CHKERRQ(ierr);
+    ierr = MatView((*submat)[ic],PETSC_VIEWER_STDOUT_WORLD);CHKERRQ(ierr);
+  }
+  delete[] A;
+  delete[] idx;
+
+  PetscFunctionReturn(0);
+}
+
+int main(int argc,char **argv)
+{
+  int i,j,ic,ista,iend;
+  double err,errd,t[10];
+  clock_t tic,toc;
+  std::ofstream fid0,fid1;
+  PARAMETER parameter;
+  PARTICLE particle;
+  CLUSTER cluster;
+  GRID grid;
+  MPI2 mpi;
+
+  PetscErrorCode ierr;
+  KSP ksp;
+  PC pc;
+  IS *is,*is_local;
+  Mat M,P;
+  Vec bb,xx;
+  PetscInt *idx;
+  PetscScalar *xxx;
+  PetscScalar *bbb;
+
+  tic = std::clock();
+  for (i=0; i<10; i++) t[i] = 0;
+  
+  MPI_Init(&argc,&argv);
+  PetscInitialize(&argc,&argv,PETSC_NULL,PETSC_NULL);
+  MPI_Comm_size(MPI_COMM_WORLD,&mpi.nprocs);
+  MPI_Comm_rank(MPI_COMM_WORLD,&mpi.myrank);
+
+  /*
+    physical parameters
+  */
+  parameter.vis = 0.1;
+  parameter.t = 1;
+  cluster.file = 0;
+  
+  /*
+    particle parameters
+  */
+  particle.sigma = 1;
+  particle.overlap = 1.0;
+  particle.h = particle.overlap*particle.sigma;
+  particle.xmin = -2.5;
+  particle.xmax = 2.5;
+  particle.ymin = -1;
+  particle.ymax = 1;
+  
+  /*
+    cluster parameters
+  */
+  cluster.nsigma_box = 3;
+  cluster.nsigma_buffer = 9;
+  cluster.nsigma_trunc = 9;
+  
+  /*
+    allocate arrays
+  */
+  grid.nx = ceil((particle.xmax-particle.xmin)/particle.h)+1;
+  grid.ny = ceil((particle.ymax-particle.ymin)/particle.h)+1;
+  particle.ni = grid.nx*grid.ny;
+  particle.nj = particle.ni;
+  particle.xi = new double [particle.ni];
+  particle.yi = new double [particle.ni];
+  particle.ei = new double [particle.ni];
+  particle.wi = new double [particle.ni];
+  particle.ri = new double [particle.ni];
+  particle.rd = new double [particle.ni];
+  particle.xj = new double [particle.nj];
+  particle.yj = new double [particle.nj];
+  particle.gj = new double [particle.nj];
+  cluster.xi = new double [particle.ni];
+  cluster.yi = new double [particle.ni];
+  cluster.gj = new double [particle.ni];
+  cluster.ei = new double [particle.ni];
+  cluster.wi = new double [particle.ni];
+  mpi.sendi = new double [particle.ni];
+  mpi.recvi = new double [particle.ni];
+  mpi.sendj = new double [particle.nj];
+  mpi.recvj = new double [particle.nj];
+  
+  /*
+    generate particles
+  */
+  for (i=0; i<grid.nx; i++) {
+    for (j=0; j<grid.ny; j++) {
+      particle.xi[i*grid.ny+j] = particle.xmin+i*particle.h;
+      particle.yi[i*grid.ny+j] = particle.ymin+j*particle.h;
+      particle.xj[i*grid.ny+j] = particle.xmin+i*particle.h;
+      particle.yj[i*grid.ny+j] = particle.ymin+j*particle.h;
+    }
+  }
+  
+  /*
+    calculate initial vortex strength and exact vorticity field on particle
+  */
+  for (i=0; i<particle.ni; i++) {
+    particle.ei[i] = exp(-(particle.xi[i]*particle.xi[i]+particle.yi[i]*particle.yi[i])/
+      (4*parameter.vis*parameter.t))/(pi*4*parameter.vis*parameter.t);
+    particle.gj[i] = particle.ei[i]*particle.h*particle.h;
+    particle.wi[i] = particle.ei[i];
+  }
+  
+  /*
+    generate clusters
+  */
+  Get_cluster clusters;
+  clusters.get_cluster(&particle,&cluster);
+  mpi.nsta = 0;
+  mpi.nend = cluster.n-1;
+  mpi_range(&mpi);
+  cluster.icsta = mpi.ista;
+  cluster.icend = mpi.iend;
+  cluster.icsta = 0;
+  cluster.icend = cluster.n;
+
+  toc = tic;
+  tic = std::clock();
+  t[0] = (double)(tic-toc)/ (double)CLOCKS_PER_SEC;
+
+  /*
+    estimate vorticity field on particle from vortex strength
+  */
+  Get_vorticity vorticity;
+  vorticity.get_vorticity(&particle,&cluster);
+
+  /*
+    RBF interpolation
+  */
+  is = new IS [particle.ni];
+  is_local = new IS [particle.ni];
+  idx = new PetscInt [cluster.maxbuffer];
+  cluster.idx = new int [cluster.maxbuffer];
+
+  cluster.ni = particle.ni;
+  cluster.sigma = particle.sigma;
+  for (i=0; i<particle.ni; i++) {
+    cluster.xi[i] = particle.xi[i];
+    cluster.yi[i] = particle.yi[i];
+    cluster.gj[i] = particle.gj[i];
+    cluster.ei[i] = particle.ei[i];
+    cluster.wi[i] = particle.wi[i];
+  }
+
+  ierr = VecCreate(PETSC_COMM_WORLD,&xx);CHKERRXX(ierr);
+  ierr = VecSetSizes(xx,particle.ni,PETSC_DECIDE);CHKERRXX(ierr);
+  ierr = VecSetFromOptions(xx);CHKERRXX(ierr);
+  ierr = VecDuplicate(xx,&bb);CHKERRXX(ierr);
+  ierr = VecGetArray(bb,&bbb);CHKERRXX(ierr);
+  for (i=0; i<particle.ni; i++) {
+    bbb[i] = particle.ei[i];
+  }
+  ierr = VecRestoreArray(bb,&bbb);CHKERRXX(ierr);
+  ierr = MatCreate(PETSC_COMM_WORLD,&M);CHKERRXX(ierr);
+  ierr = MatSetSizes(M,particle.ni,particle.ni,PETSC_DECIDE,PETSC_DECIDE);CHKERRXX(ierr);
+  ierr = MatSetType(M,MATSHELL);CHKERRXX(ierr);
+  ierr = MatSetFromOptions(M);CHKERRXX(ierr);
+  ierr = MatShellSetOperation(M,MATOP_MULT, (void (*)(void)) mymatmult);
+  ierr = MatShellSetContext(M,&cluster);CHKERRXX(ierr);
+  ierr = MatCreate(PETSC_COMM_WORLD,&P);CHKERRXX(ierr);
+  ierr = MatSetSizes(P,particle.ni,particle.ni,PETSC_DECIDE,PETSC_DECIDE);CHKERRXX(ierr);
+  ierr = MatSetType(P,MATSHELL);CHKERRXX(ierr);
+  ierr = MatSetFromOptions(P);CHKERRXX(ierr);
+  ierr = MatShellSetOperation(P,MATOP_GET_SUBMATRICES, (void (*)(void)) mysubmat);
+  ierr = MatShellSetContext(P,&cluster);CHKERRXX(ierr);
+
+  ierr = KSPCreate(PETSC_COMM_WORLD,&ksp);CHKERRXX(ierr);
+  ierr = KSPSetFromOptions(ksp);CHKERRXX(ierr);
+  ierr = KSPGetPC(ksp,&pc);CHKERRXX(ierr);
+  ierr = PCASMSetOverlap(pc,0);CHKERRXX(ierr);
+  for (ic=cluster.icsta; ic<cluster.icend; ic++) {
+    Get_buffer buffer;
+    buffer.get_buffer(&cluster,ic);
+    ista = cluster.ista[ic];
+    iend = cluster.iend[ic];
+    if (ista <= iend) {
+      for (i=0; i<cluster.npbufferi; i++) {
+        idx[i] = cluster.idx[i];
+      }
+    }
+    ierr = ISCreateGeneral(PETSC_COMM_WORLD,cluster.npbufferi,idx,&is[ic]);CHKERRXX(ierr);
+    ierr = ISCreateGeneral(PETSC_COMM_WORLD,iend-ista+1,idx,&is_local[ic]);CHKERRXX(ierr);
+  }
+  ierr = PCASMSetSortIndices(pc,PETSC_FALSE);CHKERRXX(ierr);
+  ierr = PCASMSetLocalSubdomains(pc,cluster.n,is,is_local);CHKERRXX(ierr);
+  ierr = KSPSetOperators(ksp,M,P,DIFFERENT_NONZERO_PATTERN);CHKERRXX(ierr);
+  ierr = KSPSolve(ksp,bb,xx);CHKERRXX(ierr);
+  ierr = VecGetArray(xx,&xxx);CHKERRXX(ierr);
+  for (i=0; i<particle.ni; i++) {
+    particle.gj[i] = xxx[i];
+  }
+  ierr = VecRestoreArray(xx,&xxx);CHKERRXX(ierr);
+
+  delete[] idx;
+  delete[] cluster.idx;
+  for (ic=cluster.icsta; ic<cluster.icend; ic++) {
+    ierr = ISDestroy(is[ic]);CHKERRXX(ierr);
+    ierr = ISDestroy(is_local[ic]);CHKERRXX(ierr);
+  }
+  delete[] is;
+  delete[] is_local;
+  ierr=KSPDestroy(ksp);CHKERRXX(ierr);
+  ierr=VecDestroy(xx);CHKERRXX(ierr);
+  ierr=VecDestroy(bb);CHKERRXX(ierr);
+  ierr=MatDestroy(M);CHKERRXX(ierr);
+  ierr=MatDestroy(P);CHKERRXX(ierr);
+
+  /*
+    estimate vorticity field on particle from vortex strength
+  */
+  vorticity.get_vorticity(&particle,&cluster);
+  for (i=0; i<particle.ni; i++) {
+    particle.ri[i] = particle.ei[i]-particle.wi[i];
+  }
+
+  /*
+    calculate the L2 norm error
+  */
+  err = 0;
+  errd = 0;
+  for (i=0; i<particle.ni; i++) {
+    err += particle.ei[i]*particle.ei[i]/particle.ni;
+    errd += particle.ri[i]*particle.ri[i]/particle.ni;
+  }
+  err = sqrt(err);
+  errd = sqrt(errd);
+  err = log(errd/err)/log(10.0);
+  if (mpi.myrank == 0) printf("error : %g\n",err);
+  
+  toc = tic;
+  tic = std::clock();
+  t[0] += (double)(tic-toc)/ (double)CLOCKS_PER_SEC;
+
+  if (mpi.myrank == 0) {
+    for (i=0; i<4; i++) t[9] += t[i];
+    std::cout << "matvec : " << t[1] << std::endl;
+    std::cout << "solver : " << t[2] << std::endl;
+    std::cout << "comm   : " << t[3] << std::endl;
+    std::cout << "other  : " << t[0] << std::endl;
+    std::cout << "------------------" << std::endl;
+    std::cout << "total  : " << t[9] << std::endl;
+  }
+  PetscFinalize();
+  MPI_Finalize();
+}

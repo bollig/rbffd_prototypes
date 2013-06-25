@@ -1,0 +1,125 @@
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/repos/lorena6-alt/!svn/ver/421/Rio/rbf
+END
+test.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/repos/lorena6-alt/!svn/ver/379/Rio/rbf/test.cxx
+END
+get_trunc.h
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/repos/lorena6-alt/!svn/ver/337/Rio/rbf/get_trunc.h
+END
+get_vorticity.h
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/repos/lorena6-alt/!svn/ver/337/Rio/rbf/get_vorticity.h
+END
+get_strength.h
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/repos/lorena6-alt/!svn/ver/253/Rio/rbf/get_strength.h
+END
+vorticity_evaluation.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/repos/lorena6-alt/!svn/ver/326/Rio/rbf/vorticity_evaluation.cxx
+END
+main.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/repos/lorena6-alt/!svn/ver/421/Rio/rbf/main.cxx
+END
+mpi_range.h
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/repos/lorena6-alt/!svn/ver/230/Rio/rbf/mpi_range.h
+END
+batch.sh
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/repos/lorena6-alt/!svn/ver/408/Rio/rbf/batch.sh
+END
+get_buffer.h
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/repos/lorena6-alt/!svn/ver/337/Rio/rbf/get_buffer.h
+END
+bluegene.sh
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/repos/lorena6-alt/!svn/ver/420/Rio/rbf/bluegene.sh
+END
+bicgstab.h
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/repos/lorena6-alt/!svn/ver/307/Rio/rbf/bicgstab.h
+END
+rbf_solver.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/repos/lorena6-alt/!svn/ver/326/Rio/rbf/rbf_solver.cxx
+END
+get_cluster.h
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/repos/lorena6-alt/!svn/ver/372/Rio/rbf/get_cluster.h
+END
+par.h
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/repos/lorena6-alt/!svn/ver/336/Rio/rbf/par.h
+END
+gauss.h
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/repos/lorena6-alt/!svn/ver/230/Rio/rbf/gauss.h
+END
+cylinder
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/repos/lorena6-alt/!svn/ver/326/Rio/rbf/cylinder
+END
+cylinder.cxx
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/repos/lorena6-alt/!svn/ver/326/Rio/rbf/cylinder.cxx
+END
+batch2.sh
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/repos/lorena6-alt/!svn/ver/420/Rio/rbf/batch2.sh
+END
+sort.h
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/repos/lorena6-alt/!svn/ver/307/Rio/rbf/sort.h
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/repos/lorena6-alt/!svn/ver/315/Rio/rbf/Makefile
+END

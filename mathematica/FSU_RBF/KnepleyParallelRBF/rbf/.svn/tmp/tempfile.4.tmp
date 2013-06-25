@@ -1,0 +1,501 @@
+#include <mpi.h>
+#include <cmath>
+#include <ctime>
+#include <fstream>
+#include <iostream>
+#include <algorithm>
+#include <petscksp.h>
+#include <petscis.h>
+#include <petsclog.h>
+
+#include "par.h"
+#include "sort.h"
+#include "gauss.h"
+#include "mpi_range.h"
+#include "get_cluster.h"
+#include "get_buffer.h"
+#include "get_trunc.h"
+#include "get_vorticity.h"
+
+PetscErrorCode mymatmult(Mat A,Vec x,Vec y)
+{
+  int i,j,ic,il,ista,iend;
+  double dx,dy,w;
+  PetscScalar *ax,*ay;
+  PetscErrorCode ierr;
+  BOTH *both;
+  ierr = MatShellGetContext(A, (void **) &both);CHKERRQ(ierr);
+  PARTICLE *particle = both->p;
+  CLUSTER *cluster = both->c;
+
+  PetscFunctionBegin;
+  ierr = VecGetArray(x,&ax);CHKERRQ(ierr);
+  ierr = VecGetArray(y,&ay);CHKERRQ(ierr);
+  for(i=particle->ista; i<particle->iend; i++) {
+    ierr = VecSetValues(particle->g,1,&i,&ax[i-particle->ista],INSERT_VALUES);CHKERRQ(ierr);
+  }
+  ierr = VecAssemblyBegin(particle->g);CHKERRQ(ierr);
+  ierr = VecAssemblyEnd(particle->g);CHKERRQ(ierr);
+  ierr = VecGhostUpdateBegin(particle->g,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecGhostUpdateEnd(particle->g,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecGetArray(particle->g,&particle->gl);CHKERRQ(ierr);
+  for (ic=0; ic<cluster->nclocal; ic++) {
+    Get_trunc trunc;
+    trunc.get_trunc(particle,cluster,ic);
+    ista = cluster->ista[ic];
+    iend = cluster->iend[ic];
+    for (i=ista; i<=iend; i++) {
+      il = cluster->ilocal[i];
+      w = 0;
+      for (j=0; j<cluster->nptruncj; j++) {
+        dx = particle->xl[i]-cluster->xjt[j];
+        dy = particle->yl[i]-cluster->yjt[j];
+        w += cluster->gjt[j]*exp(-(dx*dx+dy*dy)/(2*particle->sigma*particle->sigma))/
+          (2*pi*particle->sigma*particle->sigma);
+      }
+      ay[il-particle->ista] = w;
+    }
+    /* Counted 1 for exp() */
+    ierr = PetscLogFlops((iend - ista)*cluster->nptruncj*15);CHKERRQ(ierr);
+  }
+  ierr = VecRestoreArray(particle->g,&particle->gl);CHKERRQ(ierr);
+  ierr = VecRestoreArray(x,&ax);CHKERRQ(ierr);
+  ierr = VecRestoreArray(y,&ay);CHKERRQ(ierr);
+  PetscFunctionReturn(0);
+}
+
+PetscErrorCode mysubmat(Mat mat,PetscInt n,const IS irow[],const IS icol[],MatReuse scall,Mat *submat[])
+{
+  int i,ic,j,ista,iend;
+  double dx,dy;
+  PetscInt *idx;
+  PetscScalar *A;
+  PetscErrorCode ierr;
+  BOTH *both;
+  ierr = MatShellGetContext(mat, (void **) &both);CHKERRQ(ierr);
+  PARTICLE *particle = both->p;
+  CLUSTER *cluster = both->c;
+
+  idx = new PetscInt [cluster->maxbuffer];
+  A = new PetscScalar [cluster->maxbuffer*cluster->maxbuffer];
+
+  PetscFunctionBegin;
+  if (scall == MAT_REUSE_MATRIX) {SETERRQ(PETSC_ERR_SUP, "Cannot handle submatrix reuse yet");}
+  ierr = PetscMalloc(n * sizeof(Mat*), submat);CHKERRQ(ierr);
+  ierr = VecGetArray(particle->g,&particle->gl);CHKERRQ(ierr);
+  for(ic = 0; ic < n; ic++) {
+    Get_buffer buffer;
+    buffer.get_buffer(particle,cluster,ic);
+    ierr = MatCreate(PETSC_COMM_SELF,&(*submat)[ic]);CHKERRQ(ierr);
+    ierr = MatSetOptionsPrefix((*submat)[ic], "sub_");CHKERRQ(ierr);
+    ierr = MatSetSizes((*submat)[ic],cluster->npbufferi,cluster->npbufferi,PETSC_DETERMINE,PETSC_DETERMINE);CHKERRQ(ierr);
+    ierr = MatSetFromOptions((*submat)[ic]);CHKERRQ(ierr);
+    ierr = MatSeqAIJSetPreallocation((*submat)[ic],cluster->npbufferi,PETSC_NULL);CHKERRQ(ierr);
+    ista = cluster->ista[ic];
+    iend = cluster->iend[ic];
+    if (ista <= iend) {
+      for (i=0; i<cluster->npbufferi; i++) {
+        for (j=0; j<cluster->npbufferi; j++) {
+          dx = cluster->xib[i]-cluster->xib[j];
+          dy = cluster->yib[i]-cluster->yib[j];
+          A[i*cluster->npbufferi+j] = exp(-(dx*dx+dy*dy)/(2*particle->sigma*particle->sigma))/
+            (2*pi*particle->sigma*particle->sigma);
+        }
+        idx[i] = i;
+      }
+    }
+    ierr = MatSetValues((*submat)[ic],cluster->npbufferi,idx,cluster->npbufferi,idx,A,INSERT_VALUES);CHKERRQ(ierr);
+    ierr = MatAssemblyBegin((*submat)[ic],MAT_FINAL_ASSEMBLY);CHKERRQ(ierr);
+    ierr = MatAssemblyEnd((*submat)[ic],MAT_FINAL_ASSEMBLY);CHKERRQ(ierr);
+  }
+  ierr = VecRestoreArray(particle->g,&particle->gl);CHKERRQ(ierr);
+  delete[] A;
+  delete[] idx;
+
+  PetscFunctionReturn(0);
+}
+
+int main(int argc,char **argv)
+{
+  int i,ic,ista,iend,*isort,ievent[10];
+  double xi,yi,gi,ei,wi,err,errd,t[10];
+  clock_t tic,toc;
+  std::ofstream fid0,fid1;
+  PARAMETER parameter;
+  PARTICLE particle;
+  CLUSTER cluster;
+  GRID grid;
+  MPI2 mpi;
+  BOTH both;
+  both.p = &particle;
+  both.c = &cluster;
+
+  PetscErrorCode ierr;
+  KSP ksp;
+  PC pc;
+  IS isx,isy,*is,*is_local;
+  Mat M,P;
+  Vec xx;
+  PetscInt *idx,its;
+  PetscScalar *xxx;
+  VecScatter ctx;
+
+  tic = std::clock();
+  for (i=0; i<10; i++) t[i] = 0;
+
+  PetscInitialize(&argc,&argv,PETSC_NULL,PETSC_NULL);
+  ierr = PetscLogEventRegister("InitVec",0,&ievent[0]);CHKERRQ(ierr);
+  ierr = PetscLogEventRegister("InitCluster",0,&ievent[1]);CHKERRQ(ierr);
+  ierr = PetscLogEventRegister("InitIS",0,&ievent[2]);CHKERRQ(ierr);
+  ierr = PetscLogEventRegister("InitGhost",0,&ievent[3]);CHKERRQ(ierr);
+  ierr = PetscLogEventRegister("InitRHS",0,&ievent[4]);CHKERRQ(ierr);
+  ierr = PetscLogEventRegister("InitMat",0,&ievent[5]);CHKERRQ(ierr);
+  ierr = PetscLogEventRegister("Post Processing",0,&ievent[6]);CHKERRQ(ierr);
+
+  ierr = PetscLogEventBegin(ievent[0],0,0,0,0);CHKERRQ(ierr);
+  ierr = MPI_Comm_size(PETSC_COMM_WORLD,&mpi.nprocs);CHKERRQ(ierr);
+  ierr = MPI_Comm_rank(PETSC_COMM_WORLD,&mpi.myrank);CHKERRQ(ierr);
+  /*
+    physical parameters
+  */
+  parameter.vis = 0.1;
+  parameter.t = 1;
+  cluster.file = 0;
+
+  /*
+    particle parameters
+  */
+  particle.sigma = 0.01;
+  particle.overlap = atof(argv[1]);
+  particle.h = particle.overlap*particle.sigma;
+  particle.xmin = 0;
+  particle.xmax = 1;
+  particle.ymin = 0;
+  particle.ymax = 1;
+
+  /*
+    cluster parameters
+  */
+  cluster.nsigma_box = atoi(argv[2]);
+  cluster.sigma_buffer = atof(argv[3]);
+  if (particle.overlap < 0.8+epsf) {
+    cluster.sigma_trunc = cluster.nsigma_box+8;
+  } else {
+    cluster.sigma_trunc = cluster.nsigma_box+6;
+  }
+
+
+  /*
+    allocate arrays
+  */
+  grid.nx = (int)floor((particle.xmax-particle.xmin+epsf)/particle.h)+1;
+  grid.ny = (int)floor((particle.ymax-particle.ymin+epsf)/particle.h)+1;
+  particle.ni = grid.nx*grid.ny;
+  if(mpi.myrank==0) {
+    printf("||---------------------------------------\n");
+    printf("|| number of particles        : %d      \n",particle.ni);
+    printf("|| std of Gaussian (sigma)    : %f      \n",particle.sigma);
+    printf("|| overlap ratio (h/sigma)    : %f      \n",particle.overlap);
+    printf("|| non-overlapping subdomain  : %d sigma\n",cluster.nsigma_box);
+    printf("|| overlapping subdomain      : %d sigma\n",(int)fmin(cluster.sigma_buffer,floor(2/particle.sigma)));
+    printf("|| entire domain              : %d sigma\n",(int)floor(2/particle.sigma));
+    printf("||---------------------------------------\n");
+  }
+  particle.nj = particle.ni;
+
+  /*
+    generate particles
+  */
+  ierr = VecCreate(PETSC_COMM_WORLD,&particle.xi);CHKERRQ(ierr);
+  ierr = VecSetSizes(particle.xi,PETSC_DECIDE,particle.ni);CHKERRQ(ierr);
+  ierr = VecSetFromOptions(particle.xi);CHKERRQ(ierr);
+  ierr = VecDuplicate(particle.xi,&particle.yi);CHKERRQ(ierr);
+  ierr = VecDuplicate(particle.xi,&particle.gi);CHKERRQ(ierr);
+  ierr = VecDuplicate(particle.xi,&particle.ei);CHKERRQ(ierr);
+  ierr = VecDuplicate(particle.xi,&particle.wi);CHKERRQ(ierr);
+  ierr = VecGetOwnershipRange(particle.xi,&particle.ista,&particle.iend);CHKERRQ(ierr);
+  particle.nlocal = particle.iend-particle.ista;
+  for(i=particle.ista; i<particle.iend; i++) {
+    xi = particle.xmin+floor(i/grid.ny)*particle.h;
+    yi = particle.ymin+(i%grid.ny)*particle.h;
+    ei = (float)rand()/RAND_MAX;
+    xi = xi*grid.nx/(grid.nx+1)+ei*particle.h/2;
+    ei = (float)rand()/RAND_MAX;
+    yi = yi*grid.ny/(grid.ny+1)+ei*particle.h/2;
+//    ei = exp(-(xi*xi+yi*yi)/(4*parameter.vis*parameter.t))/(pi*4*parameter.vis*parameter.t);
+    ei = 0.75*exp(-((9*xi-2)*(9*xi-2)+(9*yi-2)*(9*yi))/4)
+      +0.75*exp(-((9*xi+1)*(9*xi+1))/49-((9*yi+1)*(9*yi+1))/10)
+      +0.5*exp(-((9*xi-7)*(9*xi-7)+(9*yi-3)*(9*yi-3))/4)
+      -0.2*exp(-(9*xi-4)*(9*xi-4)-(9*yi-7)*(9*yi-7));
+    wi = ei;
+    gi = ei*particle.h*particle.h;
+    ierr = VecSetValues(particle.xi,1,&i,&xi,INSERT_VALUES);CHKERRQ(ierr);
+    ierr = VecSetValues(particle.yi,1,&i,&yi,INSERT_VALUES);CHKERRQ(ierr);
+    ierr = VecSetValues(particle.gi,1,&i,&gi,INSERT_VALUES);CHKERRQ(ierr);
+    ierr = VecSetValues(particle.ei,1,&i,&ei,INSERT_VALUES);CHKERRQ(ierr);
+    ierr = VecSetValues(particle.wi,1,&i,&wi,INSERT_VALUES);CHKERRQ(ierr);
+  }
+  ierr = VecAssemblyBegin(particle.xi);CHKERRQ(ierr);
+  ierr = VecAssemblyEnd(particle.xi);CHKERRQ(ierr);
+  ierr = VecAssemblyBegin(particle.yi);CHKERRQ(ierr);
+  ierr = VecAssemblyEnd(particle.yi);CHKERRQ(ierr);
+  ierr = VecAssemblyBegin(particle.gi);CHKERRQ(ierr);
+  ierr = VecAssemblyEnd(particle.gi);CHKERRQ(ierr);
+  ierr = VecAssemblyBegin(particle.ei);CHKERRQ(ierr);
+  ierr = VecAssemblyEnd(particle.ei);CHKERRQ(ierr);
+  ierr = VecAssemblyBegin(particle.wi);CHKERRQ(ierr);
+  ierr = VecAssemblyEnd(particle.wi);CHKERRQ(ierr);
+
+  ierr = PetscLogEventEnd(ievent[0],0,0,0,0);CHKERRQ(ierr);
+  ierr = PetscLogEventBegin(ievent[1],0,0,0,0);CHKERRQ(ierr);
+
+  /*
+    generate clusters
+  */
+  ierr = VecGetArray(particle.xi,&particle.xl);CHKERRQ(ierr);
+  ierr = VecGetArray(particle.yi,&particle.yl);CHKERRQ(ierr);
+  ierr = VecGetArray(particle.gi,&particle.gl);CHKERRQ(ierr);
+  ierr = VecGetArray(particle.ei,&particle.el);CHKERRQ(ierr);
+  ierr = VecGetArray(particle.wi,&particle.wl);CHKERRQ(ierr);
+
+  Get_cluster clusters;
+  clusters.get_cluster(&particle,&cluster);
+
+  ierr = VecRestoreArray(particle.xi,&particle.xl);CHKERRQ(ierr);
+  ierr = VecRestoreArray(particle.yi,&particle.yl);CHKERRQ(ierr);
+  ierr = VecRestoreArray(particle.gi,&particle.gl);CHKERRQ(ierr);
+  ierr = VecRestoreArray(particle.ei,&particle.el);CHKERRQ(ierr);
+  ierr = VecRestoreArray(particle.wi,&particle.wl);CHKERRQ(ierr);
+  isort = new int [particle.nlocal];
+
+  ierr = PetscLogEventEnd(ievent[1],0,0,0,0);CHKERRQ(ierr);
+  ierr = PetscLogEventBegin(ievent[2],0,0,0,0);CHKERRQ(ierr);
+
+  /*
+    generate IS
+  */
+  ierr = ISCreateStride(PETSC_COMM_WORLD,particle.nlocal,particle.ista,1,&isx);CHKERRQ(ierr);
+  ierr = ISDuplicate(isx,&isy);CHKERRQ(ierr);
+  ierr = VecCreate(PETSC_COMM_WORLD,&particle.i);CHKERRQ(ierr);
+  ierr = VecSetSizes(particle.i,particle.nlocal,PETSC_DETERMINE);CHKERRQ(ierr);
+  ierr = VecSetFromOptions(particle.i);CHKERRQ(ierr);
+  ierr = VecScatterCreate(particle.ii,isx,particle.i,isy,&ctx);CHKERRQ(ierr);
+  ierr = VecScatterBegin(ctx,particle.ii,particle.i,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecScatterEnd(ctx,particle.ii,particle.i,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecScatterDestroy(ctx);CHKERRQ(ierr);
+  ierr = ISDestroy(isx);CHKERRQ(ierr);
+  ierr = ISDestroy(isy);CHKERRQ(ierr);
+  ierr = VecAssemblyBegin(particle.i);CHKERRQ(ierr);
+  ierr = VecAssemblyEnd(particle.i);CHKERRQ(ierr);
+  ierr = VecGetArray(particle.i,&particle.il);CHKERRQ(ierr);
+  for(i=0; i<particle.nlocal; i++) {
+    isort[i] = particle.il[i];
+  }
+  ierr = ISCreateGeneral(PETSC_COMM_WORLD,particle.nlocal,isort,&isx);CHKERRQ(ierr);
+  ierr = VecRestoreArray(particle.i,&particle.il);CHKERRQ(ierr);
+
+  ierr = PetscLogEventEnd(ievent[2],0,0,0,0);CHKERRQ(ierr);
+  ierr = PetscLogEventBegin(ievent[3],0,0,0,0);CHKERRQ(ierr);
+
+  /*
+    generate ghost vectors
+  */
+  ierr = VecCreate(PETSC_COMM_WORLD,&particle.x);CHKERRQ(ierr);
+  ierr = VecSetSizes(particle.x,particle.nlocal,PETSC_DETERMINE);CHKERRQ(ierr);
+  ierr = VecSetFromOptions(particle.x);CHKERRQ(ierr);
+  ierr = VecCreateGhost(PETSC_COMM_WORLD,particle.nlocal,PETSC_DECIDE,cluster.nghost,cluster.ighost,
+    &particle.x);CHKERRQ(ierr);
+  ierr = VecDuplicate(particle.x,&particle.y);CHKERRQ(ierr);
+  ierr = VecDuplicate(particle.x,&particle.g);CHKERRQ(ierr);
+  ierr = VecDuplicate(particle.x,&particle.e);CHKERRQ(ierr);
+  ierr = VecDuplicate(particle.x,&particle.w);CHKERRQ(ierr);
+  ierr = ISCreateStride(PETSC_COMM_WORLD,particle.nlocal,particle.ista,1,&isy);CHKERRQ(ierr);
+  ierr = VecScatterCreate(particle.xi,isx,particle.x,isy,&ctx);CHKERRQ(ierr);
+  ierr = VecScatterBegin(ctx,particle.xi,particle.x,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecScatterEnd(ctx,particle.xi,particle.x,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecScatterBegin(ctx,particle.yi,particle.y,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecScatterEnd(ctx,particle.yi,particle.y,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecScatterBegin(ctx,particle.gi,particle.g,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecScatterEnd(ctx,particle.gi,particle.g,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecScatterBegin(ctx,particle.ei,particle.e,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecScatterEnd(ctx,particle.ei,particle.e,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecScatterBegin(ctx,particle.wi,particle.w,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecScatterEnd(ctx,particle.wi,particle.w,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecScatterDestroy(ctx);CHKERRQ(ierr);
+  ierr = ISDestroy(isx);CHKERRQ(ierr);
+  ierr = ISDestroy(isy);CHKERRQ(ierr);
+  ierr = VecAssemblyBegin(particle.x);CHKERRQ(ierr);
+  ierr = VecAssemblyEnd(particle.x);CHKERRQ(ierr);
+  ierr = VecAssemblyBegin(particle.y);CHKERRQ(ierr);
+  ierr = VecAssemblyEnd(particle.y);CHKERRQ(ierr);
+  ierr = VecAssemblyBegin(particle.g);CHKERRQ(ierr);
+  ierr = VecAssemblyEnd(particle.g);CHKERRQ(ierr);
+  ierr = VecAssemblyBegin(particle.e);CHKERRQ(ierr);
+  ierr = VecAssemblyEnd(particle.e);CHKERRQ(ierr);
+  ierr = VecAssemblyBegin(particle.w);CHKERRQ(ierr);
+  ierr = VecAssemblyEnd(particle.w);CHKERRQ(ierr);
+  ierr = VecGhostUpdateBegin(particle.x,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecGhostUpdateEnd(particle.x,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecGhostUpdateBegin(particle.y,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecGhostUpdateEnd(particle.y,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecGhostUpdateBegin(particle.g,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecGhostUpdateEnd(particle.g,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecGhostUpdateBegin(particle.e,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecGhostUpdateEnd(particle.e,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecGhostUpdateBegin(particle.w,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecGhostUpdateEnd(particle.w,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecGetArray(particle.x,&particle.xl);CHKERRQ(ierr);
+  ierr = VecGetArray(particle.y,&particle.yl);CHKERRQ(ierr);
+  ierr = VecGetArray(particle.g,&particle.gl);CHKERRQ(ierr);
+  ierr = VecGetArray(particle.e,&particle.el);CHKERRQ(ierr);
+  ierr = VecGetArray(particle.w,&particle.wl);CHKERRQ(ierr);
+
+  ierr = PetscLogEventEnd(ievent[3],0,0,0,0);CHKERRQ(ierr);
+  ierr = PetscLogEventBegin(ievent[4],0,0,0,0);CHKERRQ(ierr);
+
+  /*
+    estimate vorticity field on particle from vortex strength
+  */
+  Get_vorticity vorticity;
+  vorticity.get_vorticity(&particle,&cluster);
+
+  ierr = VecRestoreArray(particle.g,&particle.gl);CHKERRQ(ierr);
+  ierr = VecRestoreArray(particle.w,&particle.wl);CHKERRQ(ierr);
+
+  ierr = PetscLogEventEnd(ievent[4],0,0,0,0);CHKERRQ(ierr);
+  ierr = PetscLogEventBegin(ievent[5],0,0,0,0);CHKERRQ(ierr);
+
+  /*
+    RBF interpolation
+  */
+  is = new IS [particle.nlocal];
+  is_local = new IS [particle.nlocal];
+  idx = new PetscInt [cluster.maxbuffer];
+
+  ierr = VecCreate(PETSC_COMM_WORLD,&xx);CHKERRQ(ierr);
+  ierr = VecSetSizes(xx,particle.nlocal,PETSC_DETERMINE);CHKERRQ(ierr);
+  ierr = VecSetFromOptions(xx);CHKERRQ(ierr);
+  ierr = MatCreate(PETSC_COMM_WORLD,&M);CHKERRQ(ierr);
+  ierr = MatSetSizes(M,particle.nlocal,particle.nlocal,PETSC_DETERMINE,PETSC_DETERMINE);CHKERRQ(ierr);
+  ierr = MatSetType(M,MATSHELL);CHKERRQ(ierr);
+  ierr = MatSetFromOptions(M);CHKERRQ(ierr);
+  ierr = MatShellSetOperation(M,MATOP_MULT, (void (*)(void)) mymatmult);
+  ierr = MatView(M,PETSC_VIEWER_STDOUT_WORLD);CHKERRQ(ierr);
+  ierr = MatShellSetContext(M,&both);CHKERRQ(ierr);
+  ierr = MatCreate(PETSC_COMM_WORLD,&P);CHKERRQ(ierr);
+  ierr = MatSetSizes(P,particle.nlocal,particle.nlocal,PETSC_DETERMINE,PETSC_DETERMINE);CHKERRQ(ierr);
+  ierr = MatSetType(P,MATSHELL);CHKERRQ(ierr);
+  ierr = MatSetFromOptions(P);CHKERRQ(ierr);
+  ierr = MatShellSetOperation(P,MATOP_GET_SUBMATRICES, (void (*)(void)) mysubmat);
+  ierr = MatShellSetContext(P,&both);CHKERRQ(ierr);
+
+  ierr = KSPCreate(PETSC_COMM_WORLD,&ksp);CHKERRQ(ierr);
+  ierr = KSPSetFromOptions(ksp);CHKERRQ(ierr);
+  ierr = KSPGetPC(ksp,&pc);CHKERRQ(ierr);
+  ierr = PCASMSetOverlap(pc,0);CHKERRQ(ierr);
+  for (ic=0; ic<cluster.nclocal; ic++) {
+    Get_buffer buffer;
+    buffer.get_buffer(&particle,&cluster,ic);
+    ista = cluster.ista[ic];
+    iend = cluster.iend[ic];
+    if (ista <= iend) {
+      for (i=0; i<cluster.npbufferi; i++) {
+        idx[i] = cluster.idx[i];
+      }
+    }
+    ierr = ISCreateGeneral(PETSC_COMM_SELF,cluster.npbufferi,idx,&is[ic]);CHKERRQ(ierr);
+    ierr = ISCreateGeneral(PETSC_COMM_SELF,iend-ista+1,idx,&is_local[ic]);CHKERRQ(ierr);
+  }
+  ierr = PCASMSetSortIndices(pc,PETSC_FALSE);CHKERRQ(ierr);
+  ierr = PCASMSetLocalSubdomains(pc,cluster.nclocal,is,is_local);CHKERRQ(ierr);
+  ierr = KSPSetOperators(ksp,M,P,DIFFERENT_NONZERO_PATTERN);CHKERRQ(ierr);
+  ierr = PetscLogEventEnd(ievent[5],0,0,0,0);CHKERRQ(ierr);
+  ierr = KSPSolve(ksp,particle.e,xx);CHKERRQ(ierr);
+  ierr = PetscLogEventBegin(ievent[6],0,0,0,0);CHKERRQ(ierr);
+  ierr = KSPGetIterationNumber(ksp,&its);CHKERRQ(ierr);
+
+  /*
+    estimate vorticity field on particle from vortex strength
+  */
+  cluster.icsta = 0;
+  cluster.icend = cluster.nclocal;
+  ierr = VecGetArray(xx,&xxx);CHKERRQ(ierr);
+  for(i=particle.ista; i<particle.iend; i++) {
+    ierr = VecSetValues(particle.g,1,&i,&xxx[i-particle.ista],INSERT_VALUES);CHKERRQ(ierr);
+  }
+  ierr = VecRestoreArray(xx,&xxx);CHKERRQ(ierr);
+  ierr = VecAssemblyBegin(particle.g);CHKERRQ(ierr);
+  ierr = VecAssemblyEnd(particle.g);CHKERRQ(ierr);
+  ierr = VecGhostUpdateBegin(particle.g,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecGhostUpdateEnd(particle.g,INSERT_VALUES,SCATTER_FORWARD);CHKERRQ(ierr);
+  ierr = VecGetArray(particle.g,&particle.gl);CHKERRQ(ierr);
+  ierr = VecGetArray(particle.w,&particle.wl);CHKERRQ(ierr);
+
+  vorticity.get_vorticity(&particle,&cluster);
+
+  ierr = VecRestoreArray(particle.x,&particle.xl);CHKERRQ(ierr);
+  ierr = VecRestoreArray(particle.y,&particle.yl);CHKERRQ(ierr);
+  ierr = VecRestoreArray(particle.g,&particle.gl);CHKERRQ(ierr);
+  ierr = VecRestoreArray(particle.e,&particle.el);CHKERRQ(ierr);
+  ierr = VecRestoreArray(particle.w,&particle.wl);CHKERRQ(ierr);
+
+  /*
+    calculate the L2 norm error
+  */
+  ierr = VecAXPY(particle.w,-1,particle.e);CHKERRQ(ierr);
+  ierr = VecNorm(particle.e,NORM_2,&err);CHKERRQ(ierr);
+  ierr = VecNorm(particle.w,NORM_2,&errd);CHKERRQ(ierr);
+  err = log(errd/err)/log(10.0);
+
+  if (mpi.myrank == 0) printf("error : %g\n",err);
+
+  toc = tic;
+  tic = std::clock();
+  t[0] = (double)(tic-toc)/ (double)CLOCKS_PER_SEC;
+
+  if (mpi.myrank == 0) {
+    for (i=0; i<4; i++) t[9] += t[i];
+    std::cout << "matvec : " << t[1] << std::endl;
+    std::cout << "solver : " << t[2] << std::endl;
+    std::cout << "comm   : " << t[3] << std::endl;
+    std::cout << "other  : " << t[0] << std::endl;
+    std::cout << "------------------" << std::endl;
+    std::cout << "total  : " << t[9] << std::endl;
+    char file[13];
+    if (1.0-particle.overlap < epsf) {
+      sprintf(file,"%s-%s-%s.dat",argv[1],argv[2],argv[3]);
+    } else {
+      sprintf(file,"0%s-%s-%s.dat",argv[1],argv[2],argv[3]);
+    }
+    fid0.open(file);
+    fid0 << t[9] << std::endl << its;
+    fid0.close();
+  }
+  for (ic=0; ic<cluster.nclocal; ic++) {
+    ierr = ISDestroy(is[ic]);CHKERRQ(ierr);
+    ierr = ISDestroy(is_local[ic]);CHKERRQ(ierr);
+  }
+  delete[] idx;
+  delete[] is;
+  delete[] is_local;
+  delete[] isort;
+
+  ierr = KSPDestroy(ksp);CHKERRQ(ierr);
+  ierr = VecDestroy(xx);CHKERRQ(ierr);
+  ierr = VecDestroy(particle.i);CHKERRQ(ierr);
+  ierr = VecDestroy(particle.x);CHKERRQ(ierr);
+  ierr = VecDestroy(particle.y);CHKERRQ(ierr);
+  ierr = VecDestroy(particle.g);CHKERRQ(ierr);
+  ierr = VecDestroy(particle.e);CHKERRQ(ierr);
+  ierr = VecDestroy(particle.w);CHKERRQ(ierr);
+  ierr = VecDestroy(particle.ii);CHKERRQ(ierr);
+  ierr = VecDestroy(particle.xi);CHKERRQ(ierr);
+  ierr = VecDestroy(particle.yi);CHKERRQ(ierr);
+  ierr = VecDestroy(particle.gi);CHKERRQ(ierr);
+  ierr = VecDestroy(particle.ei);CHKERRQ(ierr);
+  ierr = VecDestroy(particle.wi);CHKERRQ(ierr);
+  ierr = MatDestroy(M);CHKERRQ(ierr);
+  ierr = MatDestroy(P);CHKERRQ(ierr);
+  ierr = PetscLogEventEnd(ievent[6],0,0,0,0);CHKERRQ(ierr);
+  PetscFinalize();
+}

@@ -1,0 +1,7 @@
+main: main.o
+	${CLINKER} -o $@ $< ${PETSC_SNES_LIB}
+
+test: test.o
+	${CLINKER} -o $@ $< ${PETSC_SNES_LIB}
+
+include $(PETSC_DIR)/conf/base

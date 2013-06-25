@@ -1,0 +1,556 @@
+(* Content-type: application/mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 7.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       145,          7]
+NotebookDataLength[     17605,        547]
+NotebookOptionsPosition[     15947,        486]
+NotebookOutlinePosition[     16388,        503]
+CellTagsIndexPosition[     16345,        500]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"Needs", "[", "\"\<VectorAnalysis`\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.515910216082108*^9, 3.515910220407545*^9}}],
+
+Cell[BoxData[
+ RowBox[{"r1d", ":=", 
+  RowBox[{"Sqrt", "[", 
+   RowBox[{"Xx", "^", "2"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.515910223131866*^9, 3.5159102301035023`*^9}, {
+  3.515910443784431*^9, 3.5159104546685*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[Alpha]", " ", "=", " ", 
+  RowBox[{"\[Mu]", "*", "Xx", "*", "U"}]}]], "Input",
+ CellChangeTimes->{{3.516929713980904*^9, 3.51692973566287*^9}, {
+  3.516929804187708*^9, 3.516929854337142*^9}, {3.51693004021094*^9, 
+  3.516930045518642*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  SuperscriptBox["\[ExponentialE]", 
+   RowBox[{"-", 
+    FractionBox[
+     RowBox[{
+      SuperscriptBox["\[Pi]", "2"], " ", "t"}], 
+     SuperscriptBox["L", "2"]]}]], " ", "Xx", " ", "\[Mu]"}]], "Output",
+ CellChangeTimes->{{3.516929737599884*^9, 3.516929740003824*^9}, {
+  3.516929847578867*^9, 3.516929860089753*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"U", " ", "=", " ", 
+  RowBox[{
+   RowBox[{"Sin", "[", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"Pi", " ", "*", " ", "Xx"}], ")"}], " ", "/", " ", "L"}], " ", 
+    "]"}], " ", "*", " ", 
+   RowBox[{"Exp", "[", 
+    RowBox[{
+     RowBox[{"-", 
+      RowBox[{"(", 
+       RowBox[{"\[Alpha]", " ", "*", "Pi", "*", "Pi", " ", "*", "t"}], 
+       ")"}]}], "/", 
+     RowBox[{"(", 
+      RowBox[{"L", "*", "L"}], ")"}]}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.515910236328754*^9, 3.515910260376417*^9}, {
+   3.515910294778254*^9, 3.515910327898293*^9}, 3.5159103661305037`*^9, {
+   3.5159104576062593`*^9, 3.5159104577957993`*^9}, {3.516598180767641*^9, 
+   3.516598277838173*^9}, {3.516598645760922*^9, 3.516598657252215*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  SuperscriptBox["\[ExponentialE]", 
+   RowBox[{"-", 
+    FractionBox[
+     RowBox[{
+      SuperscriptBox["\[ExponentialE]", 
+       RowBox[{"-", 
+        FractionBox[
+         RowBox[{
+          SuperscriptBox["\[Pi]", "2"], " ", "t"}], 
+         SuperscriptBox["L", "2"]]}]], " ", 
+      SuperscriptBox["\[Pi]", "2"], " ", "t", " ", "Xx", " ", "\[Mu]"}], 
+     SuperscriptBox["L", "2"]]}]], " ", 
+  RowBox[{"Sin", "[", 
+   FractionBox[
+    RowBox[{"\[Pi]", " ", "Xx"}], "L"], "]"}]}]], "Output",
+ CellChangeTimes->{{3.5165982798330317`*^9, 3.516598314441793*^9}, {
+   3.5165983446928988`*^9, 3.516598349086275*^9}, {3.51659863353874*^9, 
+   3.516598686873006*^9}, 3.5169296779825163`*^9, 3.516929740063431*^9, 
+   3.5169298601281023`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"CForm", "[", "U", "]"}]], "Input",
+ CellChangeTimes->{{3.516598396739627*^9, 3.5165984033104763`*^9}}],
+
+Cell["\<\
+Sin((Pi*Xx)/L)/
+   Power(E,(Power(Pi,2)*t*Xx*\[Mu])/Power(E,(Power(Pi,2)*t)/Power(L,2))/
+     Power(L,2))\
+\>", "Output",
+ CellChangeTimes->{
+  3.51659840387749*^9, {3.5165986397386637`*^9, 3.5165986869257812`*^9}, 
+   3.5169296780414886`*^9, 3.5169297401096354`*^9, 3.516929860182213*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"dx", "=", 
+  RowBox[{"D", "[", 
+   RowBox[{"U", ",", "Xx"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.5159103833906593`*^9, 3.515910393705077*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  FractionBox[
+   RowBox[{
+    SuperscriptBox["\[ExponentialE]", 
+     RowBox[{"-", 
+      FractionBox[
+       RowBox[{
+        SuperscriptBox["\[ExponentialE]", 
+         RowBox[{"-", 
+          FractionBox[
+           RowBox[{
+            SuperscriptBox["\[Pi]", "2"], " ", "t"}], 
+           SuperscriptBox["L", "2"]]}]], " ", 
+        SuperscriptBox["\[Pi]", "2"], " ", "t", " ", "Xx", " ", "\[Mu]"}], 
+       SuperscriptBox["L", "2"]]}]], " ", "\[Pi]", " ", 
+    RowBox[{"Cos", "[", 
+     FractionBox[
+      RowBox[{"\[Pi]", " ", "Xx"}], "L"], "]"}]}], "L"], "-", 
+  FractionBox[
+   RowBox[{
+    SuperscriptBox["\[ExponentialE]", 
+     RowBox[{
+      RowBox[{"-", 
+       FractionBox[
+        RowBox[{
+         SuperscriptBox["\[Pi]", "2"], " ", "t"}], 
+        SuperscriptBox["L", "2"]]}], "-", 
+      FractionBox[
+       RowBox[{
+        SuperscriptBox["\[ExponentialE]", 
+         RowBox[{"-", 
+          FractionBox[
+           RowBox[{
+            SuperscriptBox["\[Pi]", "2"], " ", "t"}], 
+           SuperscriptBox["L", "2"]]}]], " ", 
+        SuperscriptBox["\[Pi]", "2"], " ", "t", " ", "Xx", " ", "\[Mu]"}], 
+       SuperscriptBox["L", "2"]]}]], " ", 
+    SuperscriptBox["\[Pi]", "2"], " ", "t", " ", "\[Mu]", " ", 
+    RowBox[{"Sin", "[", 
+     FractionBox[
+      RowBox[{"\[Pi]", " ", "Xx"}], "L"], "]"}]}], 
+   SuperscriptBox["L", "2"]]}]], "Output",
+ CellChangeTimes->{{3.516598258770815*^9, 3.516598314476872*^9}, {
+   3.516598344726756*^9, 3.5165983491188383`*^9}, {3.516598639769703*^9, 
+   3.516598686995384*^9}, 3.5169296780687*^9, 3.516929740163959*^9, 
+   3.5169298602288523`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"CForm", "[", "dx", "]"}]], "Input",
+ CellChangeTimes->{{3.516598407165851*^9, 3.5165984084470654`*^9}}],
+
+Cell["\<\
+(Pi*Cos((Pi*Xx)/L))/
+    (Power(E,(Power(Pi,2)*t*Xx*\[Mu])/Power(E,(Power(Pi,2)*t)/Power(L,2))/
+        Power(L,2))*L) - (Power(E,
+       -((Power(Pi,2)*t)/Power(L,2)) - 
+        (Power(Pi,2)*t*Xx*\[Mu])/
+         (Power(E,(Power(Pi,2)*t)/Power(L,2))*Power(L,2)))*Power(Pi,2)*t*
+      \[Mu]*Sin((Pi*Xx)/L))/Power(L,2)\
+\>", "Output",
+ CellChangeTimes->{
+  3.516598409251964*^9, {3.516598639819749*^9, 3.516598687049667*^9}, 
+   3.516929678125803*^9, 3.5169297402104683`*^9, 3.516929860281996*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"dxx", " ", "=", " ", 
+  RowBox[{"D", "[", 
+   RowBox[{"dx", ",", "Xx"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.515910617632167*^9, 3.515910666904776*^9}, {
+  3.516598293974812*^9, 3.516598306376281*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"-", 
+   FractionBox[
+    RowBox[{"2", " ", 
+     SuperscriptBox["\[ExponentialE]", 
+      RowBox[{
+       RowBox[{"-", 
+        FractionBox[
+         RowBox[{
+          SuperscriptBox["\[Pi]", "2"], " ", "t"}], 
+         SuperscriptBox["L", "2"]]}], "-", 
+       FractionBox[
+        RowBox[{
+         SuperscriptBox["\[ExponentialE]", 
+          RowBox[{"-", 
+           FractionBox[
+            RowBox[{
+             SuperscriptBox["\[Pi]", "2"], " ", "t"}], 
+            SuperscriptBox["L", "2"]]}]], " ", 
+         SuperscriptBox["\[Pi]", "2"], " ", "t", " ", "Xx", " ", "\[Mu]"}], 
+        SuperscriptBox["L", "2"]]}]], " ", 
+     SuperscriptBox["\[Pi]", "3"], " ", "t", " ", "\[Mu]", " ", 
+     RowBox[{"Cos", "[", 
+      FractionBox[
+       RowBox[{"\[Pi]", " ", "Xx"}], "L"], "]"}]}], 
+    SuperscriptBox["L", "3"]]}], "-", 
+  FractionBox[
+   RowBox[{
+    SuperscriptBox["\[ExponentialE]", 
+     RowBox[{"-", 
+      FractionBox[
+       RowBox[{
+        SuperscriptBox["\[ExponentialE]", 
+         RowBox[{"-", 
+          FractionBox[
+           RowBox[{
+            SuperscriptBox["\[Pi]", "2"], " ", "t"}], 
+           SuperscriptBox["L", "2"]]}]], " ", 
+        SuperscriptBox["\[Pi]", "2"], " ", "t", " ", "Xx", " ", "\[Mu]"}], 
+       SuperscriptBox["L", "2"]]}]], " ", 
+    SuperscriptBox["\[Pi]", "2"], " ", 
+    RowBox[{"Sin", "[", 
+     FractionBox[
+      RowBox[{"\[Pi]", " ", "Xx"}], "L"], "]"}]}], 
+   SuperscriptBox["L", "2"]], "+", 
+  FractionBox[
+   RowBox[{
+    SuperscriptBox["\[ExponentialE]", 
+     RowBox[{
+      RowBox[{"-", 
+       FractionBox[
+        RowBox[{"2", " ", 
+         SuperscriptBox["\[Pi]", "2"], " ", "t"}], 
+        SuperscriptBox["L", "2"]]}], "-", 
+      FractionBox[
+       RowBox[{
+        SuperscriptBox["\[ExponentialE]", 
+         RowBox[{"-", 
+          FractionBox[
+           RowBox[{
+            SuperscriptBox["\[Pi]", "2"], " ", "t"}], 
+           SuperscriptBox["L", "2"]]}]], " ", 
+        SuperscriptBox["\[Pi]", "2"], " ", "t", " ", "Xx", " ", "\[Mu]"}], 
+       SuperscriptBox["L", "2"]]}]], " ", 
+    SuperscriptBox["\[Pi]", "4"], " ", 
+    SuperscriptBox["t", "2"], " ", 
+    SuperscriptBox["\[Mu]", "2"], " ", 
+    RowBox[{"Sin", "[", 
+     FractionBox[
+      RowBox[{"\[Pi]", " ", "Xx"}], "L"], "]"}]}], 
+   SuperscriptBox["L", "4"]]}]], "Output",
+ CellChangeTimes->{{3.5165982588190203`*^9, 3.5165983145082283`*^9}, {
+   3.5165983447595177`*^9, 3.516598349153269*^9}, {3.516598639877081*^9, 
+   3.516598687093099*^9}, 3.5169296781578836`*^9, 3.5169297402660923`*^9, 
+   3.516929860328906*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"CForm", "[", "dxx", "]"}]], "Input",
+ CellChangeTimes->{{3.5165984117912483`*^9, 3.516598412719125*^9}}],
+
+Cell["\<\
+(-2*Power(E,-((Power(Pi,2)*t)/Power(L,2)) - 
+        (Power(Pi,2)*t*Xx*\[Mu])/
+         (Power(E,(Power(Pi,2)*t)/Power(L,2))*Power(L,2)))*Power(Pi,3)*t*
+      \[Mu]*Cos((Pi*Xx)/L))/Power(L,3) - 
+   (Power(Pi,2)*Sin((Pi*Xx)/L))/
+    (Power(E,(Power(Pi,2)*t*Xx*\[Mu])/Power(E,(Power(Pi,2)*t)/Power(L,2))/
+        Power(L,2))*Power(L,2)) + 
+   (Power(E,(-2*Power(Pi,2)*t)/Power(L,2) - 
+        (Power(Pi,2)*t*Xx*\[Mu])/
+         (Power(E,(Power(Pi,2)*t)/Power(L,2))*Power(L,2)))*Power(Pi,4)*
+      Power(t,2)*Power(\[Mu],2)*Sin((Pi*Xx)/L))/Power(L,4)\
+\>", "Output",
+ CellChangeTimes->{
+  3.5165984131118393`*^9, {3.51659863992137*^9, 3.5165986871304617`*^9}, 
+   3.516929678220155*^9, 3.516929740309816*^9, 3.516929860413571*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"lapl", " ", "=", " ", 
+  RowBox[{"Laplacian", "[", "U", "]"}]}]], "Input",
+ CellChangeTimes->{{3.516598368792123*^9, 3.516598381044696*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"-", 
+   FractionBox[
+    RowBox[{"2", " ", 
+     SuperscriptBox["\[ExponentialE]", 
+      RowBox[{
+       RowBox[{"-", 
+        FractionBox[
+         RowBox[{
+          SuperscriptBox["\[Pi]", "2"], " ", "t"}], 
+         SuperscriptBox["L", "2"]]}], "-", 
+       FractionBox[
+        RowBox[{
+         SuperscriptBox["\[ExponentialE]", 
+          RowBox[{"-", 
+           FractionBox[
+            RowBox[{
+             SuperscriptBox["\[Pi]", "2"], " ", "t"}], 
+            SuperscriptBox["L", "2"]]}]], " ", 
+         SuperscriptBox["\[Pi]", "2"], " ", "t", " ", "Xx", " ", "\[Mu]"}], 
+        SuperscriptBox["L", "2"]]}]], " ", 
+     SuperscriptBox["\[Pi]", "3"], " ", "t", " ", "\[Mu]", " ", 
+     RowBox[{"Cos", "[", 
+      FractionBox[
+       RowBox[{"\[Pi]", " ", "Xx"}], "L"], "]"}]}], 
+    SuperscriptBox["L", "3"]]}], "-", 
+  FractionBox[
+   RowBox[{
+    SuperscriptBox["\[ExponentialE]", 
+     RowBox[{"-", 
+      FractionBox[
+       RowBox[{
+        SuperscriptBox["\[ExponentialE]", 
+         RowBox[{"-", 
+          FractionBox[
+           RowBox[{
+            SuperscriptBox["\[Pi]", "2"], " ", "t"}], 
+           SuperscriptBox["L", "2"]]}]], " ", 
+        SuperscriptBox["\[Pi]", "2"], " ", "t", " ", "Xx", " ", "\[Mu]"}], 
+       SuperscriptBox["L", "2"]]}]], " ", 
+    SuperscriptBox["\[Pi]", "2"], " ", 
+    RowBox[{"Sin", "[", 
+     FractionBox[
+      RowBox[{"\[Pi]", " ", "Xx"}], "L"], "]"}]}], 
+   SuperscriptBox["L", "2"]], "+", 
+  FractionBox[
+   RowBox[{
+    SuperscriptBox["\[ExponentialE]", 
+     RowBox[{
+      RowBox[{"-", 
+       FractionBox[
+        RowBox[{"2", " ", 
+         SuperscriptBox["\[Pi]", "2"], " ", "t"}], 
+        SuperscriptBox["L", "2"]]}], "-", 
+      FractionBox[
+       RowBox[{
+        SuperscriptBox["\[ExponentialE]", 
+         RowBox[{"-", 
+          FractionBox[
+           RowBox[{
+            SuperscriptBox["\[Pi]", "2"], " ", "t"}], 
+           SuperscriptBox["L", "2"]]}]], " ", 
+        SuperscriptBox["\[Pi]", "2"], " ", "t", " ", "Xx", " ", "\[Mu]"}], 
+       SuperscriptBox["L", "2"]]}]], " ", 
+    SuperscriptBox["\[Pi]", "4"], " ", 
+    SuperscriptBox["t", "2"], " ", 
+    SuperscriptBox["\[Mu]", "2"], " ", 
+    RowBox[{"Sin", "[", 
+     FractionBox[
+      RowBox[{"\[Pi]", " ", "Xx"}], "L"], "]"}]}], 
+   SuperscriptBox["L", "4"]]}]], "Output",
+ CellChangeTimes->{
+  3.5165983827442913`*^9, {3.516598639976995*^9, 3.51659868716288*^9}, 
+   3.5169296783103247`*^9, 3.51692974039147*^9, 3.516929860496626*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"CForm", "[", "lapl", "]"}]], "Input",
+ CellChangeTimes->{{3.516598415495384*^9, 3.51659841750238*^9}}],
+
+Cell["\<\
+(-2*Power(E,-((Power(Pi,2)*t)/Power(L,2)) - 
+        (Power(Pi,2)*t*Xx*\[Mu])/
+         (Power(E,(Power(Pi,2)*t)/Power(L,2))*Power(L,2)))*Power(Pi,3)*t*
+      \[Mu]*Cos((Pi*Xx)/L))/Power(L,3) - 
+   (Power(Pi,2)*Sin((Pi*Xx)/L))/
+    (Power(E,(Power(Pi,2)*t*Xx*\[Mu])/Power(E,(Power(Pi,2)*t)/Power(L,2))/
+        Power(L,2))*Power(L,2)) + 
+   (Power(E,(-2*Power(Pi,2)*t)/Power(L,2) - 
+        (Power(Pi,2)*t*Xx*\[Mu])/
+         (Power(E,(Power(Pi,2)*t)/Power(L,2))*Power(L,2)))*Power(Pi,4)*
+      Power(t,2)*Power(\[Mu],2)*Sin((Pi*Xx)/L))/Power(L,4)\
+\>", "Output",
+ CellChangeTimes->{
+  3.516598418221586*^9, {3.516598640020434*^9, 3.5165986872272463`*^9}, 
+   3.516929678389166*^9, 3.5169297404926577`*^9, 3.51692986056236*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"dt", " ", "=", " ", 
+  RowBox[{"D", "[", 
+   RowBox[{"U", ",", " ", "t"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.5165983407184896`*^9, 3.516598341217225*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  SuperscriptBox["\[ExponentialE]", 
+   RowBox[{"-", 
+    FractionBox[
+     RowBox[{
+      SuperscriptBox["\[ExponentialE]", 
+       RowBox[{"-", 
+        FractionBox[
+         RowBox[{
+          SuperscriptBox["\[Pi]", "2"], " ", "t"}], 
+         SuperscriptBox["L", "2"]]}]], " ", 
+      SuperscriptBox["\[Pi]", "2"], " ", "t", " ", "Xx", " ", "\[Mu]"}], 
+     SuperscriptBox["L", "2"]]}]], " ", 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"-", 
+     FractionBox[
+      RowBox[{
+       SuperscriptBox["\[ExponentialE]", 
+        RowBox[{"-", 
+         FractionBox[
+          RowBox[{
+           SuperscriptBox["\[Pi]", "2"], " ", "t"}], 
+          SuperscriptBox["L", "2"]]}]], " ", 
+       SuperscriptBox["\[Pi]", "2"], " ", "Xx", " ", "\[Mu]"}], 
+      SuperscriptBox["L", "2"]]}], "+", 
+    FractionBox[
+     RowBox[{
+      SuperscriptBox["\[ExponentialE]", 
+       RowBox[{"-", 
+        FractionBox[
+         RowBox[{
+          SuperscriptBox["\[Pi]", "2"], " ", "t"}], 
+         SuperscriptBox["L", "2"]]}]], " ", 
+      SuperscriptBox["\[Pi]", "4"], " ", "t", " ", "Xx", " ", "\[Mu]"}], 
+     SuperscriptBox["L", "4"]]}], ")"}], " ", 
+  RowBox[{"Sin", "[", 
+   FractionBox[
+    RowBox[{"\[Pi]", " ", "Xx"}], "L"], "]"}]}]], "Output",
+ CellChangeTimes->{{3.5165983091104403`*^9, 3.5165983491846113`*^9}, {
+   3.516598640088089*^9, 3.51659868727738*^9}, 3.516929678453986*^9, 
+   3.516929740575074*^9, 3.516929860629469*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"CForm", "[", "dt", "]"}]], "Input",
+ CellChangeTimes->{{3.516598421054316*^9, 3.516598421599283*^9}}],
+
+Cell["\<\
+((-((Power(Pi,2)*Xx*\[Mu])/
+          (Power(E,(Power(Pi,2)*t)/Power(L,2))*Power(L,2))) + 
+       (Power(Pi,4)*t*Xx*\[Mu])/
+        (Power(E,(Power(Pi,2)*t)/Power(L,2))*Power(L,4)))*Sin((Pi*Xx)/L))
+    /Power(E,(Power(Pi,2)*t*Xx*\[Mu])/Power(E,(Power(Pi,2)*t)/Power(L,2))/
+     Power(L,2))\
+\>", "Output",
+ CellChangeTimes->{
+  3.516598422131072*^9, {3.516598640155465*^9, 3.5165986873443823`*^9}, 
+   3.516929678518332*^9, 3.516929740658939*^9, 3.516929860695163*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"Clear", "[", "L", "]"}]], "Input",
+ CellChangeTimes->{{3.5165986807447367`*^9, 3.516598683172481*^9}}]
+},
+WindowSize->{916, 775},
+WindowMargins->{{Automatic, 345}, {Automatic, 0}},
+Magnification:>FEPrivate`If[
+  FEPrivate`Equal[FEPrivate`$VersionNumber, 6.], 1.25, 1.25 Inherited],
+FrontEndVersion->"7.0 for Mac OS X x86 (32-bit) (February 18, 2009)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[545, 20, 146, 2, 33, "Input"],
+Cell[694, 24, 223, 5, 33, "Input"],
+Cell[CellGroupData[{
+Cell[942, 33, 266, 5, 33, "Input"],
+Cell[1211, 40, 345, 9, 56, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1593, 54, 755, 19, 33, "Input"],
+Cell[2351, 75, 764, 20, 86, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3152, 100, 126, 2, 33, "Input"],
+Cell[3281, 104, 299, 7, 80, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3617, 116, 171, 4, 33, "Input"],
+Cell[3791, 122, 1630, 46, 104, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5458, 173, 127, 2, 33, "Input"],
+Cell[5588, 177, 506, 11, 145, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6131, 193, 230, 5, 33, "Input"],
+Cell[6364, 200, 2595, 75, 208, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[8996, 280, 128, 2, 33, "Input"],
+Cell[9127, 284, 737, 15, 211, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[9901, 304, 164, 3, 33, "Input"],
+Cell[10068, 309, 2512, 74, 216, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[12617, 388, 126, 2, 33, "Input"],
+Cell[12746, 392, 737, 15, 211, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[13520, 412, 185, 4, 33, "Input"],
+Cell[13708, 418, 1451, 42, 110, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[15196, 465, 125, 2, 33, "Input"],
+Cell[15324, 469, 478, 10, 130, "Output"]
+}, Open  ]],
+Cell[15817, 482, 126, 2, 33, "Input"]
+}
+]
+*)
+
+(* End of internal cache information *)
