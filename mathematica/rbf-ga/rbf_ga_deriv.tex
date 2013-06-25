@@ -73,7 +73,8 @@ Note that in the derivative of $z$ we assume the center coordinates $x_i$ and $y
 Finally, we substitute Equation~\ref{eq:x_part1} and \ref{eq:x_part2} into Equation~\ref{eq:x_product_rule} to get:
 \begin{align}
 \pd{\psi(x,y)}{x} & = \left( 2x\epsilon^2 G_k(z) + \pd{G_k(z)}{x} \right) e^{-\epsilon^2(x^2 + y^2)} \nonumber \\
-                 & = \left[ 2x\epsilon^2 G_k(z) + 2 \epsilon^2 x_i G_{max(0,k-p)}( z )  \right] e^{-\epsilon^2(x^2 + y^2)} \label{eq:rbf_ga_xderiv}
+                 & = \left( 2x\epsilon^2 G_k(z) + 2 \epsilon^2 x_i G_{max(0,k-p)}( z )  \right) e^{-\epsilon^2(x^2 + y^2)}  \nonumber \\
+                 & = \left( x G_{k}(z) + x_i G_{max(0,k-p)}(z) \right) 2 \epsilon^2 e^{-\epsilon^2(x^2+y^2)}\label{eq:rbf_ga_xderiv}
 \end{align}
 
 
@@ -82,13 +83,11 @@ Finally, we substitute Equation~\ref{eq:x_part1} and \ref{eq:x_part2} into Equat
 We repeat the process for $\pd{}{y}$, but due to similarity to $\pd{}{x}$, we can conclude: 
 
 \begin{align}
-\pd{\psi(x,y)}{y}   & = \left[ 2y\epsilon^2 G_k(z) + 2 \epsilon^2 y_i G_{max(0,k-p)}( z )  \right] e^{-\epsilon^2(x^2 + y^2)} \label{eq:rbf_ga_yderiv}
+\pd{\psi(x,y)}{y}   & = \left( y G_k(z) + y_i G_{max(0,k-p)}( z )  \right) 2\epsilon^2 e^{-\epsilon^2(x^2 + y^2)} \label{eq:rbf_ga_yderiv}
 \end{align}
-As the problem dimension increases, each first order derivative results similar equations.
-
-We generalize to:
+As the problem dimension increases, each first order derivative results similar equations, but a substitution for $r(\vx)^2 = (x^2 + y^2 + \cdots)$ can be made: 
 \begin{align}
-\pd{\psi(\vx)}{x}   & = \left[ 2 x \epsilon^2 G_k(z) + 2 \epsilon^2 x_i G_{max(0,k-p)}( z )  \right] e^{-\epsilon^2 r(\vx)^2} \label{eq:rbf_ga_yderiv}
+\pd{\psi(\vx)}{x}   & = \left( x G_k(z) + x_i G_{max(0,k-p)}( z )  \right) 2\epsilon^2 e^{-\epsilon^2 r(\vx)^2} \label{eq:rbf_ga_yderiv}
 \end{align}
 
 
