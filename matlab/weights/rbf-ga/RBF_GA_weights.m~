@@ -24,22 +24,26 @@ function [] = RBF_GA_weights(nodes, stencil, dim, epsilon)
 %% RBF_GA_weights(nodes, stencil, d, 0.4)
 
     % Get the full B_k from which all other B_k's will be drawn
+    % NOTE: P_max_k is the set of vectors from which we draw the
+    % nullspace (i.e., B_k = null(P_max_k(...))' ). See below Equation 14. 
     [P_max_k, max_k] = Build_P_max_k(nodes(:,1:dim), stencil, dim);
-
-%     % Here we acquire the sub matrix B_{k-1} = null(P_k), where P_k is subset of P_max_k:
-%     sub_k = max_k - 1;
-%     while sub_k >= 0
-%         [B_sub_k] = Get_B_k(P_max_k, dim, sub_k)
-%        
-%         sub_k = sub_k - 1;
-%     end
   
-    [A_GA] = Assemble_LHS(P_max_k, dim, max_k, nodes(:,1:dim), stencil, 1);
-    cond(A_GA)
-    w1 = A_GA \ ones(size(stencil,2), 1)
+    % Test constant epsilon = 1 (Pretty high...expect poor accuracy)
+    %[A_GA] = Assemble_LHS(P_max_k, dim, max_k, nodes(:,1:dim), stencil, 1);
+    %cond(A_GA)
+    %w1 = A_GA \ ones(size(stencil,2), 1)
     
-    [A_GA] = Assemble_LHS(P_max_k, dim, max_k, nodes(:,1:dim), stencil, epsilon);
-    A_GA = [A_GA ones(size(stencil,2),1); ones(1,size(stencil,2)) 0]; 
+    % Test small epsilon (can go 1e-12 -> 0.1 without change in accuracy). 
+    [A_GA] = Assemble_LHS(P_max_k, dim, max_k, nodes(:,1:dim), stencil, epsilon)
+    
+    % Add column and row of monomial 1s for constraint
+   % A_GA = [A_GA ones(size(stencil,2),1); ones(1,size(stencil,2)) 0] 
+    
+    
+    [B_GA] = Assemble_RHS(P_max_k, dim, max_k, nodes(:,1:dim), stencil, epsilon)
+    
+    return; 
+    
     cond(A_GA)
     w2 = A_GA \ [ones(size(stencil,2), 1);0]
      
@@ -58,26 +62,35 @@ function [val] = rbf(X,epsilon)
 
 end
 
-function [A_GA] = Assemble_LHS(P_max_k, dim, k, nodes, stencil, epsilon)
-%% Assembles the LHS matrix that will be solved for RBF-GA weights
-    [m n] = size(stencil); 
+function [B_GA] = Assemble_RHS(P_max_k, dim, max_k, nodes, stencil, epsilon)
+%% Need to populate the analytic derivatives of the new basis functions.
 
-    A_GA = ones(n, n);
+%% For now assume X, Y, Z derivatives
+%A_GA contains [psi_1(x); psi_2(x); ... psi_n(x)] 
+%B_GA needs to contain [psi_1(x_c); psi_2(x_c); ... psi_n(x_c)] 
+[m n] = size(stencil); 
+
+    A_GA = zeros(n, n);
     cur_basis_indx = 1; 
     
     for kk = 0:k 
-
+            % Get the maximum B matrix that would be required for nullspace
+            % for this stencil (see paper). 
             B_k = Get_B_k(P_max_k, dim, kk);
             
             [B_k__nrows, B_k__ncols] = size(B_k);
 
+            % Truncate col operations if our stencil/nodes do not complete
+            % the set of vectors in B. 
             B_k__ncols = min(n, B_k__ncols); 
             
+            % Truncate B
             B_k = B_k(:,1:B_k__ncols);
             
             X_c = nodes(stencil(1:B_k__ncols),:);
             X = nodes(stencil(1:end),:);
-
+            
+            % z: as specified in paper
             z = 2*epsilon.^2 * X * X_c';
 
             G_k = (exp(z) .* gammainc(z,kk))';
@@ -99,7 +112,56 @@ function [A_GA] = Assemble_LHS(P_max_k, dim, k, nodes, stencil, epsilon)
                 end
             end
             cur_basis_indx = cur_basis_indx + B_k__nrows; 
-           % A_GA
+    end
+
+end
+
+function [A_GA, BasisFuncs] = Assemble_LHS(P_max_k, dim, k, nodes, stencil, epsilon)
+%% Assembles the LHS matrix that will be solved for RBF-GA weights
+    [m n] = size(stencil); 
+
+    A_GA = zeros(n, n);
+    cur_basis_indx = 1; 
+    
+    for kk = 0:k 
+            % Get the maximum B matrix that would be required for nullspace
+            % for this stencil (see paper). 
+            B_k = Get_B_k(P_max_k, dim, kk);
+            
+            [B_k__nrows, B_k__ncols] = size(B_k);
+
+            % Truncate col operations if our stencil/nodes do not complete
+            % the set of vectors in B. 
+            B_k__ncols = min(n, B_k__ncols); 
+            
+            % Truncate B
+            B_k = B_k(:,1:B_k__ncols);
+            
+            X_c = nodes(stencil(1:B_k__ncols),:);
+            X = nodes(stencil(1:end),:);
+            
+            % z: as specified in paper
+            z = 2*epsilon.^2 * X * X_c';
+
+            G_k = (exp(z) .* gammainc(z,kk))';
+            
+            % Make sure we only use the subset of the B_k necessary for
+            % the stencil
+            BG_prod = ( B_k(:,1:B_k__ncols) * G_k);
+            
+            % The power on 1/epsilon is not obvious. I will need to contact Natasha and
+            % Bengt for an idea of how it scales. 
+
+            for j = 0:B_k__nrows-1
+                if (cur_basis_indx+j <= n) 
+                    
+                    rbf_sample = rbf(nodes(stencil,:),epsilon); 
+                    % this gives: 1/eps^0, 2, 4, ...
+                    epsilon_scale_fact = epsilon.^(-(kk)*2);
+                    A_GA(cur_basis_indx + j,:) = BG_prod(j+1,:) .* (rbf_sample * epsilon_scale_fact)';
+                end
+            end
+            cur_basis_indx = cur_basis_indx + B_k__nrows; 
     end
 
 end
