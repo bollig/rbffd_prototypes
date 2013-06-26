@@ -115,6 +115,44 @@ In theory the composition/indirect approach to obtaining the projected operators
 %\include{rbffd_avoid_pole_singularities}
 %\include{rbffd_weights_on_sphere}
 
+\section{Problems with Paper}
+\begin{itemize}
+\item In Equations 12-14 in Bengt's paper, the growth rate for the power on the $\frac{1}{\epsilon^{*}}$ is not obvious. Through trial and error I was able to deduce that the power should scale as: $\frac{1}{\epsilon^{2k}}$ where $k$ is the same $k$ on $G_k$.
+
+\item When $z = 2\epsilon^2 x \cdot x_i$ is negative (i.e., the cases where stencil nodes are outside of first quadrant), the gammainc function in matlab returns NaN values. How do we handle the situation? 
+\begin{itemize}
+\item Actually, the problem is not when they are outside the first quadrant. Instead, it appears when the nodes span multiple quadrants (e.g., when in $[-1,1]^d$ instead of $[0,1]^d$).
+\item Answer: The $imag(gammainc(z,k)) < 1e-15$ for all cases tested. . Since it is so near to 0, we simply exclude it by requesting the $real(gammainc(z,k))$ when producing the bases. 
+\end{itemize}
+
+\item I am attempting to generate figures similar to Figure 3. I am able to reproduce the basis functions for $\Psi_1(x), \Psi_2(x), \Psi_3(x)$, but the remainder do not reproduce the figures in the paper. 
+\begin{itemize}
+\item Note: I was playing with different node distributions (regular, hexagonal, halton), and I realized that the visualized bases depend on the stencil and node locations. Bengt's paper does not explicitly state what node distribution was used to produce that figure. But at least I am confident that the results in Figure~\ref{fig:psis_3d} (and the X-Y axes view in Figure~\ref{fig:psis_2d}) are correct for my node distributions.
+\end{itemize}
+\end{itemize}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.55\textwidth]{./figures/hex_grid_stencil.png}
+\caption{Red: A hexagonal grid within the unit disk ($r <= 1$). Blue: a stencil of size $n=31$ nodes selected from the grid. }
+\label{fig:hex_grid_stencil}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{./figures/NewBasis_view3.eps}
+\caption{3D view of the new basis functions from RBF-GA for the hexagonal grid and stencil shown in Figure~\ref{fig:hex_grid_stencil} and stencil size $n=31$.}
+\label{fig:psis_3d}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{./figures/NewBasis_view2.eps}
+\caption{2D view of the new basis functions from RBF-GA for the hexagonal grid and stencil shown in Figure~\ref{fig:hex_grid_stencil} and stencil size $n=31$.}
+\label{fig:psis_2d}
+\end{figure}
+
+
 \ifstandalone
 \bibliographystyle{plain}
 \bibliography{merged_references}
