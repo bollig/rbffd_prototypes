@@ -117,7 +117,7 @@ In theory the composition/indirect approach to obtaining the projected operators
 
 \section{Problems with Paper}
 \begin{itemize}
-\item The size of matrix $B_k$---stated below Equation 14 in Bengt's paper---is wrong. The authors state that the dimensions will be $\begin{pmatrix} d+k-1 \\ d-1 \end{pmatrix} \times \begin{pmatrix} d+k \\ d \end{pmatrix}$. While debugging I found that to reproduce the dimensions from Equations 12-14 requires the matrix $B_k$ to grow as (note: off by one on first dim): $\begin{pmatrix} d+k-1 \\ d \end{pmatrix} \times \begin{pmatrix} d+k \\ d \end{pmatrix}$
+%\item The size of matrix $B_k$---stated below Equation 14 in Bengt's paper---is wrong. The authors state that the dimensions are $\begin{pmatrix} d+k-1 \\ d-1 \end{pmatrix} \times \begin{pmatrix} d+k \\ d \end{pmatrix}$. While debugging I found that to reproduce the dimensions from Equations 12-14 requires the matrix $B_k$ to grow as (note: off by one on first dim): $\begin{pmatrix} d+k-1 \\ d \end{pmatrix} \times \begin{pmatrix} d+k \\ d \end{pmatrix}$
 
 
 \item In Equations 12-14 in Bengt's paper, the growth rate for the power on the $\frac{1}{\epsilon^{*}}$ is not obvious. Through trial and error I was able to deduce that the power should scale as: $\frac{1}{\epsilon^{2k}}$ where $k$ is the same $k$ on $G_k$. 
