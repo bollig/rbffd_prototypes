@@ -217,6 +217,11 @@ end
 
 function [nrows,ncols] = Get_Dims_for_k(dim, k)
 %% Returns the proper number of rows and columns for B_k
+% NOTE: below Equation 14 in Bengts paper, they give two matrix dimensions.
+% This is the latter (the size of the polynomial matrix). When we compute
+% the nullspace we get a matrix B_k with dimensions nchoosek(dim+k-1,dim-1)
+% \times nchoosek(dim+k,dim). 
+
     nrows = nchoosek(dim+k-1, dim);
     ncols = nchoosek(dim+k, dim);
 end

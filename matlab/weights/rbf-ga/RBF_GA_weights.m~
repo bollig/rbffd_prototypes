@@ -1,4 +1,5 @@
-function [] = RBF_GA_weights(nodes, stencil, dim, epsilon)
+function [A_GA, B_GA] = RBF_GA_weights(nodes, stencil, dim, epsilon)
+global debug; 
 
 %TODO: 
 %       a) Derive RHS for X, Y, Z and Lapl. also, projected operators on
@@ -34,13 +35,13 @@ function [] = RBF_GA_weights(nodes, stencil, dim, epsilon)
     %w1 = A_GA \ ones(size(stencil,2), 1)
     
     % Test small epsilon (can go 1e-12 -> 0.1 without change in accuracy). 
-    [A_GA] = Assemble_LHS(P_max_k, dim, max_k, nodes(:,1:dim), stencil, epsilon)
+    [A_GA] = Assemble_LHS(P_max_k, dim, max_k, nodes(:,1:dim), stencil, epsilon);
     
     % Add column and row of monomial 1s for constraint
    % A_GA = [A_GA ones(size(stencil,2),1); ones(1,size(stencil,2)) 0] 
     
     
-    [B_GA] = Assemble_RHS(P_max_k, dim, max_k, nodes(:,1:dim), stencil, epsilon)
+    [B_GA] = Assemble_RHS(P_max_k, dim, max_k, nodes(:,1:dim), stencil, epsilon);
     
     return; 
     
@@ -62,7 +63,7 @@ function [val] = rbf(X,epsilon)
 
 end
 
-function [B_GA] = Assemble_RHS(P_max_k, dim, max_k, nodes, stencil, epsilon)
+function [B_GA] = Assemble_RHS(P_max_k, dim, k, nodes, stencil, epsilon)
 %% Need to populate the analytic derivatives of the new basis functions.
 
 %% For now assume X, Y, Z derivatives
@@ -70,7 +71,7 @@ function [B_GA] = Assemble_RHS(P_max_k, dim, max_k, nodes, stencil, epsilon)
 %B_GA needs to contain [psi_1(x_c); psi_2(x_c); ... psi_n(x_c)] 
 [m n] = size(stencil); 
 
-    A_GA = zeros(n, n);
+    B_GA = zeros(n, 1);
     cur_basis_indx = 1; 
     
     for kk = 0:k 
@@ -87,8 +88,10 @@ function [B_GA] = Assemble_RHS(P_max_k, dim, max_k, nodes, stencil, epsilon)
             % Truncate B
             B_k = B_k(:,1:B_k__ncols);
             
+            % Psi_n is basis centered at X_c = X_n
             X_c = nodes(stencil(1:B_k__ncols),:);
-            X = nodes(stencil(1:end),:);
+            % Sample nodes: 
+            X = nodes(stencil(1),:);
             
             % z: as specified in paper
             z = 2*epsilon.^2 * X * X_c';
@@ -105,10 +108,10 @@ function [B_GA] = Assemble_RHS(P_max_k, dim, max_k, nodes, stencil, epsilon)
             for j = 0:B_k__nrows-1
                 if (cur_basis_indx+j <= n) 
                     
-                    rbf_sample = rbf(nodes(stencil,:),epsilon); 
+                    rbf_sample = rbf(X,epsilon);
                     % this gives: 1/eps^0, 2, 4, ...
                     epsilon_scale_fact = epsilon.^(-(kk)*2);
-                    A_GA(cur_basis_indx + j,:) = BG_prod(j+1,:) .* (rbf_sample * epsilon_scale_fact)';
+                    B_GA(cur_basis_indx + j,:) = BG_prod(j+1,:) .* (rbf_sample * epsilon_scale_fact)';
                 end
             end
             cur_basis_indx = cur_basis_indx + B_k__nrows; 
@@ -119,6 +122,7 @@ end
 function [A_GA, BasisFuncs] = Assemble_LHS(P_max_k, dim, k, nodes, stencil, epsilon)
 %% Assembles the LHS matrix that will be solved for RBF-GA weights
     [m n] = size(stencil); 
+    global debug; 
 
     A_GA = zeros(n, n);
     cur_basis_indx = 1; 
@@ -142,9 +146,9 @@ function [A_GA, BasisFuncs] = Assemble_LHS(P_max_k, dim, k, nodes, stencil, epsi
             
             % z: as specified in paper
             z = 2*epsilon.^2 * X * X_c';
-
-            G_k = (exp(z) .* gammainc(z,kk))';
             
+            G_k = (exp(z) .* real(gammainc(z,kk)))';
+                        
             % Make sure we only use the subset of the B_k necessary for
             % the stencil
             BG_prod = ( B_k(:,1:B_k__ncols) * G_k);
@@ -155,10 +159,37 @@ function [A_GA, BasisFuncs] = Assemble_LHS(P_max_k, dim, k, nodes, stencil, epsi
             for j = 0:B_k__nrows-1
                 if (cur_basis_indx+j <= n) 
                     
-                    rbf_sample = rbf(nodes(stencil,:),epsilon); 
+                    rbf_sample = rbf(X,epsilon); 
                     % this gives: 1/eps^0, 2, 4, ...
                     epsilon_scale_fact = epsilon.^(-(kk)*2);
                     A_GA(cur_basis_indx + j,:) = BG_prod(j+1,:) .* (rbf_sample * epsilon_scale_fact)';
+                    if debug 
+                        if (kk < 5) && (j < 6)
+                            xx = nodes(stencil(1:end),1);
+                            yy = nodes(stencil(1:end),2);
+                            zz = A_GA(cur_basis_indx+j,:)';
+                            
+                            xli = linspace(min(xx)-0.05,max(xx)+0.05,40);
+                            yli = linspace(min(yy)-0.05,max(yy)+0.05,40);
+                            [xq,yq] = meshgrid(xli,yli);
+                            
+                            zq = griddata(xx, yy, zz, xq, yq,'cubic');
+                            
+                            %plot3(xq(:), yq(:), zq(:), 'o');
+
+                            subplot(5,5, kk*5 + j+1 )
+                            surf(xq,yq,zq);
+                            shading interp;
+                            
+                            titlestr = sprintf('$\\Psi_{%d}(x)$', cur_basis_indx + j);
+                            title(titlestr, 'interpreter', 'latex','FontSize',20)
+                            set(gca,'FontSize',14)
+                            %hold on;
+                            %plot3(xx,yy,zz,'.','MarkerSize',15);
+                            %hold off;
+                            axis tight;
+                        end
+                    end
                 end
             end
             cur_basis_indx = cur_basis_indx + B_k__nrows; 
@@ -178,6 +209,7 @@ function [B_sub_k] = Get_B_k(P_max_k, dim, k)
         [m n] = size(R);
 
         B_sub_k = Q(:,n+1:m)';
+        size(B_sub_k)
         %B_sub_k = null(P_sub_k)';
     else 
         B_sub_k = 1;
@@ -227,12 +259,10 @@ if max_k
     % B_n__nrows = nchoosek(d+max_k-1, d)
     % NOTE: We truncate the matrix if it exceeds the number of stencil nodes
     % available
-    %B_n__ncols = min(nchoosek(d+max_k, d), n)
+  
+    %% Testing: override truncation to see padded zeros
     B_n__ncols = min(B_n__ncols, n);
-
-    %% TEsting: override truncation to see padded zeros
     P_max_k = zeros(B_n__nrows, nchoosek(d+max_k, d));
-    %P_max_k = zeros(B_n__nrows, B_n__ncols);
 
 
     % This is some fancy matlab; 
