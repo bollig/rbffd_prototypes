@@ -129,6 +129,7 @@ My trial and error was naive, but I found that without the proper scaling, any c
 \item Actually, the problem is not when they are outside the first quadrant. Instead, it appears when the nodes span multiple quadrants (e.g., when in $[-1,1]^d$ instead of $[0,1]^d$).
 \item Answer: The $imag(gammainc(z,k)) < 1e-15$ for all cases tested. . Since it is so near to 0, we simply exclude it by requesting the $real(gammainc(z,k))$ when producing the bases. 
 \end{itemize}
+\item I also found that for $k=0$ occasionally I get NaN values out of matlab's gammainc(z,k). Consulting the documentation for this routine I found the statement that, for small values of z and $k=0$, "For small $x$ and $a$, $gammainc(x,a) \  \tilde{} \ x^a$, so $gammainc(0,0) = 1$". In fact, the occurrences of NaN correspond to $a=0$ and $x < -1e-5$. Working so near to $0$, I simply added a check on the output from gammainc that catches NaN and substitutes the value 1. For $k>0$ NaNs result in errors.
 
 \item I am attempting to generate figures similar to Figure 3. I am able to reproduce the basis functions for $\Psi_1(x), \Psi_2(x), \Psi_3(x)$, but the remainder do not reproduce the figures in the paper. 
 \begin{itemize}

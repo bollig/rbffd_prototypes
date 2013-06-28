@@ -145,8 +145,25 @@ function [A_GA, BasisFuncs] = Assemble_LHS(P_max_k, dim, k, nodes, stencil, epsi
             % z: as specified in paper
             z = 2*epsilon.^2 * X * X_c';
             
+            %G_k = (exp(z) .* real(gammainc(z,kk)))';
             G_k = (exp(z) .* real(gammainc(z,kk)))';
-                        
+            
+            % NOTE: when kk = 0 and z is small the gammainc
+            % documentation states that, "For small x and a, gammainc(x,a) ~ x^a, so
+            % gammainc(0,0) = 1.".
+            %
+            % In fact, when kk == 0 and z < -1e-5 we get NaN out of gammainc.
+            % Consequently, we must capture these instances and replace
+            % the NaN with the value 1.
+            nanloc = find(isnan(G_k));
+            if ( nanloc ) 
+                if kk > 0
+                    error('NaN found on kk=%d\n', kk);
+                else
+                    G_k( nanloc ) = 1;
+                end
+            end
+                       
             % Make sure we only use the subset of the B_k necessary for
             % the stencil
             BG_prod = ( B_k(:,1:B_k__ncols) * G_k);
@@ -186,6 +203,9 @@ function [A_GA, BasisFuncs] = Assemble_LHS(P_max_k, dim, k, nodes, stencil, epsi
                             %plot3(xx,yy,zz,'.','MarkerSize',15);
                             %hold off;
                             axis tight;
+                            if kk == 0
+                            %    axis([-1 1 -1 1 0 1])
+                            end
                         end
                     end
                 end
