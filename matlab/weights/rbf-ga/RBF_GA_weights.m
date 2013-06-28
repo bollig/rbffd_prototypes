@@ -204,7 +204,7 @@ function [A_GA, BasisFuncs] = Assemble_LHS(P_max_k, dim, k, nodes, stencil, epsi
                             %hold off;
                             axis tight;
                             if kk == 0
-                            %    axis([-1 1 -1 1 0 1])
+                                axis([-1 1 -1 1 0 1])
                             end
                         end
                     end
