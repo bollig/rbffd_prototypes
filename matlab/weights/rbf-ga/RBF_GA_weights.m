@@ -16,13 +16,13 @@ global debug;
 
 
 %% The RBF-GA (Gamma Incomplete for Gaussian RBF-FD), based on Fornberg, Lehto and Powell 2012
-% 
-%% d = 3
-%% p = haltonset(d,'Skip',1e3,'Leap',1e2)
-%% nodes = net(p,120)
-%% stencil = [1:50]
-%% plot3(nodes(stencil,1), nodes(stencil,2), nodes(stencil,3), '.')
-%% RBF_GA_weights(nodes, stencil, d, 0.4)
+% Example test:  
+%   d = 3
+%   p = haltonset(d,'Skip',1e3,'Leap',1e2)
+%   nodes = net(p,120)
+%   stencil = [1:50]
+%   plot3(nodes(stencil,1), nodes(stencil,2), nodes(stencil,3), '.')
+%   RBF_GA_weights(nodes, stencil, d, 0.4)
 
     % Get the full B_k from which all other B_k's will be drawn
     % NOTE: P_max_k is the set of vectors from which we draw the
@@ -57,16 +57,14 @@ global debug;
 end
 
 function [val] = rbf(X,epsilon)
-    
-    %% e^(-eps^2 (x^2 + y^2))
+    %% RBF choice is Gaussian: 
+    % $$e^{-\epsilon^2 (x^2 + y^2)}$$
     val = exp(-epsilon.^2 * (dot(X,X,2)));
-
 end
 
 function [B_GA] = Assemble_RHS(P_max_k, dim, k, nodes, stencil, epsilon)
 %% Need to populate the analytic derivatives of the new basis functions.
-
-%% For now assume X, Y, Z derivatives
+% For now assume X, Y, Z derivatives
 %A_GA contains [psi_1(x); psi_2(x); ... psi_n(x)] 
 %B_GA needs to contain [psi_1(x_c); psi_2(x_c); ... psi_n(x_c)] 
 [m n] = size(stencil); 
@@ -228,7 +226,7 @@ end
 
 
 function [P_max_k, max_k] = Build_P_max_k(nodes, stencil, dim)
-% Detects necessary $k$ based on stencil size
+%% Detects necessary $k$ based on stencil size
 % Assembles B_k given dimension, $d$, $k$ and stencil of nodes
 
 % Dimension
