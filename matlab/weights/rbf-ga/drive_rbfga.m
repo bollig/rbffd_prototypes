@@ -1,7 +1,7 @@
 d = 2
 global debug;
 debug = 1; 
-if 1
+if 0
     p = haltonset(d,'Skip',1e3,'Leap',1e2);
     % Halton nodes
     nodes = [net(p,100) * 2 - 1];
