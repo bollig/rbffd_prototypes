@@ -64,10 +64,10 @@ hold off;
 pause
 
 figure(2)
-[A_GA, B_GA] = RBF_GA_weights(nodes, stencil, d, 1.0);
+[A_GA, B_GA] = RBF_GA_weights(nodes, stencil, d, 0.00000000001);
 
 
-[weights_available, nodes] = Calc_RBFFD_Weights({'x'}, size(nodes,1), nodes, size(nodes,1), 1.0, 0);
+%[weights_available, nodes] = Calc_RBFFD_Weights({'x'}, size(nodes,1), nodes, size(nodes,1), 1.0, 0);
 
 % TODO: find out why bases 4 and 5 do not match Fornberg paper
 % ANSWER: changing the stencil center location and node distribution

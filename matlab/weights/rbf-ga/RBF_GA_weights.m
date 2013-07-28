@@ -40,10 +40,13 @@ global debug;
     % Add column and row of monomial 1s for constraint
    % A_GA = [A_GA ones(size(stencil,2),1); ones(1,size(stencil,2)) 0] 
     
+   % d/dx = 1
+   which_deriv = 1; 
+  
    % TODO: need to get RHS properly. Its RBF * max_{0,p} G(k). G(K)
     % The deriv_p indicates we want the RHS to represent the pth deriv wrt
     % z (i.e., d^p/dz^p G_k(z) => G_{max(0,k-p)}(z))
-    [B_GA] = Assemble_RHS(which_deriv, deriv_p, P_max_k, dim, max_k, nodes(:,1:dim), stencil, epsilon);
+    [B_GA] = Assemble_RHS(which_deriv, P_max_k, dim, max_k, nodes(:,1:dim), stencil, epsilon);
     
     return; 
     
@@ -64,7 +67,33 @@ function [val] = rbf(X,epsilon)
     val = exp(-epsilon.^2 * (dot(X,X,2)));
 end
 
-function [B_GA] = Assemble_RHS(which_deriv, deriv_p, P_max_k, dim, k, nodes, stencil, epsilon)
+function [val] = drbf_dx_over_x(X,epsilon)
+    %% RBF choice is Gaussian: 
+    % $$e^{-\epsilon^2 (x^2 + y^2)}$$
+    val = 2*epsilon^2 * exp(-epsilon.^2 * (dot(X,X,2)));
+end
+
+function [G_k] = eval_G_k(kk, z)
+    G_k = (exp(z) .* real(gammainc(z,kk)))';
+
+    % NOTE: when kk = 0 and z is small the gammainc
+    % documentation states that, "For small x and a, gammainc(x,a) ~ x^a, so
+    % gammainc(0,0) = 1.".
+    %
+    % In fact, when kk == 0 and z < -1e-5 we get NaN out of gammainc.
+    % Consequently, we must capture these instances and replace
+    % the NaN with the value 1.
+    nanloc = find(isnan(G_k));
+    if ( nanloc )
+        if kk > 0
+            error('NaN found on kk=%d\n', kk);
+        else
+            G_k( nanloc ) = 1;
+        end
+    end
+end
+
+function [B_GA] = Assemble_RHS(which_deriv, P_max_k, dim, k, nodes, stencil, epsilon)
 %% Need to populate the analytic derivatives of the new basis functions.
 % For now assume X, Y, Z derivatives
 %A_GA contains [psi_1(x); psi_2(x); ... psi_n(x)] 
@@ -107,13 +136,27 @@ function [B_GA] = Assemble_RHS(which_deriv, deriv_p, P_max_k, dim, k, nodes, ste
             
             % z: as specified in paper
             z = 2*epsilon.^2 * X * X_c';
-
-            G_k = (exp(z) .* gammainc(z,kk))';
+        
+            %G_k = (exp(z) .* real(gammainc(z,kk)))';
+            G_k = eval_G_k(kk,z);
             
             % Make sure we only use the subset of the B_k necessary for
             % the stencil
-            BG_prod = ( B_k(:,1:B_k__ncols) * G_k);
-            
+            if (which_deriv == 1) 
+                G_k_m_1 = eval_G_k(max(0,kk-1), z);
+                
+                % we need: 
+                % \pd{\psi(\vx)}{x}   & = \left( x G_k(z) + x_i G_{max(0,k-1)}( z )  \right) 2\epsilon^2 e^{-\epsilon^2 r(\vx)^2}
+                % DO I NEED THE B_K product? Equation 7.1 does not indicate
+                % its necessary...For now, assume I do. 
+                BG_prod = ( B_k(:,1:B_k__ncols) * ( X(:,1) .* G_k + X_c(:,1) .* G_k_m_1 ))
+            else 
+                BG_prod = ( B_k(:,1:B_k__ncols) * G_k )
+            end
+            % The power on 1/epsilon is not obvious. I will need to contact Natasha and
+            % Bengt for an idea of how it scales. 
+
+                
             % The power on 1/epsilon is not obvious. I will need to contact Natasha and
             % Bengt for an idea of how it scales. 
 
@@ -121,9 +164,13 @@ function [B_GA] = Assemble_RHS(which_deriv, deriv_p, P_max_k, dim, k, nodes, ste
                 if (cur_basis_indx+j <= n) 
                     
                     %% TODO: RBF sample depends on the deriv type
-                    rbf_sample = rbf(X,epsilon);
+                    if which_deriv == 1
+                        rbf_sample = drbf_dx_over_x(X,epsilon);
+                    else
+                        rbf_sample = rbf(X,epsilon);
+                    end
                     
-                    % this gives: 1/eps^0, 2, 4, ...
+                         % this gives: 1/eps^0, 2, 4, ...
                     epsilon_scale_fact = epsilon.^(-(kk)*2);
                     B_GA(cur_basis_indx + j,:) = BG_prod(j+1,:) .* (rbf_sample * epsilon_scale_fact)';
                 end
