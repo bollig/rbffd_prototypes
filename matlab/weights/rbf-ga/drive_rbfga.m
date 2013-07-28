@@ -1,14 +1,14 @@
 d = 2
 global debug;
-debug = 1; 
-if 1
+debug = 0; 
+if 0
     p = haltonset(d,'Skip',1e3,'Leap',1e2);
     % Halton nodes
-    nodes = [net(p,100) * 2 - 1];
+    nodes = net(p,100) * 2 - 1;
     %nodes = net(p,100) * 2 - 1;
 else 
-    if 0
-        if 0
+    if 1
+        if 1
             m = 9;
             [X Y] = meshgrid(0:1:m);
             % Generate hexagonal grid
@@ -53,22 +53,24 @@ for i = 1:size(nodes,1)
 end
 nodes = nodes( dis <= 1, : );
 
+nodes = [0, 0; nodes];
+
 stencil = knnsearch(nodes,zeros(1,d),'k',size(nodes,1));
 
 figure(1)
 plot(nodes(:,1), nodes(:,2), 'ro');
 pause;
 hold on;
-plot(nodes(stencil,1), nodes(stencil,2), 'b.');
+plot(nodes(1,1), nodes(1,2), 'g+','MarkerSize',10);
+%plot(nodes(stencil,1), nodes(stencil,2), 'b.');
 hold off;
 pause
 
-figure(2)
-[A_GA, B_GA] = RBF_GA_weights(nodes, stencil, d, 0.01);
+[A_GA, B_GA] = RBF_GA_weights(nodes, stencil, d, 0.000001);
 
 
 global RBFFD_WEIGHTS;
-[weights_available, nodes] = Calc_RBFFD_Weights({'x'}, size(nodes,1), nodes, size(nodes,1), 0.01, 0);
+[weights_available, nodes] = Calc_RBFFD_Weights({'x'}, size(nodes,1), nodes, size(nodes,1), 1.0, 0);
 
 % TODO: find out why bases 4 and 5 do not match Fornberg paper
 % ANSWER: changing the stencil center location and node distribution

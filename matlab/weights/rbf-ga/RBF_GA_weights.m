@@ -218,6 +218,7 @@ function [A_GA, BasisFuncs] = Assemble_LHS(P_max_k, dim, k, nodes, stencil, epsi
                     
                     A_GA(cur_basis_indx + j,:) = BG_prod(j+1,:) .* (rbf_sample * epsilon_scale_fact)';
                     if debug 
+                        figure
                         if (kk < 5) && (j < 6)
                             xx = nodes(stencil(1:end),1);
                             yy = nodes(stencil(1:end),2);
