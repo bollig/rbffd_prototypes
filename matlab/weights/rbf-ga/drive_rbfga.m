@@ -1,7 +1,7 @@
 d = 2
 global debug;
 debug = 1; 
-if 0
+if 1
     p = haltonset(d,'Skip',1e3,'Leap',1e2);
     % Halton nodes
     nodes = [net(p,100) * 2 - 1];
@@ -64,7 +64,10 @@ hold off;
 pause
 
 figure(2)
-[A_GA, B_GA] = RBF_GA_weights(nodes, stencil, d, 0.00001);
+[A_GA, B_GA] = RBF_GA_weights(nodes, stencil, d, 1.0);
+
+
+[weights_available, nodes] = Calc_RBFFD_Weights({'x'}, size(nodes,1), nodes, size(nodes,1), 1.0, 0);
 
 % TODO: find out why bases 4 and 5 do not match Fornberg paper
 % ANSWER: changing the stencil center location and node distribution

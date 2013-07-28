@@ -40,8 +40,10 @@ global debug;
     % Add column and row of monomial 1s for constraint
    % A_GA = [A_GA ones(size(stencil,2),1); ones(1,size(stencil,2)) 0] 
     
-    
-    [B_GA] = Assemble_RHS(P_max_k, dim, max_k, nodes(:,1:dim), stencil, epsilon);
+   % TODO: need to get RHS properly. Its RBF * max_{0,p} G(k). G(K)
+    % The deriv_p indicates we want the RHS to represent the pth deriv wrt
+    % z (i.e., d^p/dz^p G_k(z) => G_{max(0,k-p)}(z))
+    [B_GA] = Assemble_RHS(which_deriv, deriv_p, P_max_k, dim, max_k, nodes(:,1:dim), stencil, epsilon);
     
     return; 
     
@@ -62,7 +64,7 @@ function [val] = rbf(X,epsilon)
     val = exp(-epsilon.^2 * (dot(X,X,2)));
 end
 
-function [B_GA] = Assemble_RHS(P_max_k, dim, k, nodes, stencil, epsilon)
+function [B_GA] = Assemble_RHS(which_deriv, deriv_p, P_max_k, dim, k, nodes, stencil, epsilon)
 %% Need to populate the analytic derivatives of the new basis functions.
 % For now assume X, Y, Z derivatives
 %A_GA contains [psi_1(x); psi_2(x); ... psi_n(x)] 
@@ -72,6 +74,12 @@ function [B_GA] = Assemble_RHS(P_max_k, dim, k, nodes, stencil, epsilon)
     B_GA = zeros(n, 1);
     cur_basis_indx = 1; 
     
+    % Loop over the "k" bundles (i.e., the 1, 2, 3, 4, 5, etc. groups)
+    % The derivative d^p/dz^p G(z) = G_{max(0, k-p)}(z), so we have: 
+    % for first deriv wrt z: G_0(z) -> G_0(z), G_1(z) -> G_0(z), G_2(z) ->
+    % G_1(z), etc. etc. Otherwise these are the same scalings on the RBF
+    % sample (just be sure to sample only the first row since we're getting
+    % the distances from center to all other bases). 
     for kk = 0:k 
             % Get the maximum B matrix that would be required for nullspace
             % for this stencil (see paper). 
@@ -86,9 +94,15 @@ function [B_GA] = Assemble_RHS(P_max_k, dim, k, nodes, stencil, epsilon)
             % Truncate B
             B_k = B_k(:,1:B_k__ncols);
             
+            %% KEY FOR RHS: 
+            % LHS samples: X_c = nodes(stencil(1:B_k__ncols),:);
+            % and: X = nodes(stencil(1:end),:);
+            
             % Psi_n is basis centered at X_c = X_n
+            % i.e., center bases at each of the stencil nodes. 
             X_c = nodes(stencil(1:B_k__ncols),:);
-            % Sample nodes: 
+            
+            % Sample nodes (check all bases against the stencil center): 
             X = nodes(stencil(1),:);
             
             % z: as specified in paper
@@ -106,7 +120,9 @@ function [B_GA] = Assemble_RHS(P_max_k, dim, k, nodes, stencil, epsilon)
             for j = 0:B_k__nrows-1
                 if (cur_basis_indx+j <= n) 
                     
+                    %% TODO: RBF sample depends on the deriv type
                     rbf_sample = rbf(X,epsilon);
+                    
                     % this gives: 1/eps^0, 2, 4, ...
                     epsilon_scale_fact = epsilon.^(-(kk)*2);
                     B_GA(cur_basis_indx + j,:) = BG_prod(j+1,:) .* (rbf_sample * epsilon_scale_fact)';
