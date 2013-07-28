@@ -149,29 +149,20 @@ function [B_GA] = Assemble_RHS(which_deriv, P_max_k, dim, k, nodes, stencil, eps
                 % \pd{\psi(\vx)}{x}   & = \left( x G_k(z) + x_i G_{max(0,k-1)}( z )  \right) 2\epsilon^2 e^{-\epsilon^2 r(\vx)^2}
                 % DO I NEED THE B_K product? Equation 7.1 does not indicate
                 % its necessary...For now, assume I do. 
-                BG_prod = ( B_k(:,1:B_k__ncols) * ( X(:,1) .* G_k + X_c(:,1) .* G_k_m_1 ))
+                BG_prod = ( B_k(:,1:B_k__ncols) * ( X(:,1) .* G_k + X_c(:,1) .* G_k_m_1 ));
+                rbf_sample = drbf_dx_over_x(X,epsilon);
             else 
-                BG_prod = ( B_k(:,1:B_k__ncols) * G_k )
+                BG_prod = ( B_k(:,1:B_k__ncols) * G_k );
+                rbf_sample = rbf(X,epsilon);
             end
+            
             % The power on 1/epsilon is not obvious. I will need to contact Natasha and
             % Bengt for an idea of how it scales. 
-
-                
-            % The power on 1/epsilon is not obvious. I will need to contact Natasha and
-            % Bengt for an idea of how it scales. 
+            % this gives: 1/eps^0, 2, 4, ...
+            epsilon_scale_fact = epsilon.^(-(kk)*2);
 
             for j = 0:B_k__nrows-1
                 if (cur_basis_indx+j <= n) 
-                    
-                    %% TODO: RBF sample depends on the deriv type
-                    if which_deriv == 1
-                        rbf_sample = drbf_dx_over_x(X,epsilon);
-                    else
-                        rbf_sample = rbf(X,epsilon);
-                    end
-                    
-                         % this gives: 1/eps^0, 2, 4, ...
-                    epsilon_scale_fact = epsilon.^(-(kk)*2);
                     B_GA(cur_basis_indx + j,:) = BG_prod(j+1,:) .* (rbf_sample * epsilon_scale_fact)';
                 end
             end
@@ -209,37 +200,22 @@ function [A_GA, BasisFuncs] = Assemble_LHS(P_max_k, dim, k, nodes, stencil, epsi
             z = 2*epsilon.^2 * X * X_c';
             
             %G_k = (exp(z) .* real(gammainc(z,kk)))';
-            G_k = (exp(z) .* real(gammainc(z,kk)))';
-            
-            % NOTE: when kk = 0 and z is small the gammainc
-            % documentation states that, "For small x and a, gammainc(x,a) ~ x^a, so
-            % gammainc(0,0) = 1.".
-            %
-            % In fact, when kk == 0 and z < -1e-5 we get NaN out of gammainc.
-            % Consequently, we must capture these instances and replace
-            % the NaN with the value 1.
-            nanloc = find(isnan(G_k));
-            if ( nanloc ) 
-                if kk > 0
-                    error('NaN found on kk=%d\n', kk);
-                else
-                    G_k( nanloc ) = 1;
-                end
-            end
+            G_k = eval_G_k(kk,z);
                        
             % Make sure we only use the subset of the B_k necessary for
             % the stencil
             BG_prod = ( B_k(:,1:B_k__ncols) * G_k);
             
+            rbf_sample = rbf(X,epsilon);
+                    
             % The power on 1/epsilon is not obvious. I will need to contact Natasha and
             % Bengt for an idea of how it scales. 
+            % this gives: 1/eps^0, 2, 4, ...
+            epsilon_scale_fact = epsilon.^(-(kk)*2);
 
             for j = 0:B_k__nrows-1
                 if (cur_basis_indx+j <= n) 
                     
-                    rbf_sample = rbf(X,epsilon); 
-                    % this gives: 1/eps^0, 2, 4, ...
-                    epsilon_scale_fact = epsilon.^(-(kk)*2);
                     A_GA(cur_basis_indx + j,:) = BG_prod(j+1,:) .* (rbf_sample * epsilon_scale_fact)';
                     if debug 
                         if (kk < 5) && (j < 6)
