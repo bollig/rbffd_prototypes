@@ -1,9 +1,9 @@
-function [] = plot_eigenvalues(filename, mytitle)
+function [] = plot_eigenvalues(filename, mytitle, scale)
 
 figure
 set(gcf,'Position',[100 100 720 650])
 evals = dlmread(filename);
-plot(real(evals), imag(evals), 'o','LineWidth',1,'MarkerEdgeColor','b','MarkerFaceColor','g','MarkerSize',6);
+plot(real(evals/scale), imag(evals/scale), 'o','LineWidth',1,'MarkerEdgeColor','b','MarkerFaceColor','g','MarkerSize',6);
 axis tight;
 grid on;
 if nargin < 2

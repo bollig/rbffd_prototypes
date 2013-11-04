@@ -29,7 +29,7 @@ We start with:
 \begin{align} 
 \psi (x,y) = e^{-\epsilon^2(x^2+y^2)} \cdot G_k(2\epsilon^2(x x_i +y y_i)) \label{eq:rbf_ga_basis}
 \end{align}
-from Fornberg et al. \cite{FornbergLehtoPowell12}, Equation 7.1 (Appendix A).
+from Fornberg et al. \cite{Fornberg2012}, Equation 7.1 (Appendix A).
 
 
 The authors provide that derivatives of the basis functions requires:
@@ -82,15 +82,7 @@ Finally, we substitute Equation~\ref{eq:x_part1} and \ref{eq:x_part2} into Equat
                  & = \left( x G_{k}(z) + x_i G_{max(0,k-1)}(z) \right) 2 \epsilon^2 e^{-\epsilon^2(x^2+y^2)}\label{eq:rbf_ga_xderiv}
 \end{align}
 
-
-\section{$\pd{}{y}$, and higher dimensions}
-
-We repeat the process for $\pd{}{y}$, but due to similarity to $\pd{}{x}$, we can conclude: 
-
-\begin{align}
-\pd{\psi(x,y)}{y}   & = \left( y G_k(z) + y_i G_{max(0,k-1)}( z )  \right) 2\epsilon^2 e^{-\epsilon^2(x^2 + y^2)} \label{eq:rbf_ga_yderiv}
-\end{align}
-As the problem dimension increases, each first order derivative results similar equations, but a substitution for $r(\vx)^2 = (x^2 + y^2 + \cdots)$ can be made: 
+We repeat the process for $\pd{}{y}$, but due to similarity to $\pd{}{x}$ for the general form: 
 \begin{align}
 \pd{\psi(\vx)}{x}   & = \left( x G_k(z) + x_i G_{max(0,k-1)}( z )  \right) 2\epsilon^2 e^{-\epsilon^2 r(\vx)^2} \label{eq:rbf_ga_yderiv}
 \end{align}
@@ -117,7 +109,7 @@ NOTE: this assumes $x_i$ is a constant.
 
 \section{Laplacian $\Laplacian$}
 
-The Laplacian, $\Laplacian = \sum_{d=1}^{D}  \pdd{}{x_d}$ (where $D$ is the problem dimension) can be obtained following \cite{FornbergLehtoPowell12} to rewrite Equation~\ref{eq:rbf_ga_basis} as the product of two functions in one variable. 
+The Laplacian, $\Laplacian = \sum_{d=1}^{D}  \pdd{}{x_d}$ (where $D$ is the problem dimension) can be obtained following \cite{Fornberg2012} to rewrite Equation~\ref{eq:rbf_ga_basis} as the product of two functions in one variable. \authnote{Have not mastered this yet}
 
 \subsection{2D}
 
@@ -126,7 +118,7 @@ The Laplacian, $\Laplacian = \sum_{d=1}^{D}  \pdd{}{x_d}$ (where $D$ is the prob
 
 \section{Projected Operators}
 
-For the Stokes problem we need projected operators on the sphere. Derivation of these operators can be done via the chain rule, but I suspect that we may be able to compose the projected operators using only the basic operators for $\pd{}{x}$,  $\pd{}{y}$, and $\pd{}{z}$ as demonstrated in one of my dissertation Appendices---I was able to compose Differentiation Matrices for projected operators based on DMs for the unprojected operators with minimal loss of accuracy. 
+For the Stokes problem we need projected operators on the sphere. Derivation of these operators can be done via the chain rule, but I suspect that we may be able to compose the projected operators using only the basic operators for $\pd{}{x}$,  $\pd{}{y}$, and $\pd{}{z}$ as demonstrated in one of my dissertation Appendices---I was able to compose differentiation matrices for projected operators based on DMs for the unprojected operators with minimal loss of precision. 
 
 In theory the composition/indirect approach to obtaining the projected operators will suffice. If not, we shall return to derive the RHS forms. 
 
@@ -146,12 +138,12 @@ In theory the composition/indirect approach to obtaining the projected operators
 
 \item In Equations 12-14 in Bengt's paper, the growth rate for the power on the $\frac{1}{\epsilon^{*}}$ is not obvious. Through trial and error I was able to deduce that the power should scale as: $\frac{1}{\epsilon^{2k}}$ where $k$ is the same $k$ on $G_k$. 
 
-My trial and error was naive, but I found that without the proper scaling, any changes to $\epsilon$ would impact the conditioning and magnitude of elements in the matrix. I did a simple solve of $A x = ones$ where $A$ was the LHS produced with RBF-GA. When $\epsilon$ would change, the values of $x$ would change scale as well. By fixing the power on the scaling to $2k$ I am able to input any value for $\epsilon$ (e.g. $1e-2 \rightarrow 1e-15$ and the values of $x$ change by a minuscule amount ($< 1e-9$).
+My trial and error was naive, but I found that without the proper scaling, any changes to $\epsilon$ would impact the conditioning and magnitude of elements in the matrix. I did a simple solve of $A x = ones$ where $A$ was the LHS produced with RBF-GA. When $\epsilon$ would change, the values of $x$ would change scale as well. By fixing the power on the scaling to $2k$ I am able to input any value for $\epsilon$ (e.g. $1e-2 \rightarrow 10^{-15}$ and the values of $x$ change by a minuscule amount ($< 10^{-9}$).
 
 \item When $z = 2\epsilon^2 x \cdot x_i$ is negative (i.e., the cases where stencil nodes are outside of first quadrant), the gammainc function in matlab returns NaN values. How do we handle the situation? 
 \begin{itemize}
 \item Actually, the problem is not when they are outside the first quadrant. Instead, it appears when the nodes span multiple quadrants (e.g., when in $[-1,1]^d$ instead of $[0,1]^d$).
-\item Answer: The $imag(gammainc(z,k)) < 1e-15$ for all cases tested. . Since it is so near to 0, we simply exclude it by requesting the $real(gammainc(z,k))$ when producing the bases. 
+\item Answer: The $imag(gammainc(z,k)) < 10^{-15}$ for all cases tested. . Since it is so near to 0, we simply exclude it by requesting the $real(gammainc(z,k))$ when producing the bases. 
 \end{itemize}
 \item I also found that for $k=0$ occasionally I get NaN values out of matlab's gammainc(z,k). Consulting the documentation for this routine I found the statement that, for small values of z and $k=0$, "For small $x$ and $a$, $gammainc(x,a) \  \tilde{} \ x^a$, so $gammainc(0,0) = 1$". In fact, the occurrences of NaN correspond to $a=0$ and $x < -1e-5$. Working so near to $0$, I simply added a check on the output from gammainc that catches NaN and substitutes the value 1. For $k>0$ NaNs result in errors.
 

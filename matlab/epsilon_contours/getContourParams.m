@@ -95,6 +95,8 @@ for i = 1:length(display_list)
         
         draw_pt_x = textPt1(1) + (textPt2(1) - textPt1(1)) / 2;
         draw_pt_y = textPt1(2) + (textPt2(2) - textPt1(2)) / 2;
+
+        textM1 = textM;
         
         lev = sprintf('l%d',display_list(i));
         params = sprintf('c1 = %3.3f, c2 = %3.3f', eps_params.(lev).c1, eps_params.(lev).c2);

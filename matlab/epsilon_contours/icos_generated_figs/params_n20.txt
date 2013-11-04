@@ -1,0 +1,17 @@
+Generating Contours for n=20
+N = 162
+N = 642
+N = 2562
+N = 10242
+N = 40962
+Assuming variable epsilon is calculated as ep = c1 * sqrt(N) - c2
+NOTE: the minus sign before c2
+log_10(Mean Condition Number) = 2, params: c1 = 0.220, c2 = -0.035
+log_10(Mean Condition Number) = 4, params: c1 = 0.124, c2 = -0.058
+log_10(Mean Condition Number) = 6, params: c1 = 0.082, c2 = 0.017
+log_10(Mean Condition Number) = 8, params: c1 = 0.056, c2 = 0.097
+log_10(Mean Condition Number) = 10, params: c1 = 0.040, c2 = 0.109
+log_10(Mean Condition Number) = 12, params: c1 = 0.027, c2 = 0.131
+log_10(Mean Condition Number) = 14, params: c1 = 0.015, c2 = 0.050
+log_10(Mean Condition Number) = 16, params: c1 = 0.010, c2 = 0.289
+Printing figure: ./generated_figs//labeled_contours_n20
